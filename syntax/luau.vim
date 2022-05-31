@@ -209,7 +209,7 @@ syn match luauOperator "\v\.\.\."
 syn keyword luauOperator += -= /= *= %= ^= ..=
 
 " Luau unicode escape sequence ( https://luau-lang.org/syntax#string-literals )
-syn match luauSpecial contained #\\u\{[[:xdigit:]]\{,3}\}#
+syn match luauSpecial contained #\\u{[[:xdigit:]]\{,3}}#
 
 " https://luau-lang.org/syntax#number-literals
 
