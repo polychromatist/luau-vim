@@ -179,6 +179,11 @@ syn match luaFunc /\<debug\.traceback\>/
 
 " Luau statements / operators
 syn keyword luauStatement continue export type
+" for some reason the vim lua syntax does not recognize rudimentary operator
+" tokens, so i guess they go here
+syn keyword luauOperator + - * / % ^ # == ~= <= >= > < = ) ( [ ] ; : , . .. ...
+" and we can't forget the luau incremental operators
+syn keyword luauOperator += -= /= *= %= ^= ..=
 
 " Luau unicode escape sequence ( https://luau-lang.org/syntax#string-literals )
 syn match luauSpecial contained #\\u{[[:xdigit:]]\{,3}}#
@@ -321,7 +326,7 @@ hi def link luaFunc		Identifier
 hi def link luauFunc            Identifier
 hi def link luaLabel		Label
 hi def link robloxFunc          Identifier
-hi def link luauOpeartor        Operator
+hi def link luauOperator        Operator
 hi def link luauStatement       Statement
 
 let b:current_syntax = "luau"
