@@ -212,12 +212,87 @@ syn match luauFunc /\<debug\.info\>/
 syn match luauFunc /\<debug\.loadmodule\>/
 syn match luauFunc /\<debug\.profilebegin\>/
 syn match luauFunc /\<debug\.profileend\>/
-syn match luaFunc /\<debug\.setmemorycategory\>/
-syn match luaFunc /\<debug\.resetmemorycategory\>/
+syn match luauFunc /\<debug\.setmemorycategory\>/
+syn match luauFunc /\<debug\.resetmemorycategory\>/
 
 " Roblox environment variables
 if luau_roblox == 1
-  syn keyword robloxFunc warn
+  syn keyword robloxConst self
+  syn keyword robloxFunc warn typeof settings UserSettings
+  syn keyword robloxFunc game workspace script plugin
+  syn keyword robloxFunc Instance UDim2 Vector3 CFrame TweenInfo Enum UDim Vector2 Vector3int16 Vector2int16 FloatCurveKey Faces BrickColor Axes DateTime Color3 ColorSequence ColorSequenceKeypoint NumberRange NumberSequence NumberSequenceKeypoint Random PhysicalProperties Ray RaycastResult Rect Region3 Region3int16 OverlapParams PathWaypoint DockWidgetPluginGuiInfo RaycastParams
+  syn match robloxFunc /\<RaycastParams\.new\>/
+  syn match robloxFunc /\<Ray\.new\>/
+  syn match robloxFunc /\<DockWidgetPluginGuiInfo\.new\>/
+  syn match robloxFunc /\<DateTime\.fromIsoDate\>/
+  syn match robloxFunc /\<DateTime\.fromLocalTime\>/
+  syn match robloxFunc /\<DateTime\.fromUniversalTime\>/
+  syn match robloxFunc /\<DateTime\.fromUnixTimestamp\>/
+  syn match robloxFunc /\<DateTime\.fromUnixTimestampMillis\>/
+  syn match robloxFunc /\<DateTime\.now\>/
+  syn match robloxFunc /\<PhysicalProperties\.new\>/
+  syn match robloxFunc /\<ColorSequenceKeypoint\.new\>/
+  syn match robloxFunc /\<ColorSequence\.new\>/
+  syn match robloxFunc /\<OverlapParams\.new\>/
+  syn match robloxFunc /\<BrickColor\.Red\>/
+  syn match robloxFunc /\<BrickColor\.White\>/
+  syn match robloxFunc /\<BrickColor\.DarkGray\>/
+  syn match robloxFunc /\<BrickColor\.Gray\>/
+  syn match robloxFunc /\<BrickColor\.Green\>/
+  syn match robloxFunc /\<BrickColor\.Blue\>/
+  syn match robloxFunc /\<BrickColor\.Black\>/
+  syn match robloxFunc /\<BrickColor\.Yellow\>/
+  syn match robloxFunc /\<BrickColor\.random\>/
+  syn match robloxFunc /\<BrickColor\.New\>/
+  syn match robloxFunc /\<BrickColor\.palette\>/
+  syn match robloxFunc /\<BrickColor\.Random\>/
+  syn match robloxFunc /\<BrickColor\.new\>/
+  syn match robloxFunc /\<Color3\.toHSV\>/
+  syn match robloxFunc /\<Color3\.fromHSV\>/
+  syn match robloxFunc /\<Color3\.fromHex\>/
+  syn match robloxFunc /\<Color3\.fromRGB\>/
+  syn match robloxFunc /\<Color3\.new\>/
+  syn match robloxFunc /\<TweenInfo\.new\>/
+  syn match robloxFunc /\<Rect\.new\>/
+  syn match robloxFunc /\<NumberRange\.new\>/
+  syn match robloxFunc /\<NumberSequenceKeypoint\.new\>/
+  syn match robloxFunc /\<NumberSequence\.new\>/
+  syn match robloxFunc /\<Random\.new\>/
+  syn match robloxFunc /\<PathWaypoint\.new\>/
+  syn match robloxFunc /\<Region3int16\.new\>/
+  syn match robloxFunc /\<Region3\.new\>/
+  syn match robloxFunc /\<Axes\.new\>/
+  syn match robloxFunc /\<Vector2int16\>new\>/
+  syn match robloxFunc /\<Vector3int16\.new\>/
+  syn match robloxFunc /\<CFrame\.Angles\>/
+  syn match robloxFunc /\<CFrame\.fromEulerAngles\>/
+  syn match robloxFunc /\<CFrame\.fromEulerAnglesXYZ\>/
+  syn match robloxFunc /\<CFrame\.fromEulerAnglesYXZ\>/
+  syn match robloxFunc /\<CFrame\.fromMatrix\>/
+  syn match robloxFunc /\<CFrame\.fromOrientation\>/
+  syn match robloxFunc /\<CFrame\.identity\>/
+  syn match robloxFunc /\<CFrame\.lookAt\>/
+  syn match robloxFunc /\<CFrame\.new\>/
+  syn match robloxFunc /\<Instance\.new\>/
+  syn match robloxFunc /\<Vector3\.FromAxis\>/
+  syn match robloxFunc /\<Vector3\.FromNormalId\>/
+  syn match robloxFunc /\<Vector3\.fromAxis\>/
+  syn match robloxFunc /\<Vector3\.fromNormalId\>/
+  syn match robloxFunc /\<Vector3\.new\>/
+  syn match robloxFunc /\<Vector3\.one\>/
+  syn match robloxFunc /\<Vector3\.xAxis\>/
+  syn match robloxFunc /\<Vector3\.yAxis\>/
+  syn match robloxFunc /\<Vector3\.zAxis\>/
+  syn match robloxFunc /\<Vector3\.zero\>/
+  syn match robloxFunc /\<UDim2\.fromOffset\>/
+  syn match robloxFunc /\<UDim2\.fromScale\>/
+  syn match robloxFunc /\<UDim2\.new\>/
+  syn match robloxFunc /\<Vector2\.new\>/
+  syn match robloxFunc /\<Vector2\.one\>/
+  syn match robloxFunc /\<Vector2\.xAxis\>/
+  syn match robloxFunc /\<Vector2\.yAxis\>/
+  syn match robloxFunc /\<Vector2\.zero\>/
+  syn match robloxFunc /\<UDim\.new\>/
 endif
 
 hi def link luaStatement		Statement
