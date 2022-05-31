@@ -65,11 +65,6 @@ syn match luaComment "\%^#!.*"
 
 syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
-" inline dot function invocation
-syn region luaInlineDotInvocation transparent matchgroup=luaDotFCall start="\<\.\>" end="\<(\>" contains=luaName
-
-syn region luaInlineDotInvocation2 transparent matchgroup=luaDotFCall start="\<(\>" end="\<)\>" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luaInlineDotInvocation
-
 " function ... end
 syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
