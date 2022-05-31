@@ -19,6 +19,31 @@ syn case match
 
 syn sync minlines=100
 
+syn match luauOperator "\v\+"
+syn match luauOperator "\v-"
+syn match luauOperator "\v\*"
+syn match luauOperator "\v/"
+syn match luauOperator "\v\%"
+syn match luauOperator "\v^"
+syn match luauOperator "\v#"
+syn match luauOperator "\v\=\="
+syn match luauOperator "\v\~\="
+syn match luauOperator "\v\<\="
+syn match luauOperator "\v\>\="
+syn match luauOperator "\v\>"
+syn match luauOperator "\v\<"
+syn match luauOperator "\v\="
+syn match luauOperator "\v\)"
+syn match luauOperator "\v\("
+syn match luauOperator "\v\]"
+syn match luauOperator "\v\["
+syn match luauOperator "\v;"
+syn match luauOperator "\v:"
+syn match luauOperator "\v,"
+syn match luauOperator "\v\."
+syn match luauOperator "\v\.\."
+syn match luauOperator "\v\.\.\."
+
 " Inherited from syntax/lua.vim
 
 " Comments
@@ -181,30 +206,6 @@ syn match luaFunc /\<debug\.traceback\>/
 syn keyword luauStatement continue export type
 " for some reason the vim lua syntax does not recognize rudimentary operator
 " tokens, so i guess they go here
-syn match luauOperator "\v\+"
-syn match luauOperator "\v-"
-syn match luauOperator "\v\*"
-syn match luauOperator "\v/"
-syn match luauOperator "\v\%"
-syn match luauOperator "\v^"
-syn match luauOperator "\v#"
-syn match luauOperator "\v\=\="
-syn match luauOperator "\v\~\="
-syn match luauOperator "\v\<\="
-syn match luauOperator "\v\>\="
-syn match luauOperator "\v\>"
-syn match luauOperator "\v\<"
-syn match luauOperator "\v\="
-syn match luauOperator "\v\)"
-syn match luauOperator "\v\("
-syn match luauOperator "\v\]"
-syn match luauOperator "\v\["
-syn match luauOperator "\v;"
-syn match luauOperator "\v:"
-syn match luauOperator "\v,"
-syn match luauOperator "\v\."
-syn match luauOperator "\v\.\."
-syn match luauOperator "\v\.\.\."
 " and we can't forget the luau incremental operators
 syn keyword luauOperator += -= /= *= %= ^= ..=
 
