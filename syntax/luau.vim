@@ -186,6 +186,7 @@ syn match luauSpecial contained #\\u{[[:xdigit:]]\{,3}}#
 " https://luau-lang.org/syntax#number-literals
 
 " Luau binary integer literals
+syn match luauNumber "\<0[bB][01_]\+\>"
 " integer number
 syn match luauNumber "\<[[:digit:]_]\+\>"
 " floating point number, with dot, optional exponent
