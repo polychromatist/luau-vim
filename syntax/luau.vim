@@ -65,6 +65,11 @@ syn match luaComment "\%^#!.*"
 
 syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
+" inline dot function invocation
+syn region luaInlineDotInvocation transparent matchgroup=luaDotFCall start="\<\.\>" end="\<\(\>" contains=luaName
+
+syn region luaInlineDotInvocation2 transparent matchgroup=luaDotFCall start="\<(\>" end="\<)\>" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luaInlineDotInvocation
+
 " function ... end
 syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
@@ -101,6 +106,7 @@ syn keyword luaConstant nil
 syn keyword luaConstant true false
 
 " Strings
+syn match luaName contained #[\w_]\=#
 syn match  luaSpecial contained #\\[\\abfnrtvz'"]\|\\x[[:xdigit:]]\{2}\|\\[[:digit:]]\{,3}#
 syn region luaString2 matchgroup=luaString start="\[\z(=*\)\[" end="\]\z1\]" contains=@Spell
 syn region luaString  start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=luaSpecial,luauSpecial,@Spell
@@ -338,6 +344,7 @@ hi def link luaIn			Operator
 hi def link luaConstant		Constant
 hi def link luaCond		Conditional
 hi def link luaElse		Conditional
+hi def link luaDotFCall         Identifier
 hi def link luaFunction		Function
 hi def link luaComment		Comment
 hi def link luaTodo		Todo
