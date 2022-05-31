@@ -77,8 +77,8 @@ syn keyword luaConstant true false
 " Strings
 syn match  luaSpecial contained #\\[\\abfnrtvz'"]\|\\x[[:xdigit:]]\{2}\|\\[[:digit:]]\{,3}#
 syn region luaString2 matchgroup=luaString start="\[\z(=*\)\[" end="\]\z1\]" contains=@Spell
-syn region luaString  start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=luaSpecial,@Spell
-syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,@Spell
+syn region luaString  start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=luaSpecial,luauSpecial,@Spell
+syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,luauSpecial,@Spell
 
 " luaNumber would be here, see luauNumber
 
@@ -181,12 +181,30 @@ syn match luaFunc /\<debug\.traceback\>/
 syn keyword luauStatement continue export type
 " for some reason the vim lua syntax does not recognize rudimentary operator
 " tokens, so i guess they go here
-syn keyword luauOperator + - * / % ^ # == ~= <= >= > < = ) ( [ ] ; : , . .. ...
+syn match luauOperator "\v\+"
+syn match luauOperator "\v-"
+syn match luauOperator "\v\*"
+syn match luauOperator "\v/"
+syn match luauOperator "\v%"
+syn match luauOperator "\v^"
+syn match luauOperator "\v#"
+syn match luauOperator "\v\=\="
+syn match luauOperator "\v~\="
+syn match luauOperator "\v\<\="
+syn match luauOperator "\v\>\="
+syn match luauOperator "\v\>"
+syn match luauOperator "\v\<"
+syn match luauOperator "\v\="
+syn match luauOperator "\v)"
+syn match luauOperator "\v("
+syn match luauOperator "\v\]"
+syn match luauOperator "\v\["
+; : , . .. ...
 " and we can't forget the luau incremental operators
 syn keyword luauOperator += -= /= *= %= ^= ..=
 
 " Luau unicode escape sequence ( https://luau-lang.org/syntax#string-literals )
-syn match luauSpecial contained #\\u{[[:xdigit:]]\{,3}}#
+syn match luauSpecial contained #\\u\{[[:xdigit:]]\{,3}\}#
 
 " https://luau-lang.org/syntax#number-literals
 
