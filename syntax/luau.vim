@@ -339,7 +339,6 @@ hi def link luaIn			Operator
 hi def link luaConstant		Constant
 hi def link luaCond		Conditional
 hi def link luaElse		Conditional
-hi def link luaDotFCall         Identifier
 hi def link luaFunction		Function
 hi def link luaComment		Comment
 hi def link luaTodo		Todo
