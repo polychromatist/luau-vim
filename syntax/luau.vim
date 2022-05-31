@@ -250,7 +250,6 @@ if luau_roblox == 1
   syn keyword robloxConst self
   syn keyword robloxFunc warn typeof settings UserSettings
   syn keyword robloxFunc game workspace script plugin
-  syn keyword robloxFunc Instance UDim2 Vector3 CFrame TweenInfo Enum UDim Vector2 Vector3int16 Vector2int16 FloatCurveKey Faces BrickColor Axes DateTime Color3 ColorSequence ColorSequenceKeypoint NumberRange NumberSequence NumberSequenceKeypoint Random PhysicalProperties Ray RaycastResult Rect Region3 Region3int16 OverlapParams PathWaypoint DockWidgetPluginGuiInfo RaycastParams
   syn match robloxFunc /\<RaycastParams\.new\>/
   syn match robloxFunc /\<Ray\.new\>/
   syn match robloxFunc /\<DockWidgetPluginGuiInfo\.new\>/
@@ -323,6 +322,7 @@ if luau_roblox == 1
   syn match robloxFunc /\<Vector2\.yAxis\>/
   syn match robloxFunc /\<Vector2\.zero\>/
   syn match robloxFunc /\<UDim\.new\>/
+  syn keyword robloxFunc Instance UDim2 Vector3 CFrame TweenInfo Enum UDim Vector2 Vector3int16 Vector2int16 FloatCurveKey Faces BrickColor Axes DateTime Color3 ColorSequence ColorSequenceKeypoint NumberRange NumberSequence NumberSequenceKeypoint Random PhysicalProperties Ray RaycastResult Rect Region3 Region3int16 OverlapParams PathWaypoint DockWidgetPluginGuiInfo RaycastParams
 endif
 
 hi def link luaStatement		Statement
