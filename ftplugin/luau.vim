@@ -20,7 +20,7 @@ setlocal fo-=t fo+=croql
 
 setlocal com=:--
 setlocal cms=--%s
-setlocal suffixesadd=.lua
+setlocal suffixesadd=.luau
 
 
 " The following lines enable the macros/matchit.vim plugin for
