@@ -1,1 +1,1 @@
-au BufRead,BufNewFile *.luau    set filetype=luau
+au BufRead,BufNewFile *.luau,*.lua    set filetype=luau
