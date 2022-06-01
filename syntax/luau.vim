@@ -19,6 +19,8 @@ syn case match
 
 syn sync minlines=100
 
+syn match luaWord transparent contained #[a-zA-Z_]\w\{-}#
+
 syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
 syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
 syn match  luaParenError ")"
@@ -66,7 +68,7 @@ syn match luaComment "\%^#!.*"
 syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
 
-" syn region luaDotInvocation contained transparent matchgroup=luaDotFCall start="\."ms=e+1 end="("me=e-1 contains=luaWord
+syn region luaDotInvocation contained transparent keepend matchgroup=luaDotFCall start="\."ms=e+1 end="("me=e-1 contains=luaWord
 " function ... end
 syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
@@ -103,7 +105,6 @@ syn keyword luaConstant nil
 syn keyword luaConstant true false
 
 " Strings
-syn match luaWord transparent contained #[a-zA-Z_]\w\{-}#
 syn match  luaSpecial contained #\\[\\abfnrtvz'"]\|\\x[[:xdigit:]]\{2}\|\\[[:digit:]]\{,3}#
 syn region luaString2 matchgroup=luaString start="\[\z(=*\)\[" end="\]\z1\]" contains=@Spell
 syn region luaString  start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=luaSpecial,luauSpecial,@Spell
