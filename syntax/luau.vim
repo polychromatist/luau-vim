@@ -68,7 +68,6 @@ syn match luaComment "\%^#!.*"
 syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
 
-syn region luaDotInvocation keepend matchgroup=luauOperator start="\." end="(" contains=luaWord
 " function ... end
 syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
@@ -97,6 +96,8 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<while\>" end="
 syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<do\>"me=e-2   contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd nextgroup=luaBlock skipwhite skipempty
 
 syn keyword luaIn contained in
+
+syn region luaDotInvocation keepend matchgroup=luauOperator start="\." end="(" contains=luaWord
 
 " other keywords
 syn keyword luaStatement return local break
