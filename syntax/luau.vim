@@ -97,7 +97,8 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
-syn match luaDotInvocation /[.:]\zs[a-zA-Z_]\w*\ze(/ 
+syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
+syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contained
 " syn match luaInvocationWord /[a-zA-Z_]\w*/ contained containedin=luaDotInvocation
 
 " other keywords
@@ -359,8 +360,8 @@ hi def link luaLabel		Label
 hi def link robloxFunc          Identifier
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
-" hi def link luaInvocationWord   Identifier
-hi def link luaDotInvocation    Identifier
+hi def link luaInvocationWord   Identifier
+" hi def link luaDotInvocation    Identifier
 
 let b:current_syntax = "luau"
 
