@@ -103,7 +103,7 @@ syn keyword luaConstant nil
 syn keyword luaConstant true false
 
 " Strings
-syn match luaWord transparent contained /\<[a-zA-Z_][a-zA-Z[:digit:]_]\{-}\>/
+syn match luaWord transparent contained #[a-zA-Z_]\w\{-}#
 syn match  luaSpecial contained #\\[\\abfnrtvz'"]\|\\x[[:xdigit:]]\{2}\|\\[[:digit:]]\{,3}#
 syn region luaString2 matchgroup=luaString start="\[\z(=*\)\[" end="\]\z1\]" contains=@Spell
 syn region luaString  start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=luaSpecial,luauSpecial,@Spell
