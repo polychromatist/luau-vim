@@ -345,7 +345,7 @@ hi def link luaIn			Operator
 hi def link luaConstant		Constant
 hi def link luaCond		Conditional
 hi def link luaElse		Conditional
-hi def link luaFunction		Function
+hi def link luaFunction		Keyword
 hi def link luaComment		Comment
 hi def link luaTodo		Todo
 hi def link luaTable		Structure
@@ -360,7 +360,7 @@ hi def link luaLabel		Label
 hi def link robloxFunc          Identifier
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
-hi def link luaInvocationWord   Identifier
+hi def link luaInvocationWord   Function
 " hi def link luaDotInvocation    Identifier
 
 let b:current_syntax = "luau"
