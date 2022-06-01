@@ -19,7 +19,7 @@ syn case match
 
 syn sync minlines=100
 
-syn match luaWord contained #[a-zA-Z_]\w\{-}#
+syn match luaWord transparent contained #[a-zA-Z_]\w\{-}#
 
 syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
 syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
@@ -68,7 +68,7 @@ syn match luaComment "\%^#!.*"
 syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
 
-syn region luaDotInvocation keepend start="[.:]"ms=s+1 end="("me=e-1 contains=luaWord
+syn region luaDotInvocation keepend start="\."ms=s+1 end="("me=e-1 contains=luaWord
 " function ... end
 syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
