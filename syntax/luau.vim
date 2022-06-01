@@ -19,7 +19,6 @@ syn case match
 
 syn sync minlines=100
 
-" syn match luaWord contained transparent contains=NONE /[a-zA-Z_][a-zA-Z0-9_]\{-}/
 
 syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
 syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
@@ -98,7 +97,8 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
-syn match luaDotInvocation /[.:]\%([a-zA-Z_]\)\w*(/
+syn match luaDotInvocation /[.:][a-zA-Z_]\w*(/ contains=luaInvocationWord
+syn match luaInvocationWord /[a-zA-Z_]\w\*/ contained
 
 " other keywords
 syn keyword luaStatement return local break
@@ -359,7 +359,7 @@ hi def link luaLabel		Label
 hi def link robloxFunc          Identifier
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
-hi def link luaDotInvocation    Identifier
+hi def link luaInvocationWord   Identifier
 
 let b:current_syntax = "luau"
 
