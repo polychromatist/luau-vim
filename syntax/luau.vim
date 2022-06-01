@@ -49,6 +49,8 @@ syn match luauOperator "\v,"
 syn match luauOperator "\v\."
 syn match luauOperator "\v\.\."
 syn match luauOperator "\v\.\.\."
+syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
+syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contained
 
 " Inherited from syntax/lua.vim
 
@@ -97,8 +99,6 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
-syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
-syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contained
 " syn match luaInvocationWord /[a-zA-Z_]\w*/ contained containedin=luaDotInvocation
 
 " other keywords
