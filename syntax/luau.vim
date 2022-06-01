@@ -20,6 +20,7 @@ syn case match
 syn sync minlines=100
 
 " syn match luaWord contained transparent contains=NONE /[a-zA-Z_][a-zA-Z0-9_]\{-}/
+syn match luaDotInvocation /[.:][a-zA-Z_]\w*(/hs=s+1,he=e-1
 
 syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
 syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
@@ -98,7 +99,6 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
-syn match luaDotInvocation /[.:][a-zA-Z_]\w*(/hs=s+1,he=e-1
 
 " other keywords
 syn keyword luaStatement return local break
