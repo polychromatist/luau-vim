@@ -345,7 +345,7 @@ hi def link luaIn			Operator
 hi def link luaConstant		Constant
 hi def link luaCond		Conditional
 hi def link luaElse		Conditional
-hi def link luaFunction		Keyword
+hi def link luaFunction		Statement
 hi def link luaComment		Comment
 hi def link luaTodo		Todo
 hi def link luaTable		Structure
