@@ -97,8 +97,8 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
-syn match luaDotInvocation /[.:][a-zA-Z_]\w*(/ contains=luaInvocationWord
-syn match luaInvocationWord /[a-zA-Z_]\w\*/ contained
+syn match luaDotInvocation /[.:][a-zA-Z_]\w*(/ contains=luaInvocationWord transparent
+syn match luaInvocationWord /[a-zA-Z_]\w*/ contained
 
 " other keywords
 syn keyword luaStatement return local break
