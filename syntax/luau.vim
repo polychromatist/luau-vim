@@ -65,6 +65,8 @@ syn match luaComment "\%^#!.*"
 
 syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
+
+syn region luaDotInvocation contained transparent matchgroup=luaDotFCall start="\."ms=e+1 end="("me=e-1 contains=luaWord
 " function ... end
 syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
@@ -101,6 +103,7 @@ syn keyword luaConstant nil
 syn keyword luaConstant true false
 
 " Strings
+syn match luaWord transparent /\<\w\+\>/
 syn match  luaSpecial contained #\\[\\abfnrtvz'"]\|\\x[[:xdigit:]]\{2}\|\\[[:digit:]]\{,3}#
 syn region luaString2 matchgroup=luaString start="\[\z(=*\)\[" end="\]\z1\]" contains=@Spell
 syn region luaString  start=+'+ end=+'+ skip=+\\\\\|\\'+ contains=luaSpecial,luauSpecial,@Spell
@@ -353,6 +356,7 @@ hi def link luaLabel		Label
 hi def link robloxFunc          Identifier
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
+hi def link luaDotFCall         Identifier
 
 let b:current_syntax = "luau"
 
