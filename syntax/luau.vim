@@ -360,7 +360,7 @@ hi def link robloxFunc          Identifier
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
 " hi def link luaInvocationWord   Identifier
-hi def link luaDotInvocation    Statement
+hi def link luaDotInvocation    Identifier
 
 let b:current_syntax = "luau"
 
