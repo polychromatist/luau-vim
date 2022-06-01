@@ -98,7 +98,7 @@ syn keyword luaIn contained in
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
 syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
-syn match luaInvocationWord "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contained
+syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contained
 " syn match luaInvocationWord /[a-zA-Z_]\w*/ contained containedin=luaDotInvocation
 
 " other keywords
