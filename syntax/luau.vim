@@ -68,7 +68,7 @@ syn match luaComment "\%^#!.*"
 syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
 
-syn region luaDotInvocation keepend start="\."ms=s+1 end="("me=e-1 contains=luaWord
+syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
 " function ... end
 syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
