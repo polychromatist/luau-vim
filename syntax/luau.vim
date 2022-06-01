@@ -357,7 +357,7 @@ hi def link luauSpecial         SpecialChar
 hi def link luaFunc		Identifier
 hi def link luauFunc            Identifier
 hi def link luaLabel		Label
-hi def link robloxFunc          Identifier
+hi def link robloxFunc          Keyword
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
 hi def link luaInvocationWord   Identifier
