@@ -49,8 +49,8 @@ syn match luauOperator "\v,"
 syn match luauOperator "\v\."
 syn match luauOperator "\v\.\."
 syn match luauOperator "\v\.\.\."
-syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
-syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contained containedin=luaDotInvocation
+" syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
+syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contained contains=ALLBUT,luaIfThen,luaElseifThen,luaIn,luaElse,luaTodo,luaSpecial
 
 " Inherited from syntax/lua.vim
 
