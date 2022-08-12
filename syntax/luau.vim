@@ -20,8 +20,8 @@ syn case match
 syn sync minlines=100
 
 
-syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
-syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement
+syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luaType,luaTypeBlock,luaTypeDef,luaTypeDecl
+syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luaType,luaTypeBlock,luaTypeDef,luaTypeDecl
 syn match  luaParenError ")"
 syn match  luaBraceError "}"
 
@@ -99,11 +99,11 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " typedef
-syn region luauTypeDef transparent matchgroup=luauType start="\<type\>" end="="me=e-1 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock nextgroup=luauTypeBlock skipwhite skipempty
-syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
+" syn region luauTypeDef transparent matchgroup=luauType start="\<type\>" end="="me=e-1 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock nextgroup=luauTypeBlock skipwhite skipempty
+" syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
 
 " type declaration
-syn match luauTypeDecl contained /\<type\s\+\zs\w\+/ contains=NONE
+" syn match luauTypeDecl contained /\<type\s\+\zs\w\+/ contains=NONE
 " syn match luauTypeDecl contained transparent /.\|\w+/ contains=luauType
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
@@ -328,7 +328,7 @@ if luau_roblox == 1
   syn match robloxFunc /\<Vector3\.xAxis\>/
   syn match robloxFunc /\<Vector3\.yAxis\>/
   syn match robloxFunc /\<Vector3\.zAxis\>/
-  " syn match robloxFunc /\<Vector3\.zero\>/
+  syn match robloxFunc /\<Vector3\.zero\>/
   syn match robloxFunc /\<UDim2\.fromOffset\>/
   syn match robloxFunc /\<UDim2\.fromScale\>/
   syn match robloxFunc /\<UDim2\.new\>/
