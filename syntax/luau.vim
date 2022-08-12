@@ -1,17 +1,17 @@
 " Vim syntax file
-" Language:     Luau 0.529
+" Language:     Luau 0.540
 " Maintainer:   polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 May 31
-" Options:      luau_roblox = 0 (Luau standalone) or 1 (with Roblox envvars)
-if exists("b:current_syntax")
+" Last Change:  2022 Aug 12
+" Options:      luau_roblox = 0 (Luau standalone) or 1 (Luau+Roblox - default)
+if exists('b:current_syntax')
   finish
 endif
 
 let s:cpo_save = &cpo
 set cpo&vim
 
-if !exists("luau_roblox")
+if !exists('luau_roblox')
   let luau_roblox = 1
 endif
 
@@ -50,7 +50,7 @@ syn match luauOperator "\v\."
 syn match luauOperator "\v\.\."
 syn match luauOperator "\v\.\.\."
 " syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
-syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contained contains=ALLBUT,luaIfThen,luaElseifThen,luaIn,luaElse,luaTodo,luaSpecial
+syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contains=ALLBUT,luaIfThen,luaElseifThen,luaIn,luaElse,luaTodo,luaSpecial,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType
 
 " Inherited from syntax/lua.vim
 
@@ -70,33 +70,39 @@ syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
 
 " function ... end
-syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
+syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock,luauTypeDecl,luauType
 
 " if ... then
-syn region luaIfThen transparent matchgroup=luaCond start="\<if\>" end="\<then\>"me=e-4           contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaIn nextgroup=luaThenEnd skipwhite skipempty
+syn region luaIfThen transparent matchgroup=luaCond start="\<if\>" end="\<then\>"me=e-4           contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaIn,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType nextgroup=luaThenEnd skipwhite skipempty
 
 " then ... end
-syn region luaThenEnd contained transparent matchgroup=luaCond start="\<then\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaThenEnd,luaIn
+syn region luaThenEnd contained transparent matchgroup=luaCond start="\<then\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaThenEnd,luaIn,luauTypeBlock,luauTypeDecl,luauType
 
 " elseif ... then
-syn region luaElseifThen contained transparent matchgroup=luaCond start="\<elseif\>" end="\<then\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
+syn region luaElseifThen contained transparent matchgroup=luaCond start="\<elseif\>" end="\<then\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType
 
 " else
 syn keyword luaElse contained else
 
 " do ... end
-syn region luaBlock transparent matchgroup=luaStatement start="\<do\>" end="\<end\>"          contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
+syn region luaBlock transparent matchgroup=luaStatement start="\<do\>" end="\<end\>"          contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock,luauTypeDecl,luauType
 
 " repeat ... until
-syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<repeat\>" end="\<until\>"   contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
+syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<repeat\>" end="\<until\>"   contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock,luauTypeDecl,luauType
 
 " while ... do
-syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<while\>" end="\<do\>"me=e-2 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn nextgroup=luaBlock skipwhite skipempty
+syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<while\>" end="\<do\>"me=e-2 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType nextgroup=luaBlock skipwhite skipempty
 
 " for ... do and for ... in ... do
-syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<do\>"me=e-2   contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd nextgroup=luaBlock skipwhite skipempty
+syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<do\>"me=e-2   contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType nextgroup=luaBlock skipwhite skipempty
 
 syn keyword luaIn contained in
+
+" typedef
+syn region luauTypeDef transparent matchgroup=luauTypeDef start="\<type\>" end="="me=e-1 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn nextgroup=luauTypeBlock skipwhite skipempty
+syn region luauTypeBlock contained transparent matchgroup=luauTypeDef start="=" end="\r\|;"
+syn match luauTypeDecl contained transparent /.\|\w+/ contains=luauType
+syn match  luauType contained /\w+/ contains=NONE
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
 " syn match luaInvocationWord /[a-zA-Z_]\w*/ contained containedin=luaDotInvocation
@@ -332,38 +338,39 @@ if luau_roblox == 1
   syn match robloxFunc /\<UDim\.new\>/
 endif
 
-hi def link luaStatement		Statement
-hi def link luaRepeat		Repeat
-hi def link luaFor			Repeat
-hi def link luaString		String
-hi def link luaString2		String
+hi def link luaStatement		    Statement
+hi def link luaRepeat		        Repeat
+hi def link luaFor			        Repeat
+hi def link luaString		        String
+hi def link luaString2		      String
 hi def link luauString          String
-hi def link luaNumber		Number
+hi def link luaNumber		        Number
 hi def link luauNumber          Number
-hi def link luaOperator		Operator
-hi def link luaIn			Operator
-hi def link luaConstant		Constant
-hi def link luaCond		Conditional
-hi def link luaElse		Conditional
-hi def link luaFunction		Statement
-hi def link luaComment		Comment
-hi def link luaTodo		Todo
-hi def link luaTable		Structure
-hi def link luaError		Error
-hi def link luaParenError		Error
-hi def link luaBraceError		Error
-hi def link luaSpecial		SpecialChar
+hi def link luaOperator		      Operator
+hi def link luaIn			          Operator
+hi def link luaConstant		      Constant
+hi def link luaCond		          Conditional
+hi def link luaElse		          Conditional
+hi def link luaFunction		      Statement
+hi def link luaComment		      Comment
+hi def link luaTodo		          Todo
+hi def link luaTable		        Structure
+hi def link luaError		        Error
+hi def link luaParenError		    Error
+hi def link luaBraceError		    Error
+hi def link luaSpecial		      SpecialChar
 hi def link luauSpecial         SpecialChar
-hi def link luaFunc		Identifier
+hi def link luaFunc		          Identifier
 hi def link luauFunc            Identifier
-hi def link luaLabel		Label
+hi def link luaLabel		        Label
 hi def link robloxFunc          Identifier
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
 hi def link luaInvocationWord   Function
+hi def link luauType            Type
 " hi def link luaDotInvocation    Identifier
 
-let b:current_syntax = "luau"
+let b:current_syntax = 'luau'
 
 let &cpo = s:cpo_save
 unlet s:cpo_save
