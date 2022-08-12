@@ -328,7 +328,7 @@ if luau_roblox == 1
   syn match robloxFunc /\<Vector3\.xAxis\>/
   syn match robloxFunc /\<Vector3\.yAxis\>/
   syn match robloxFunc /\<Vector3\.zAxis\>/
-  syn match robloxFunc /\<Vector3\.zero\>/
+  " syn match robloxFunc /\<Vector3\.zero\>/
   syn match robloxFunc /\<UDim2\.fromOffset\>/
   syn match robloxFunc /\<UDim2\.fromScale\>/
   syn match robloxFunc /\<UDim2\.new\>/
