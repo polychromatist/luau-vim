@@ -369,6 +369,7 @@ hi def link robloxFunc          Identifier
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
 hi def link luaInvocationWord   Function
+hi def link luauType            Type
 hi def link luauTypeDecl        Type
 " hi def link luaDotInvocation    Identifier
 
