@@ -99,11 +99,11 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " typedef
-" syn region luauTypeDef transparent matchgroup=luauType start="\<type\>" end="="me=e-1 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock nextgroup=luauTypeBlock skipwhite skipempty
-" syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
+syn region luauTypeDef transparent matchgroup=luauType start="\<type\>" end="="me=e-1 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock nextgroup=luauTypeBlock skipwhite skipempty
+syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
 
 " type declaration
-" syn match luauTypeDecl contained /\<type\s\+\zs\w\+/ contains=NONE
+syn match luauTypeDecl contained /\<type\s\+\zs\w\+/ contains=NONE
 " syn match luauTypeDecl contained transparent /.\|\w+/ contains=luauType
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
