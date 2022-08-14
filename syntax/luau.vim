@@ -53,7 +53,6 @@ syn match luauOperator "\v\.\."
 syn match luauOperator "\v\.\.\."
 " syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
 syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contains=ALLBUT,luaIfThen,luaElseifThen,luaIn,luaElse,luaTodo,luaSpecial,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType
-syn match luauType "type \w\+ ="
 
 " Inherited from syntax/lua.vim
 
@@ -101,11 +100,6 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 
 syn keyword luaIn contained in
 
-" typedef
-" one liner
-syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
-" block
-syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
 " typeof
 " syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
 
@@ -132,6 +126,13 @@ syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,lua
 
 syn keyword luaFunc assert collectgarbage error next newproxy
 syn keyword luaFunc print rawget rawset tonumber tostring type _VERSION
+
+syn match luauType "type \w\+ ="
+" typedef
+" one liner
+syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
+" block
+syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
 
 syn keyword luaFunc getmetatable setmetatable
 syn keyword luaFunc ipairs pairs
@@ -226,7 +227,7 @@ syn match luaFunc /\<debug\.traceback\>/
 " Luau
 
 " Luau statements / operators
-syn keyword luauStatement continue export type
+syn keyword luauStatement continue export
 " for some reason the vim lua syntax does not recognize rudimentary operator
 " tokens, so i guess they go here
 " and we can't forget the luau incremental operators
