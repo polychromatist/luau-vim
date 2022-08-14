@@ -53,6 +53,7 @@ syn match luauOperator "\v\.\."
 syn match luauOperator "\v\.\.\."
 " syn match luaDotInvocation "\v[.:]\zs[a-zA-Z_]\w*\ze\(" contains=luaInvocationWord
 syn match luaInvocationWord "\v[a-zA-Z_]\w*\ze\(" contains=ALLBUT,luaIfThen,luaElseifThen,luaIn,luaElse,luaTodo,luaSpecial,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType
+syn match luauType "type \w\+ ="
 
 " Inherited from syntax/lua.vim
 
@@ -72,13 +73,13 @@ syn match  luaError "\<\%(end\|else\|elseif\|then\|until\|in\)\>"
 
 
 " function ... end
-syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock,luauTypeDecl,luauType
+syn region luaFunctionBlock transparent matchgroup=luaFunction start="\<function\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
 " if ... then
 syn region luaIfThen transparent matchgroup=luaCond start="\<if\>" end="\<then\>"me=e-4           contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaIn,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType nextgroup=luaThenEnd skipwhite skipempty
 
 " then ... end
-syn region luaThenEnd contained transparent matchgroup=luaCond start="\<then\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaThenEnd,luaIn,luauTypeBlock,luauTypeDecl,luauType
+syn region luaThenEnd contained transparent matchgroup=luaCond start="\<then\>" end="\<end\>" contains=ALLBUT,luaTodo,luaSpecial,luaThenEnd,luaIn
 
 " elseif ... then
 syn region luaElseifThen contained transparent matchgroup=luaCond start="\<elseif\>" end="\<then\>" contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType
@@ -87,10 +88,10 @@ syn region luaElseifThen contained transparent matchgroup=luaCond start="\<elsei
 syn keyword luaElse contained else
 
 " do ... end
-syn region luaBlock transparent matchgroup=luaStatement start="\<do\>" end="\<end\>"          contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock,luauTypeDecl,luauType
+syn region luaBlock transparent matchgroup=luaStatement start="\<do\>" end="\<end\>"          contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
 " repeat ... until
-syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<repeat\>" end="\<until\>"   contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock,luauTypeDecl,luauType
+syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<repeat\>" end="\<until\>"   contains=ALLBUT,luaTodo,luaSpecial,luaElseifThen,luaElse,luaThenEnd,luaIn
 
 " while ... do
 syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<while\>" end="\<do\>"me=e-2 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeDef,luauTypeBlock,luauTypeDecl,luauType nextgroup=luaBlock skipwhite skipempty
@@ -106,7 +107,6 @@ syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}
 " block
 syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
 " typeof
-syn match luauType "type \w\+ ="
 " syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
 
 " type declaration
@@ -378,7 +378,6 @@ hi def link luauOperator        Operator
 hi def link luauStatement       Statement
 hi def link luaInvocationWord   Function
 hi def link luauType            Type
-hi def link luauTypeDecl        Type
 " hi def link luaDotInvocation    Identifier
 
 let b:current_syntax = 'luau'
