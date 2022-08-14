@@ -102,11 +102,11 @@ syn keyword luaIn contained in
 
 " typedef
 " one liner
-syn match luauTypeDef transparent /\<type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}[.a-zA-Z0-9_]\s\{-}$/
+syn match luauTypeDef transparent /type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}[.a-zA-Z0-9_]\s\{-}$/
 " block
-syn region luauTypeDef transparent matchgroup=luauType start=/\<type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
+syn region luauTypeDef transparent matchgroup=luauType start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
 " typeof
-syn match luauType /\<type \zs[_a-zA-Z0-9]\+\ze [=]/
+syn match luauType "type \zs[_a-zA-Z0-9]\+\ze ="
 " syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
 
 " type declaration
@@ -120,7 +120,7 @@ syn keyword luaStatement return local break
 syn keyword luaOperator and or not
 syn keyword luaConstant nil
 syn keyword luaConstant true false
-syn keyword luauType any test
+syn keyword luauType any
 
 " Strings
 syn match  luaSpecial contained #\\[\\abfnrtvz'"]\|\\x[[:xdigit:]]\{2}\|\\[[:digit:]]\{,3}#
