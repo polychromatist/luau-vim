@@ -100,14 +100,12 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 
 syn keyword luaIn contained in
 
-" typeof
-" syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
-
-" type declaration
-" syn match luauTypeDecl contained transparent /.\|\w+/ contains=luauType
-
-" syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
-" syn match luaInvocationWord /[a-zA-Z_]\w*/ contained containedin=luaDotInvocation
+syn match luauType "type \w\+ ="
+" typedef
+" one liner
+syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
+" block
+syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
 
 " other keywords
 syn keyword luaStatement return local break
@@ -127,12 +125,6 @@ syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,lua
 syn keyword luaFunc assert collectgarbage error next newproxy
 syn keyword luaFunc print rawget rawset tonumber tostring type _VERSION
 
-syn match luauType "type \w\+ ="
-" typedef
-" one liner
-syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
-" block
-syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
 
 syn keyword luaFunc getmetatable setmetatable
 syn keyword luaFunc ipairs pairs
@@ -348,6 +340,8 @@ if luau_roblox == 1
   syn match robloxFunc /\<UDim\.new\>/
 endif
 
+hi def link luauType            Type
+hi def link luaInvocationWord   Function
 hi def link luaStatement		    Statement
 hi def link luaRepeat		        Repeat
 hi def link luaFor			        Repeat
@@ -377,8 +371,6 @@ hi def link luaLabel		        Label
 hi def link robloxFunc          Identifier
 hi def link luauOperator        Operator
 hi def link luauStatement       Statement
-hi def link luaInvocationWord   Function
-hi def link luauType            Type
 " hi def link luaDotInvocation    Identifier
 
 let b:current_syntax = 'luau'
