@@ -108,7 +108,7 @@ syn match luauType "\(\<type \)\@<=\s*\w\+\ze\s*="
 syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=\w[.a-zA-Z0-9_]\+/ contains=luauOperator
 " syn region luauTypeDef transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=\w/ end=/\w/
 " block
-syn region luauTypeDef start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}"me=e-1 contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc
+syn region luauTypeDef start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ms=e+1 end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc
 
 " other keywords
 syn keyword luaStatement return local break
