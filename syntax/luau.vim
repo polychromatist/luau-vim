@@ -106,7 +106,7 @@ syn match luauTypeDef transparent /type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}[.a-zA-Z0-
 " block
 syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
 " typeof
-syn match luauType "type [a-zA-Z0-9]\+ ="
+syn match luauType "type \w\+ ="
 " syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
 
 " type declaration
