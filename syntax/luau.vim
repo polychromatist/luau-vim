@@ -123,7 +123,7 @@ syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,lua
 " luaNumber would be here, see luauNumber
 
 syn keyword luaFunc assert collectgarbage error next newproxy
-syn keyword luaFunc print rawget rawset tonumber tostring _VERSION
+syn keyword luaFunc print rawget rawset tonumber type tostring _VERSION
 
 
 syn keyword luaFunc getmetatable setmetatable
