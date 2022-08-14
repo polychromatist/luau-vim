@@ -100,13 +100,15 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 
 syn keyword luaIn contained in
 
+" type statement
 syn match luauStatement "type\( \)\@="
 syn match luauType "\(type \)\@<=\s*\w\+\ze\s*="
 " typedef
 " one liner
-syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
+syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=\w[.a-zA-Z0-9_]/
+" syn region luauTypeDef transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=\w/ end=/\w/
 " block
-syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
+syn region luauTypeDef transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc
 
 " other keywords
 syn keyword luaStatement return local break
@@ -344,6 +346,7 @@ endif
 
 hi def link luaInvocationWord   Function
 hi def link luauType            Type
+hi def link luauTypeDef         Type
 hi def link luaStatement		    Statement
 hi def link luaRepeat		        Repeat
 hi def link luaFor			        Repeat
