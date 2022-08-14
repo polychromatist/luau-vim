@@ -103,9 +103,9 @@ syn keyword luaIn contained in
 " typedef
 syn match luauType "type \w\+ ="
 " one liner
-syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
+" syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
 " block
-syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
+" syn region luauTypeDef transparent start=/type\s\+[a-zA-Z0-9_]\+\s\+[=]\s\{-}{/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
 
 " other keywords
 syn keyword luaStatement return local break
@@ -123,7 +123,7 @@ syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,lua
 " luaNumber would be here, see luauNumber
 
 syn keyword luaFunc assert collectgarbage error next newproxy
-syn keyword luaFunc print rawget rawset tonumber tostring type _VERSION
+syn keyword luaFunc print rawget rawset tonumber tostring _VERSION
 
 
 syn keyword luaFunc getmetatable setmetatable
