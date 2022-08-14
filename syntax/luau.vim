@@ -24,6 +24,8 @@ syn region luaParen      transparent                     start='(' end=')' conta
 syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luaType,luaTypeBlock,luaTypeDef,luaTypeDecl
 syn match  luaParenError ")"
 syn match  luaBraceError "}"
+syn match luauOperator "?"
+syn match luauQueError "?"
 
 syn match luauOperator "\v\+"
 syn match luauOperator "\v-"
@@ -99,11 +101,15 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " typedef
-syn region luauTypeDef transparent matchgroup=luauType start="\<type\>" end="="me=e-1 contains=ALLBUT,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luauTypeBlock nextgroup=luauTypeBlock skipwhite skipempty
-syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
+" one liner
+syn match luauTypeDef transparent /\<type\>\s\+[a-zA-Z0-9_]\+\s\+[=][\s\r]\{-}[.a-zA-Z0-9_]\s\{-}$/
+" block
+syn region luauTypeDef matchgroup=luauType start="\<type\>\s\+[a-zA-Z0-9_]\+\s\+[=][\s\r]\{-}{" end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc skipwhite skipempty
+" typeof
+syn match luauType contained /\<type\>\s\+\zs[a-zA-Z0-9_]\ze\+\s\+[=]/
+" syn region luauTypeBlock contained transparent matchgroup=luauType start="=" end="\r\|;"
 
 " type declaration
-syn match luauTypeDecl contained /\<type\s\+\zs\w\+/ contains=NONE
 " syn match luauTypeDecl contained transparent /.\|\w+/ contains=luauType
 
 " syn region luaDotInvocation keepend start="\." end="(" contains=luaWord
@@ -114,6 +120,7 @@ syn keyword luaStatement return local break
 syn keyword luaOperator and or not
 syn keyword luaConstant nil
 syn keyword luaConstant true false
+syn keyword luauType any
 
 " Strings
 syn match  luaSpecial contained #\\[\\abfnrtvz'"]\|\\x[[:xdigit:]]\{2}\|\\[[:digit:]]\{,3}#
@@ -360,6 +367,7 @@ hi def link luaTable		        Structure
 hi def link luaError		        Error
 hi def link luaParenError		    Error
 hi def link luaBraceError		    Error
+hi def link luauQueError        Error
 hi def link luaSpecial		      SpecialChar
 hi def link luauSpecial         SpecialChar
 hi def link luaFunc		          Identifier
