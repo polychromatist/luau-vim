@@ -120,7 +120,7 @@ syn keyword luaStatement return local break
 syn keyword luaOperator and or not
 syn keyword luaConstant nil
 syn keyword luaConstant true false
-syn keyword luauType any
+syn keyword luauType any test
 
 " Strings
 syn match  luaSpecial contained #\\[\\abfnrtvz'"]\|\\x[[:xdigit:]]\{2}\|\\[[:digit:]]\{,3}#
