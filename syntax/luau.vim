@@ -108,7 +108,7 @@ syn match luauType "\(\<type \)\@<=\s*\w\+\ze\s*="
 syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=\w[.a-zA-Z0-9_]\+/ contains=luauOperator
 " syn region luauTypeDef transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=\w/ end=/\w/
 " block
-syn region luauTypeDef matchgroup=luauType start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc
+syn region luauTypeDef matchgroup=luauTypeDelimiter start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc
 
 " other keywords
 syn keyword luaStatement return local break
@@ -364,6 +364,7 @@ hi def link luaFunction		      Statement
 hi def link luaComment		      Comment
 hi def link luaTodo		          Todo
 hi def link luaTable		        Structure
+hi def link luauTypeDelimiter   Structure
 hi def link luaError		        Error
 hi def link luaParenError		    Error
 hi def link luaBraceError		    Error
