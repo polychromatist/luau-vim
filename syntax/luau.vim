@@ -101,7 +101,6 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 syn keyword luaIn contained in
 
 " typedef
-syn match luauType "type \w\+ ="
 " one liner
 " syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
 " block
@@ -124,6 +123,7 @@ syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,lua
 
 syn keyword luaFunc assert collectgarbage error next newproxy
 syn keyword luaFunc print rawget rawset tonumber type tostring _VERSION
+syn match luauType "type \w\+ ="
 
 
 syn keyword luaFunc getmetatable setmetatable
