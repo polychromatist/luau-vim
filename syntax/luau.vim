@@ -20,8 +20,8 @@ syn case match
 syn sync minlines=100
 
 
-syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luaType,luaTypeBlock,luaTypeDef,luaTypeDecl
-syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luaType,luaTypeBlock,luaTypeDef,luaTypeDecl
+syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luauTypeDef
+syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luauTypeDef
 syn match  luaParenError ")"
 syn match  luaBraceError "}"
 syn match luauOperator "?"
@@ -100,7 +100,6 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 
 syn keyword luaIn contained in
 
-syn match luauType "type \w\+ ="
 " typedef
 " one liner
 syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
@@ -124,6 +123,7 @@ syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,lua
 
 syn keyword luaFunc assert collectgarbage error next newproxy
 syn keyword luaFunc print rawget rawset tonumber tostring type _VERSION
+syn match luauType "type \w\+ ="
 
 
 syn keyword luaFunc getmetatable setmetatable
