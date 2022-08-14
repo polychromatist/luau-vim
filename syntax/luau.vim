@@ -100,6 +100,7 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 
 syn keyword luaIn contained in
 
+syn match luauType "type \w\+ ="
 " typedef
 " one liner
 " syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
@@ -122,8 +123,7 @@ syn region luaString  start=+"+ end=+"+ skip=+\\\\\|\\"+ contains=luaSpecial,lua
 " luaNumber would be here, see luauNumber
 
 syn keyword luaFunc assert collectgarbage error next newproxy
-syn keyword luaFunc print rawget rawset tonumber type tostring _VERSION
-syn match luauType "type \w\+ ="
+syn keyword luaFunc print rawget rawset tonumber tostring _VERSION
 
 
 syn keyword luaFunc getmetatable setmetatable
@@ -340,8 +340,8 @@ if luau_roblox == 1
   syn match robloxFunc /\<UDim\.new\>/
 endif
 
-hi def link luauType            Type
 hi def link luaInvocationWord   Function
+hi def link luauType            Type
 hi def link luaStatement		    Statement
 hi def link luaRepeat		        Repeat
 hi def link luaFor			        Repeat
