@@ -100,8 +100,8 @@ syn region luaLoopBlock transparent matchgroup=luaRepeat start="\<for\>" end="\<
 
 syn keyword luaIn contained in
 
-syn match luauStatement "type\ze "
-syn match luauType "type\s\+\zs\w\+\ze\s*="
+syn match luauStatement "type "me=e-1
+syn match luauType "type\s\+\w\+\ze\s*="ms=s+5
 " typedef
 " one liner
 " syn match luauTypeDef transparent /type\s\+\w\+\s\+=\s\{-}\w[.a-zA-Z0-9_]*\s\{-}/
