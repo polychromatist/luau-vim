@@ -13,10 +13,15 @@ via neobundle.vim
 
 ## Coverage
 y: implemented
+
 y%: mostly implemented / implemented, but target is volatile
+
 %: partially implemented (i.e. somewhat works)
+
 n: not yet implemented / implementation status unknown
+
 y!: implemented, recent issues
+
 x: no intention to implement
 
 ### Core
