@@ -17,6 +17,10 @@ via neobundle.vim
 
 ``NeoBundleFetch 'polychromatist/luau-vim'``
 
+## Init Variables
+
+`let g:luau_roblox = 0 | 1 (default)`
+
 ## Coverage
 y: implemented
 
