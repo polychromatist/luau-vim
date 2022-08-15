@@ -1,12 +1,34 @@
 # luau-vim
-This vim style for Luau is still experimental.
+Congratulations.
+You too can experience Luau and Roblox Luau syntax highlighting in your Vim / Neovim text editor.
 
-## installation
-Install via Vundle.vim
+## Installation
+via Vundle.vim
 
 ``Plugin 'polychromatist/luau-vim'``
 
-## what's next
-- more syntax
-  - method invocations
-  - type definitions
+via neobundle.vim
+
+``NeoBundleFetch 'polychromatist/luau-vim'``
+
+## Coverage
+y: implemented
+y%: mostly implemented / implemented, but target is volatile
+%: partially implemented (i.e. somewhat works)
+n: not yet implemented / implementation status unknown
+y!: implemented, recent issues
+x: no intention to implement
+
+### Core
+- base Lua syntax: y
+  - inherited from default Lua vim style
+- base Luau syntax: y%
+  - inline "if"-style x-ary operator: n
+  - type: %
+- Roblox functions: y%
+  - auto-generate: n
+
+### Other
+- method invocations: y%
+  - need to make optional
+- linting: n

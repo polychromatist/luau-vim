@@ -105,10 +105,11 @@ syn match luauStatement "\<type\( \)\@="
 syn match luauType "\(\<type \)\@<=\s*\w\+\ze\s*="
 " typedef
 " one liner
-syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=\w[.a-zA-Z0-9_]\+/ contains=luauOperator
+syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=\w[.a-zA-Z0-9_]*/ contains=luauOperator
 " syn region luauTypeDef transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=\w/ end=/\w/
 " block
-syn region luauTypeDef matchgroup=luauTypeDelimiter start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc
+syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc,luaTypeDecl_Local
+syn match luauTypeDecl_Local /^\(\s*local\s\+\w\+\s*:\s*\)\@<=\w\+/
 
 " other keywords
 syn keyword luaStatement return local break
@@ -263,11 +264,18 @@ syn match luauFunc /\<debug\.profilebegin\>/
 syn match luauFunc /\<debug\.profileend\>/
 syn match luauFunc /\<debug\.setmemorycategory\>/
 syn match luauFunc /\<debug\.resetmemorycategory\>/
+syn match luauFunc /\<task\.synchronize\>/
+syn match luauFunc /\<task\.desynchronize\>/
+syn match luauFunc /\<task\.wait\>/
+syn match luauFunc /\<task\.delay\>/
+syn match luauFunc /\<task\.defer\>/
+syn match luauFunc /\<task\.spawn\>/
+syn match luauFunc /\<task\.cancel\>/
 
 " Roblox environment variables
 if luau_roblox == 1
   syn keyword robloxConst self
-  syn keyword robloxFunc warn typeof settings UserSettings
+  syn keyword robloxFunc warn typeof settings UserSettings elapsedTime DebuggerManager printidentity LoadLibrary PluginManager delay spawn stats tick time version
   syn keyword robloxFunc game workspace script plugin
   " syn keyword robloxFunc Instance UDim2 Vector3 CFrame TweenInfo Enum UDim Vector2 Vector3int16 Vector2int16 FloatCurveKey Faces BrickColor Axes DateTime Color3 ColorSequence ColorSequenceKeypoint NumberRange NumberSequence NumberSequenceKeypoint Random PhysicalProperties Ray RaycastResult Rect Region3 Region3int16 OverlapParams PathWaypoint DockWidgetPluginGuiInfo RaycastParams
   syn match robloxFunc /\<RaycastParams\.new\>/
