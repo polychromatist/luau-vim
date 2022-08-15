@@ -2,6 +2,12 @@
 Congratulations.
 You too can experience Luau and Roblox Luau syntax highlighting in your Vim / Neovim text editor.
 
+![three, add method](screenshots/three-add.png)
+
+![geoplane, Box type](screenshots/geoplane-box-type.png)
+
+![geoplane, Mesh3.CSCMatrix](screenshots/geoplane-mesh3-cscmat-nfn.png)
+
 ## Installation
 via Vundle.vim
 
