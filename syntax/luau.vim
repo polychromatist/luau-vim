@@ -2,7 +2,7 @@
 " Language:     Luau 0.540
 " Maintainer:   polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Aug 12
+" Last Change:  2022 Aug 17
 " Options:      luau_roblox = 0 (Luau standalone) or 1 (Luau+Roblox - default)
 if exists('b:current_syntax')
   finish
@@ -105,11 +105,11 @@ syn match luauStatement "\<type\( \)\@="
 syn match luauType "\(\<type \)\@<=\s*\w\+\ze\s*="
 " typedef
 " one liner
-syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=\w[.a-zA-Z0-9_]*/ contains=luauOperator
+syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_]\+/ contains=luauOperator
 " syn region luauTypeDef transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=\w/ end=/\w/
 " block
 syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc,luaTypeDecl_Local
-syn match luauTypeDecl_Local /^\(\s*local\s\+\w\+\s*:\s*\)\@<=\w\+/
+syn match luauTypeDecl_Local /^\(\s*local\s\+\w\+\s*:\s*\)\@<=[.a-zA-Z0-9_]\+/
 
 " other keywords
 syn keyword luaStatement return local break
@@ -355,6 +355,8 @@ endif
 hi def link luaInvocationWord   Function
 hi def link luauType            Type
 hi def link luauTypeDef         Type
+hi def link luauTypeDecl_Local  Type
+hi def link luauTypeDecl_Args   Type
 hi def link luaStatement		    Statement
 hi def link luaRepeat		        Repeat
 hi def link luaFor			        Repeat
