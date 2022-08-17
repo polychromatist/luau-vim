@@ -106,10 +106,10 @@ syn match luauType "\(\<type \)\@<=\s*\w\+\ze\s*="
 " typedef
 "syn match luauDynTypeDef transparent /\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\s*[(]/
 " regular
-syn match luauTypeDef /\(\<type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement,luauTypeDef,luaFunctionBlock,luaInvocationWord,luaBlock
+syn match luauTypeDef /\(\<type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement,luauTypeDef,luaFunctionBlock,luaInvocationWord,luaBlock,luaDynTypeDef
 
 " typeof
-syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(\<type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/me=e-1 end="\ze[)]\s*[(]\s*[)]" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement,luauTypeDef,luauType,luaFunctionBlock,luaInvocationWord,luaBlock,luauOperator
+syn region luauDynTypeDef matchgroup=luauTypeDelimiter transparent start=/\(\<type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/me=e-1 end="\ze[)]\s*[(]\s*[)]" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement,luauTypeDef,luauType,luaFunctionBlock,luaInvocationWord,luaBlock,luauOperator
 
 " braced block
 syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(\<type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauStatement,luauTypeDef,luaFunctionBlock,luaInvocationWord,luaBlock
@@ -359,8 +359,7 @@ endif
 hi def link luaInvocationWord   Function
 hi def link luauType            Type
 hi def link luauTypeDef         Type
-hi def link luauTypeDef         Type
-hi def link luauTypeDef         Type
+hi def link luauDynTypeDef         Type
 hi def link luauTypeDecl        Type
 hi def link luaStatement		    Statement
 hi def link luaRepeat		        Repeat
