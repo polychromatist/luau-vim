@@ -110,7 +110,7 @@ syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/
 syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=luauOperator
 " braced block
 syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc,luaTypeDecl_Local
-syn match luauTypeDecl_Local /\(^\s*local\s\+\w\+\s*:\s*\)\@<=[.a-zA-Z0-9_|& ()->]\{-}\ze\s*=/
+syn match luauTypeDecl_Local /\(^\s*local\s\+\w\+\s*:\s*\)\@<=[.a-zA-Z0-9_|& ()->]\{-}\ze\s*[=\n]/
 
 " other keywords
 syn keyword luaStatement return local break
