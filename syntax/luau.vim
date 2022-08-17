@@ -24,7 +24,7 @@ syn region luaParen      transparent                     start='(' end=')' conta
 syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luauTypeDef
 syn match  luaParenError "\v\)"
 syn match  luaBraceError "\v\}"
-syn match luauOperator "\v\&" "\v\|" "\v\-\>" "\v\?"
+syn match  luauOperator "\v\&" "\v\|" "\v\-\>" "\v\?" contained containedin=luauTypeDef
 syn match luauTypeOpError "\v\&" "\v\|" "\v\-\>" "\v\?"
 
 syn match luauOperator "\v\+"
