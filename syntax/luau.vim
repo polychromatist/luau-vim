@@ -358,9 +358,9 @@ endif
 
 hi def link luaInvocationWord   Function
 hi def link luauType            Type
-hi def link luauTypeDef1         Type
-hi def link luauTypeDef2         Type
-hi def link luauTypeDef3         Type
+hi def link luauTypeDef         Type
+hi def link luauTypeDef         Type
+hi def link luauTypeDef         Type
 hi def link luauTypeDecl        Type
 hi def link luaStatement		    Statement
 hi def link luaRepeat		        Repeat
