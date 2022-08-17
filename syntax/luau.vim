@@ -106,12 +106,12 @@ syn match luauType "\(\<type \)\@<=\s*\w\+\ze\s*="
 " typedef
 " typeof
 "syn match luauDynTypeDef transparent /\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\s*[(]/
-syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/me=e-1 end="\ze[)]\s*[(]\s*[)]" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement
+syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(\<type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/me=e-1 end="\ze[)]\s*[(]\s*[)]" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement
 
 " regular
-syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement
+syn match luauTypeDef /\(\<type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement
 " braced block
-syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauStatement
+syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(\<type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauStatement
 syn match luauTypeDecl /\(^\s*local\s\+\w\+\s*:\s*\)\@<=[.a-zA-Z0-9_|& ()->]\{-}\ze\s*[=\n]/
 
 " other keywords
