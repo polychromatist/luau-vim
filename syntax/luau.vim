@@ -24,8 +24,7 @@ syn region luaParen      transparent                     start='(' end=')' conta
 syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luauTypeDef
 syn match  luaParenError ")"
 syn match  luaBraceError "}"
-syn match luauOperator "?"
-syn match luauQueError "?"
+syn match luauOperator "^" "|" "->" "?"
 syn match luauTypeOpError "&" "|" "->" "?"
 
 syn match luauOperator "\v\+"
@@ -107,13 +106,13 @@ syn match luauType "\(\<type \)\@<=\s*\w\+\ze\s*="
 " typedef
 " typeof
 "syn match luauDynTypeDef transparent /\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\s*[(]/
-syn region luauDynTypeDef transparent matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/me=e-1 end="\ze[)]\s*[(]\s*[)]" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luaTypeDecl_Local,luauDynTypeDef,luauStatement
+syn region luauTypeDef transparent matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/me=e-1 end="\ze[)]\s*[(]\s*[)]" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement
 
 " regular
-syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luaTypeDecl_Local,luauDynTypeDef,luauStatement
+syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauDynTypeDef,luauStatement
 " braced block
-syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauTypeOpError,luaFunc,robloxFunc,luaTypeDecl_Local,luauStatement
-syn match luauTypeDecl_Local /\(^\s*local\s\+\w\+\s*:\s*\)\@<=[.a-zA-Z0-9_|& ()->]\{-}\ze\s*[=\n]/
+syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauTypeOpError,luaFunc,robloxFunc,luauTypeDecl,luauStatement
+syn match luauTypeDecl /\(^\s*local\s\+\w\+\s*:\s*\)\@<=[.a-zA-Z0-9_|& ()->]\{-}\ze\s*[=\n]/
 
 " other keywords
 syn keyword luaStatement return local break
@@ -359,9 +358,8 @@ endif
 hi def link luaInvocationWord   Function
 hi def link luauType            Type
 hi def link luauTypeDef         Type
-hi def link luauDynTypeDef      Type
-hi def link luauTypeDecl_Local  Type
-hi def link luauTypeDecl_Args   Type
+hi def link luauTypeDecl        Type
+hi def link luauTypeDecl        Type
 hi def link luaStatement		    Statement
 hi def link luaRepeat		        Repeat
 hi def link luaFor			        Repeat
