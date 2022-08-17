@@ -26,6 +26,7 @@ syn match  luaParenError ")"
 syn match  luaBraceError "}"
 syn match luauOperator "?"
 syn match luauQueError "?"
+syn match luauTypeOpError "&" "|" "->" "?"
 
 syn match luauOperator "\v\+"
 syn match luauOperator "\v-"
@@ -105,11 +106,13 @@ syn match luauStatement "\<type\( \)\@="
 syn match luauType "\(\<type \)\@<=\s*\w\+\ze\s*="
 " typedef
 " typeof
-syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/
+"syn match luauDynTypeDef transparent /\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\s*[(]/
+syn region luauDynTypeDef transparent matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<=typeof\ze\s*[(]/me=e-1 end="\ze[)]\s*[(]\s*[)]" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luaTypeDecl_Local,luauDynTypeDef,luauStatement
+
 " regular
-syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=luauOperator
+syn match luauTypeDef /\(type\s\+\w\+\s*=\s\{-}\)\@<=[.a-zA-Z0-9_|& ()->]\+/ contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaStatement,luaConstant,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaIn,luaTypeOpError,luaFunc,robloxFunc,luaTypeDecl_Local,luauDynTypeDef,luauStatement
 " braced block
-syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauQueError,luaFunc,robloxFunc,luaTypeDecl_Local
+syn region luauTypeDef matchgroup=luauTypeDelimiter transparent start=/\(type\s\+\w\+\s*=\s\{-}\)\@<={/ end="}" contains=ALLBUT,luaBraceError,luaBlock,luaLoopBlock,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaStatement,luaConstant,luaElse,luaThenEnd,luaIn,luauTypeOpError,luaFunc,robloxFunc,luaTypeDecl_Local,luauStatement
 syn match luauTypeDecl_Local /\(^\s*local\s\+\w\+\s*:\s*\)\@<=[.a-zA-Z0-9_|& ()->]\{-}\ze\s*[=\n]/
 
 " other keywords
@@ -356,6 +359,7 @@ endif
 hi def link luaInvocationWord   Function
 hi def link luauType            Type
 hi def link luauTypeDef         Type
+hi def link luauDynTypeDef      Type
 hi def link luauTypeDecl_Local  Type
 hi def link luauTypeDecl_Args   Type
 hi def link luaStatement		    Statement
@@ -379,7 +383,7 @@ hi def link luauTypeDelimiter   Structure
 hi def link luaError		        Error
 hi def link luaParenError		    Error
 hi def link luaBraceError		    Error
-hi def link luauQueError        Error
+hi def link luauTypeOpError     Error
 hi def link luaSpecial		      SpecialChar
 hi def link luauSpecial         SpecialChar
 hi def link luaFunc		          Identifier
