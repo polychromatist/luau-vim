@@ -22,10 +22,10 @@ syn sync minlines=100
 
 syn region luaParen      transparent                     start='(' end=')' contains=ALLBUT,luaParenError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luauTypeDef
 syn region luaTableBlock transparent matchgroup=luaTable start="{" end="}" contains=ALLBUT,luaBraceError,luaTodo,luaSpecial,luaIfThen,luaElseifThen,luaElse,luaThenEnd,luaBlock,luaLoopBlock,luaIn,luaStatement,luauTypeDef
-syn match  luaParenError ")"
-syn match  luaBraceError "}"
-syn match luauOperator "^" "|" "->" "?"
-syn match luauTypeOpError "&" "|" "->" "?"
+syn match  luaParenError "\v\)"
+syn match  luaBraceError "\v\}"
+syn match luauOperator "\v\&" "\v\|" "\v\-\>" "\v\?"
+syn match luauTypeOpError "\v\&" "\v\|" "\v\-\>" "\v\?"
 
 syn match luauOperator "\v\+"
 syn match luauOperator "\v-"
@@ -358,7 +358,6 @@ endif
 hi def link luaInvocationWord   Function
 hi def link luauType            Type
 hi def link luauTypeDef         Type
-hi def link luauTypeDecl        Type
 hi def link luauTypeDecl        Type
 hi def link luaStatement		    Statement
 hi def link luaRepeat		        Repeat
