@@ -1,7 +1,7 @@
 " Vim filetype plugin file.
 " Language:	Luau
-" Maintainer:	Max Ischenko <mfi@ukr.net>
-" Last Change:	2012 Mar 07
+" Maintainer:	polychromatist (polychromatist@pm.me)
+" Last Change:	2022 Aug 31
 
 " Only do this when not done yet for this buffer
 if exists("b:did_ftplugin")
