@@ -3,12 +3,7 @@
 " Maintiner:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
 " Last Change:  2022 Sep 1
-" Options:      luauHighlightAll = 0 or 1 (default 1)
-"               - luauHighlightNumbers = 0 or 1
-"               - luauHighlightTypes = 0 or 1
-"               - luauHighlightBuiltins = 0 or 1
-"               - luauHighlightRoblox = 0 or 1
-"               - luauIncludeSyntaxFromAPIDump = 0 or 1
+" Options:      luau_roblox = 0 or 1
 
 if exists('b:current_syntax')
   finish
@@ -24,13 +19,26 @@ let g:luauHighlightNumbers = g:luauHighlightAll
 let g:luauHighlightTypes = g:luauHighlightAll
 let g:luauHighlightBuiltins = g:luauHighlightAll
 let g:luauHighlightRoblox = g:luauHighlightAll
-let g:luauIncludeRobloxAPIDump = g:luauHighlightAll
+
+let s:api_dump_url = 'https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker/roblox/API-Dump.json'
 
 syn case match
+
+syn keyword luauStatement break continue do export local return type
 
 syn keyword luauOperator and in or not
 
 syn keyword luauConstant false nil true
+
+syn keyword luauRepeat for repeat until while
+
+syn match luauStatement "function\s\+\%([a-zA-Z_]\)\@=" nextgroup=luauFunction
+
+syn match luauFunction "[a-zA-Z_][a-zA-Z0-9_]*" contained nextgroup=luauBlockFunction1
+
+syn match luauAnonymousFunction "function\_s*\%((\)\@=" transparent nextgroup=luauBlockFunction1
+
+syn keyword luauConditional if elseif else
 
 syn match luauComment "--.*$" contains=luauTodo
 syn region luauComment matchgroup=luauComment start="--\[\z(=*\)\[" end="\]\z1\]" contains=luauTodo
@@ -97,19 +105,11 @@ syn region luauStringZFragment1Alt            start=+'+ end=+\\z+ skip=+\\\\\|\\
 syn region luauStringZFragment2Alt  contained start=+^+ end=+\\z+ skip=+\\\\\|\\'+  nextgroup=luauStringZFragment2Alt,luauStringFragment2Alt,luauStringZFragment3Alt contains=luauEscape,luauZEscape skipwhite skipempty oneline
 syn region luauStringZFragment3Alt  contained start=+^+ end=+'+   skip=+\\\\\|\\'+  contains=luauEscape,luauZEscape skipwhite skipempty oneline
 
-syn region luauBlockTable matchgroup=luauStructure start=+{+ end=+}+ contains=luauTableKey,luauTableValue
-" syn region luauTableKey matchgroup=luauStructure 
-" syn region luauTableEntry matchgroup=luauOperator start="^" contained
+syn region luauBlockTable matchgroup=luauStructure start=+{+ end=+}+ contains=luauBlockTable,luauBlockFunction,luauEntryTable,luauString
+syn region luauBlockFunction1 matchgroup=luauStructure start=+(+ end=+)+ contained nextgroup=luauBlockFunction2 skipwhite skipempty
+syn region luauBlockFunction2 start=+.+ end=+end+ transparent contained
 
-syn region luauCallback matchgroup=luauStatement start="function\(\_s*(\)\@=" end=")"me=e-1 contained contains=luauFunctionParams nextgroup=luauBlockFunction skipwhite skipnl
-syn match luauStatement /\<function\(\s\+[_a-zA-Z]\)\@=/ nextgroup=luauFunction skipwhite
-syn region luauFunction matchgroup=luauFunction start="[_a-zA-Z][_a-zA-Z0-9]*\(\s*(\)\@=" end=")"me=e-1 contained contains=luauFunctionParams nextgroup=luauBlockFunction skipwhite skipnl
-syn region luauFunctionParams matchgroup=luauDelimiter start="(" end=")"me=e-1 contained
-syn region luauBlockFunction matchgroup=luauDelimiter start=")" matchgroup=luauStatement end="end" contained contains=TOP
 
-syn region luauAnonymous matchgroup=luauStructure start="(" end=")\(\s*(\)\@=" contains=luauCallback,luauWrapped nextgroup=luauFunctionArglist
-syn region luauFunctionArglist matchgroup=luauDelimiter start="(" end=")" contained
-syn match luauWrapped /[_a-zA-Z][_a-zA-Z0-9]*/ contained
 
 if (g:luauHighlightNumbers)
   " In Luau, numbers can be interfixed by underscores with no consequence.
@@ -146,7 +146,7 @@ if (g:luauHighlightBuiltins)
 
   syn keyword luauLibrary bit32 coroutine string table math os debug utf8 nextgroup=luauLibraryDot
 
-  syn match luauLibraryDot /\./ transparent contained nextgroup=luauDotBit32,luauDotCoroutine,luauDotString,luauDotTable,luauDotMath,luauDotOS,luauDotDebug,luauDotUTF8
+  syn match luauLibraryDot /\./ transparent contained nextgroup=luauDotBit32,luauDotCorotuine,luauDotString,luauDotTable,luauDotMath,luauDotOS,luauDotDebug,luauDotUTF8
 
   syn keyword luauDotBit32 lrotate lshift replace rrotate rshift contained
 
@@ -184,14 +184,6 @@ if (g:luauHighlightRoblox)
   syn match rbxLibraryDot /\./ transparent contained nextgroup=rbxDotTask
 
   syn keyword rbxDotTask cancel defer delay desynchronize spawn wait contained
-
-  if (g:luauIncludeRobloxAPIDump)
-    let s:rbx_syngen_fpath = luau_vim#get_rbx_syngen_fpath()
-    if (!filereadable(s:rbx_syngen_fpath))
-      call luau_vim#rbx_api_parse()
-    endif
-    source s:rbx_syngen_fpath
-  endif
 endif
 
 hi def link luauStatement             Statement
@@ -204,7 +196,6 @@ hi def link luauComment               Comment
 hi def link luauEscape                Special
 hi def link luauTodo                  Todo
 hi def link luauStructure             Structure
-hi def link luauDelimiter             Delimiter
 
 hi def link luauStringFragment1       luauString
 hi def link luauStringFragment2       luauString
