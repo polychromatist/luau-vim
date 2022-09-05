@@ -1,14 +1,17 @@
-local function test()
+print("hello")
+function test(fsdfsd)
+  local test = "ffff\
+    sdfsd\"fds"
+  function test()
 
+  end
 end
 
-(function(lol)
-  
+sdfdsf
+(function(aa)
+  aaaa
 end)()
-
-
-(function(affff)
-
-
+(function(aa)
+  print("hello")
+  game:GetService()
 end)()
-asdfsdf

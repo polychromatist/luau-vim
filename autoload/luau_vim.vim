@@ -1,92 +1,138 @@
-if exists('g:os')
-  let s:os = g:os
-else
-  if has('win64') || has('win32')
-    let s:os = 'Windows'
-  elseif has('unix') && executable('curl')
-    let s:os = 'Unixlike'
-  else
-    echoerr 'please install curl or put "let g:luauIncludeRobloxAPIDump = 0" in vim config'
-    throw 'could not detect any api retrieval method'
-  endif
-endif
+" luau-vim/autoload/luau_vim.vim
+" Last Change:  2022 Sep 5 (luau-vim v0.2.0)
 
-if (g:luauCustomRobloxAPIDumpURL)
+" this source file is a monolith that handles all tasks requiring logic and
+" advertises them under the luau_vim scope. there is currently only one task:
+" - implement g:luauRobloxIncludeAPIDump
+"   * fetch, parse Roblox API
+"   * generate vim syntax file for luau.vim integration
+
+" roblox api source url
+if exists('g:luauRobloxAPIDumpURL')
   let s:api_dump_url = g:luauRobloxAPIDumpURL
 else
   let s:api_dump_url = 'https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker/roblox/API-Dump.txt'
 endif
-if (g:luauCustomRobloxAPIDumpDirname)
+" roblox api storage directory name
+" stored in plugin folder
+if exists('g:luauRobloxAPIDumpDirname')
   let s:api_dump_dirname = g:luauRobloxAPIDumpDirname
 else
   let s:api_dump_dirname = 'robloxapi'
 endif
+if !exists('g:luauRobloxNonstandardTypesAreErrors')
+  let g:luauRobloxNonstandardTypesAreErrors = 0
+endif
 
+" plugin folder
 let s:_project_root = expand('<sfile>:p:h:h')
-let s:_current_api_suffix = 'current'
-let s:_dated_api_suffix = 'dated'
+" file name for roblox api used to generate syntax file
+let s:_current_api_prefix = 'current'
+" file prefix for old roblox apis
+let s:_dated_api_prefix = 'dated'
 
-" TODO command interface for selecting and preserving previously downloaded api files
+" XXX this is not implemented
+" TODO cmd interface for selecting previously downloaded api files
 if (g:luauMaxOldAPIFilesCount)
   let s:max_old_api = g:LuauMaxOldAPIFilesCount
 else
   let s:max_old_api = 3
 endif
 
+" windows/unix+curl wrapper to fetch roblox api content from s:api_dump_url
 function! luau_vim#rbx_api_fetch() abort
-  if (s:os ==# 'Windows')
+  if has('win64') || has('win32')
     return s:_win_api_fetch()
-  else
+  elseif has('unix') && executable('curl')
     return s:_curl_api_fetch()
+  else
+    echoerr 'please install curl or put "let g:luauIncludeRobloxAPIDump = 0" in vim config'
+    throw 'could not detect any api retrieval method'
   endif
 endfunction
 
-function! luau_vim#rbx_api_parse() abort
+" parse & create vim syntax output
+function! luau_vim#rbx_api_parse(api_data) abort
   let l:rbx_syngen_fpath = luau_vim#get_rbx_syngen_fpath()
 
   if (filereadable(l:rbx_syngen_fpath))
     delete(l:rbx_syngen_fpath)
   endif
 
-  let l:api_data = luau_vim#rbx_api_fetch()
-
-  let l:classes_dict = {}
+  let l:is_service = {}
+  " "standard": type is a Class with Service tag, or is not nonstandard
+  "             nor erroneus
+  " "nonstandard":  type is a Class with Deprecated and/or NotBrowsable
+  "                 tag(s), or type is an Enum with similar tags
+  " "erroneous": type exists but should never be used
+  " Option: g:luauRobloxNonstandardTypesAreErrors = 0 or 1
+  let l:type_dict = {
+        \ 'standard': [],
+        \ 'nonstandard': [],
+        \ 'erroneous': [] }
+  let l:classes_list = []
   let l:enums_dict = {}
 
-  let l:api_item_max = len(l:api_data)
+  let l:api_item_max = len(a:api_data)
   let l:_i = 0
-  " classes
   
-  while l:_i < l:api_item_max do
-    if l:api_data[l:_i][0] ==# 'E'
+  " Classes
+
+  " use a while loop, as the api data is not small
+  " although it's not huge at all, we should take care
+  " using statements that would either parse the entire list
+  " again and again or create big intermediate lists
+  while l:_i < l:api_item_max
+    " Termination Condition: hitting the enum section
+    let l:api_item = a:api_data[l:_i]
+    if l:api_item[0] ==# 'E'
       break
     endif
-    if l:api_data[l:_i][0] ==# 'C'
-      let l:class_data = matchlist(l:api_data[l:_i], 'Class \(\w\+\) : \(\w\+\)\(.*Deprecated\|.*NotBrowsable\)\@!')
+    if l:api_item[0] ==# 'C'
+      " Skip Condition: the api item is a property
+      " there are a lot of properties, discretion is needed
+      " when the time comes to consider them for syntax rules
+      " Known Tags: Deprecated, NotBrowsable, NotCreatable, Service,
+      "             NotReplicated
+
+      let l:class_data = matchlist(l:api_item, 'Class \(\w\+\)\(.*Deprecated\|.*NotBrowsable\)\@!')
       if empty(l:class_data)
         let l:_i += 1
         continue
       endif
 
-      if !has_key(l:classes_dict, l:class_data[2])
-        let l:class_list = []
-        l:classes_dict[l:class_data[2]] = l:class_list
-      else
-        let l:class_list = l:classes_dict[l:class_data[2]]
+      let l:class_name = l:class_data[1]
+      let l:tags_offset = 9 + len(l:class_name)
+
+      " Branch: if it is a Service (note Service always has NotCreatable)
+      if (match(l:api_item, 'Service', l:tags_offset) != -1)
+        l:is_service[l:class_name] = v:true
+      " Branch: if the NotCreatable tag is missing
+      elseif (match(l:api_item, 'NotCreatable', l:tags_offset) ==# -1)
+        " this is a non-deprecated, browsable, creatable Class
+        call add(l:type_dict.standard, l:class_name)
       endif
     endif
     let l:_i += 1
   endwhile
-  " enums
+  
+  " Enums
+
   let l:current_enum = ''
-  while l:_i < l:api_item_max do
-    if l:api_data[l:_i][0] ==# 'E'
-      l:current_enum = l:api_data[l:_i][5:]
+  let l:enum_unused = 0
+  while l:_i < l:api_item_max
+    " Branch: the item is an enum type
+    if a:api_data[l:_i][0] ==# 'E'
+      let l:enum_data = matchlist(a:api_data[l:_i], 'Enum \(\w\+\)\(.*Deprecated\)\@!')
+      l:current_enum = a:api_data[l:_i][5:]
+
       let l:enums_dict[l:current_enum] = []
+    " Branch: the item is an enum property contained in the last enum type
+    else
+
     endif
 
   endwhile
-  call filter(l:api_data, 'match(v:val, ''^\(Class\|Enum\) \w\+ : \w\+\(.*Deprecated\|.*NotBrowsable\)\@!'') != -1')
 
 endfunction
 
