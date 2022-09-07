@@ -403,7 +403,6 @@ if (g:luauHighlightBuiltins)
     hi def link rbxDotTask            rbxLibrary
 
     hi def link rbxMethodGame         rbxInstantiator
-    hi def link rbxInstance           
   endif
 endif
 
