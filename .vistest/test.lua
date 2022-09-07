@@ -1,12 +1,18 @@
+((function(ffff) fsdfsddffdsf end))()
+
 print("hel\z
   lo\z
   fdsf")
-local test = [=[fdsf\z
+local test,ffff = [=[fdsf\z
   
 
 
 
 fsdfsdfsdfsdf]=]
+
+hello.test:omg(..., ..., dfsdf, (function() end)
+  )
+lol test haha
 
 local d = "dfsdfdfsfds\
       ffsdfds"
@@ -18,11 +24,15 @@ function test(fsdfsd)
   end
 end
 
-local function test()
-print("test")
+local test = function(fdfdfdf)
+  asdfsf.
+  local test = "Fdsfsdf"
 end
 
-sdfdsf
+local function test()
+  print("test")
+end
+
 (function(aa)
   aaaa
 end)()
