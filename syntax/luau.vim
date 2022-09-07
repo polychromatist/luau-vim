@@ -40,7 +40,8 @@ syn keyword luauIdentifier _G _VERSION
 
 syn keyword luauOperator and in or not
 
-syn keyword luauConstant false nil true
+syn keyword luauBoolean false true
+syn keyword luauConstant nil
 
 syn match luauComment "--.*$" contains=luauTodo
 syn region luauComment matchgroup=luauComment start="--\[\z(=*\)\[" end="\]\z1\]" contains=luauTodo
@@ -131,9 +132,9 @@ syn cluster luauGeneralString add=luauStringZF1Alt,luauStringZF2Alt,luauStringZF
 " (1) regular integers
 syn match luauNumber "\<[[:digit:]_]\+\>"
 " (2) decimals; possible scientific E-notation with signed exponential
-syn match luauNumber  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>"
+syn match luauFloat  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>"
 " (3) same as (3) with implicit zero on mantissa's most significant digit
-syn match luauNumber  "\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>"
+syn match luauFloat  "\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>"
 " scientific E-notation with integer mantissa
 syn match luauNumber  "\<[[:digit:]_]\+[eE][-+]\=[[:digit:]_]\+\>"
 " (4) hex-format integers 
@@ -156,24 +157,25 @@ syn cluster luauL2 contains=luauL2_Invoke,luauL2_Dot,luauL2_Colon,luauL2_Bracket
 
 " luauE2 - expression splitters
 syn match luauE2_Dot /\./ contained nextgroup=@luauE skipwhite
-syn region luauE2_Invoke matchgroup=luauOperator start="(" end=")" contained contains=@luauL nextgroup=@luauE2 skipwhite
+syn region luauE2_Invoke matchgroup=luauE2_Invoke start="(" end=")" contained contains=@luauL nextgroup=@luauE2 skipwhite
 syn match luauE2_Colon /\%(:\s*\)\@<=\K\k*\%(\s*\%((\|"\|'\|\[=*\[\)\)\@=/ contained nextgroup=luauE2_Invoke skipwhite skipnl
-syn region luauE2_Bracket matchgroup=luauOperator start="\[" end="\]" contained contains=@luauE nextgroup=@luauE2 skipwhite
+syn region luauE2_Bracket matchgroup=luauE2_Bracket start="\[" end="\]" contained contains=@luauE nextgroup=@luauE2 skipwhite
 
 " luauL2 - list expression splitters, notably including a comma
 syn match luauL2_Sep /,/ contained nextgroup=@luauL skipwhite skipempty
 syn match luauL2_Dot /\./ contained nextgroup=@luauL skipwhite
-syn region luauL2_Invoke matchgroup=luauOperator start="(" end=")" contained contains=@luauL nextgroup=@luauL2 skipwhite
+syn region luauL2_Invoke matchgroup=luauL2_Invoke start="(" end=")" contained contains=@luauL nextgroup=@luauL2 skipwhite
 syn match luauL2_Colon /\%(:\s*\)\@<=\K\k*\%(\s*\%((\|"\|'\|\[=*\[\)\)\@=/ contained nextgroup=luauL2_Invoke skipwhite
-syn region luauL2_Bracket matchgroup=luauOperator start="\[" end="\]" contained contains=@luauE nextgroup=@luauL2 skipwhite
+syn region luauL2_Bracket matchgroup=luauL2_Bracket start="\[" end="\]" contained contains=@luauE nextgroup=@luauL2 skipwhite
 
 " luauE - single expressions
 syn keyword luauE_Callback function contained nextgroup=luauE_FunctionParams skipwhite
 syn region luauE_FunctionParams matchgroup=luauDelimiter start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luauE_Block
 syn region luauE_Block matchgroup=luauDelimiter start=")" matchgroup=luauStatement end="end" transparent contains=TOP contained
 
+syn match luauE_Var /\K\k*/ contained nextgroup=@luauE2 skipwhite
 syn match luauE_Var /\K\k*\%(\s*\%(\.\|:\|\[\|(\)\)\@=/ contained nextgroup=@luauE2 skipwhite
-syn region luauE_Wrap start="(" end=")" transparent contained contains=@luauE nextgroup=@luauE2 skipwhite
+syn region luauE_Wrap matchgroup=luauE_Wrap start="(" end=")" transparent contained contains=@luauE nextgroup=@luauE2 skipwhite
 syn match luauE_Variadic /\.\.\./ contained
 
 " luauL - list-contained expressions
@@ -181,17 +183,18 @@ syn keyword luauL_Callback function contained nextgroup=luauL_FunctionParams ski
 syn region luauL_FunctionParams matchgroup=luauDelimiter start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luauL_Block
 syn region luauL_Block matchgroup=luauDelimiter start=")" matchgroup=luauStatement end="end" transparent contains=TOP contained nextgroup=luauL2_Sep skipwhite
 
-syn match luauL_Var /\K\k*\%(\s*\%(\.\|:\|\[\|(\)\)\@=/ contained nextgroup=@luauL2 skipwhite
-syn region luauL_Wrap start="(" end=")" transparent contained contains=@luauE nextgroup=@luauL2 skipwhite
+syn match luauL_Var /\K\k*/ contained nextgroup=@luauL2 skipwhite
+syn match luauL_Var /\K\k*\%(\s*\%(\.\|:\|\[\|(\|\,\)\)\@=/ contained nextgroup=@luauL2 skipwhite
+syn region luauL_Wrap matchgroup=luauL_Wrap start="(" end=")" transparent contained contains=@luauE nextgroup=@luauL2 skipwhite
 syn match luauL_Variadic /\.\.\./ contained nextgroup=luauL2_Sep skipwhite
 
 " luauA - variable assignment syntax
 syn match luauA_Symbol /=/ contained nextgroup=@luauL skipwhite
-syn match luauA_Dot /\./ transparent contained nextgroup=luauA_DottedVar,luauA_HungVar,luauA_TailVar skipwhite
-syn match luauA_DottedVar /\K\k*\%(\s*\.\)\@=/ transparent contained nextgroup=luauA_Dot skipwhite
-syn match luauA_HungVar /\K\k*\%(\s*,\)\@=/ transparent contained nextgroup=luauA_Comma skipwhite
-syn match luauA_TailVar /\K\k*\%(\s*=\)\@=/ transparent contained nextgroup=luauA_Symbol skipwhite
-syn match luauA_Comma /,/ transparent contained nextgroup=luauA_DottedVar,luauA_HungVar,luauA_TailVar skipwhite skipnl
+syn match luauA_Dot /\./ contained nextgroup=luauA_DottedVar,luauA_HungVar,luauA_TailVar skipwhite
+syn match luauA_DottedVar /\K\k*\%(\s*\.\)\@=/ contained nextgroup=luauA_Dot skipwhite
+syn match luauA_HungVar /\K\k*\%(\s*,\)\@=/ contained nextgroup=luauA_Comma skipwhite
+syn match luauA_TailVar /\K\k*\%(\s*=\)\@=/ contained nextgroup=luauA_Symbol skipwhite
+syn match luauA_Comma /,/ contained nextgroup=luauA_DottedVar,luauA_HungVar,luauA_TailVar skipwhite skipnl
 
 " luauK - keyword, luauF - function header, luauB - bindings
 
@@ -210,16 +213,16 @@ syn match luauB_Sep /,/ contained nextgroup=luauB_Name skipwhite
 " luauS
 
 " Top Level Statement: top level variables
-syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ transparent nextgroup=luauV_Dot skipwhite
-syn match luauS_HungVar /\K\k*\%(\s*,\)\@=/ transparent nextgroup=luauA_Comma skipwhite
-syn match luauS_TailVar /\K\k*\%(\s*=\)\@=/ transparent nextgroup=luauA_Symbol skipwhite
+syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ nextgroup=luauV_Dot skipwhite
+syn match luauS_HungVar /\K\k*\%(\s*,\)\@=/ nextgroup=luauA_Comma skipwhite
+syn match luauS_TailVar /\K\k*\%(\s*=\)\@=/ nextgroup=luauA_Symbol skipwhite
 
 " Top Level Statement: anonymous wrapped expression
 syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\K\k*\|\]\|:\)\@<!(" end=")" transparent contains=@luauE nextgroup=@luauE2 skipwhite skipnl
 
 " Top Level Statement: function or method invocation
-syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ transparent nextgroup=luauE2_Invoke skipwhite
-syn match luauS_ColonInvocation /\K\k*\%(\s*:\)\@=/ transparent nextgroup=luauV_Colon skipwhite skipnl
+syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ nextgroup=luauE2_Invoke skipwhite
+syn match luauS_ColonInvocation /\K\k*\%(\s*:\)\@=/ nextgroup=luauV_Colon skipwhite skipnl
 
 " luauV - operators on top level variables
 syn match luauV_Dot /\./ transparent contained nextgroup=luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar skipwhite
@@ -338,15 +341,19 @@ if (g:luauHighlightRoblox)
   endif
 endif
 
+hi def link luauBoolean               Boolean
+hi def link luauConstant              Constant
 hi def link luauIdentifier            Identifier
 hi def link luauStatement             Statement
 hi def link luauString                String
 hi def link luauNumber                Number
+hi def link luauFloat                 Float
 hi def link luauFunction              Function
 hi def link luauConditional           Conditional
 hi def link luauOperator              Operator
 hi def link luauComment               Comment
 hi def link luauEscape                Special
+hi def link luauSpecial               Special
 hi def link luauTodo                  Todo
 hi def link luauStructure             Structure
 hi def link luauDelimiter             Delimiter
@@ -363,6 +370,18 @@ hi def link luauAnonymousFunction     luauStatement
 hi def link luauK_Function            luauStatement
 hi def link luauK_Local               luauStatement
 hi def link luauE_Callback            luauStatement
+hi def link luauL_Callback            luauE_Callback
+hi def link luauE_Variadic            luauSpecial
+hi def link luauL_Variadic            luauE_Variadic
+hi def link luauF_Name                luauFunction
+hi def link luauF_Method              luauF_Name
+hi def link luauS_InvokedVar          luauFunction
+hi def link luauS_HungVar             luauIdentifier
+hi def link luauA_HungVar             luauS_HungVar
+hi def link luauS_TailVar             luauIdentifier
+hi def link luauA_TailVar             luauS_TailVar
+hi def link luauS_ColonInvocation     luauIdentifier
+" hi def link luauE2_Invoke             Operator
 if (g:luauHighlightBuiltins)
   hi def link luauBuiltin           Function
 
@@ -378,9 +397,13 @@ if (g:luauHighlightBuiltins)
   if (g:luauHighlightRoblox)
     hi def link rbxIdentifier         Identifier
     hi def link rbxBuiltin            Function
+    hi def link rbxInstantiator       Structure
 
     hi def link rbxLibrary            rbxBuiltin
     hi def link rbxDotTask            rbxLibrary
+
+    hi def link rbxMethodGame         rbxInstantiator
+    hi def link rbxInstance           
   endif
 endif
 

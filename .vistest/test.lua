@@ -10,9 +10,12 @@ local test,ffff = [=[fdsf\z
 
 fsdfsdfsdfsdf]=]
 
-hello.test:omg(..., ..., dfsdf, (function() end)
-  )
-lol test haha
+hello.test:omg(fsdfsdfdsf.ssdfsdf, fff.fsdffsdfds)
+hello.test:omg(..., ..., (function(fdfsf) print("hello") end))
+
+a, b, c = lol
+a.b = f, f
+a.b.c, test = f.test, (function() print("test") end)(...)
 
 local d = "dfsdfdfsfds\
       ffsdfds"
@@ -23,9 +26,9 @@ function test(fsdfsd)
 
   end
 end
-
+game:GetService("")
 local test = function(fdfdfdf)
-  asdfsf.
+  asdfsf.test()
   local test = "Fdsfsdf"
 end
 
