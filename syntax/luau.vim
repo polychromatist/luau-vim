@@ -2,7 +2,7 @@
 " Language:     Luau 0.543
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 5 (luau-vim v0.2.0)
+" Last Change:  2022 Sep 7 (luau-vim v0.2.0)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (default 1)
 "               - luauHighlightTypes = 0 or 1
@@ -38,7 +38,7 @@ syn case match
 
 syn keyword luauIdentifier _G _VERSION
 
-syn keyword luauOperator and in or not
+syn keyword luauOperator and or not
 
 syn keyword luauBoolean false true
 syn keyword luauConstant nil
@@ -72,12 +72,15 @@ syn match luauZEscape contained #\\z\(\_s*\)\@=#
 " to permit only the next line of a oneline string as continued string input
 syn match luauEOLEscape contained #\\$#
 
+" the commented out sections are implemented in function:
+"   s:defineExpressions('')
+
 " Section: Luau string literal - core
 
 " simple string matches - multiline, single and double single line strings
-syn region luauString matchgroup=luauString start="\[\z(=*\)\[" end="\]\z1\]"   contains=luauEscape
-syn region luauString matchgroup=luauString start=+'+ end=+'+ skip=+\\\\\|\\'+  contains=luauEscape oneline
-syn region luauString matchgroup=luauString start=+"+ end=+"+ skip=+\\\\\|\\"+  contains=luauEscape oneline
+" syn region luauString matchgroup=luauString start="\[\z(=*\)\[" end="\]\z1\]"   contains=luauEscape
+" syn region luauString matchgroup=luauString start=+'+ end=+'+ skip=+\\\\\|\\'+  contains=luauEscape oneline
+" syn region luauString matchgroup=luauString start=+"+ end=+"+ skip=+\\\\\|\\"+  contains=luauEscape oneline
 
 " Section: Luau string literal - line splice "\" & whitespace vacuum "\z"
 
@@ -91,13 +94,13 @@ syn region luauString matchgroup=luauString start=+"+ end=+"+ skip=+\\\\\|\\"+  
 " cannot be interchanged.
 " we also permit the \z device to be detected in these match groups when
 " it is reasonably expected that the next line could contain one.
-syn match luauStringF1            /".\{-}\\$/           contains=luauEscape,luauEOLEscape nextgroup=luauStringF2,luauStringZF2,luauStringF3 skipwhite skipnl
-syn match luauStringF2 contained  /^.\{-}\\$/           contains=luauEscape,luauEOLEscape nextgroup=luauStringF2,luauStringZF2,luauStringF3 skipwhite skipnl
-syn match luauStringF3 contained  /^.\{-}\%(\\\)\@1<!"/ contains=luauEscape
+" syn match luauStringF1            /".\{-}\\$/           contains=luauEscape,luauEOLEscape nextgroup=luauStringF2,luauStringZF2,luauStringF3 skipwhite skipnl
+" syn match luauStringF2 contained  /^.\{-}\\$/           contains=luauEscape,luauEOLEscape nextgroup=luauStringF2,luauStringZF2,luauStringF3 skipwhite skipnl
+" syn match luauStringF3 contained  /^.\{-}\%(\\\)\@1<!"/ contains=luauEscape
 
-syn match luauStringF1Alt /'.\{-}\\$/                     contains=luauEscape,luauEOLEscape nextgroup=luauStringF2Alt,luauStringZF2Alt,luauStringF3Alt skipnl skipwhite
-syn match luauStringF2Alt /^.\{-}\\$/           contained contains=luauEscape,luauEOLEscape nextgroup=luauStringF2Alt,luauStringZF2Alt,luauStringF3Alt skipnl skipwhite
-syn match luauStringF3Alt /^.\{-}\%(\\\)\@1<!'/ contained contains=luauEscape
+" syn match luauStringF1Alt /'.\{-}\\$/                     contains=luauEscape,luauEOLEscape nextgroup=luauStringF2Alt,luauStringZF2Alt,luauStringF3Alt skipnl skipwhite
+" syn match luauStringF2Alt /^.\{-}\\$/           contained contains=luauEscape,luauEOLEscape nextgroup=luauStringF2Alt,luauStringZF2Alt,luauStringF3Alt skipnl skipwhite
+" syn match luauStringF3Alt /^.\{-}\%(\\\)\@1<!'/ contained contains=luauEscape
 
 " following six: syntax treatment for \z string input device
 " analogous to the backslash device, except using regions to properly
@@ -106,21 +109,21 @@ syn match luauStringF3Alt /^.\{-}\%(\\\)\@1<!'/ contained contains=luauEscape
 " whitespace, but not any character that is not whitespace. once a
 " non-whitespace character is encountered, the \z device has completed its
 " task and no other special behavior can be expected from it.
-syn region luauStringZF1           start=+"+ end=+\\z+ skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape nextgroup=luauStringZF2,luauStringF2,luauStringZF3 skipwhite skipempty oneline
-syn region luauStringZF2 contained start=+^+ end=+\\z+ skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape nextgroup=luauStringZF2,luauStringF2,luauStringZF3 skipwhite skipempty oneline
-syn region luauStringZF3 contained start=+^+ end=+"+   skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape oneline
+" syn region luauStringZF1           start=+"+ end=+\\z+ skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape nextgroup=luauStringZF2,luauStringF2,luauStringZF3 skipwhite skipempty oneline
+" syn region luauStringZF2 contained start=+^+ end=+\\z+ skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape nextgroup=luauStringZF2,luauStringF2,luauStringZF3 skipwhite skipempty oneline
+" syn region luauStringZF3 contained start=+^+ end=+"+   skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape oneline
 
-syn region luauStringZF1Alt           start=+'+ end=+\\z+ skip=+\\\\\|\\'+  contains=luauEscape,luauZEscape nextgroup=luauStringZF2Alt,luauStringF2Alt,luauStringZF3Alt skipwhite skipempty oneline
-syn region luauStringZF2Alt contained start=+^+ end=+\\z+ skip=+\\\\\|\\'+  contains=luauEscape,luauZEscape nextgroup=luauStringZF2Alt,luauStringF2Alt,luauStringZF3Alt skipwhite skipempty oneline
-syn region luauStringZF3Alt contained start=+^+ end=+'+   skip=+\\\\\|\\'+  contains=luauEscape,luauZEscape oneline
+" syn region luauStringZF1Alt           start=+'+ end=+\\z+ skip=+\\\\\|\\'+  contains=luauEscape,luauZEscape nextgroup=luauStringZF2Alt,luauStringF2Alt,luauStringZF3Alt skipwhite skipempty oneline
+" syn region luauStringZF2Alt contained start=+^+ end=+\\z+ skip=+\\\\\|\\'+  contains=luauEscape,luauZEscape nextgroup=luauStringZF2Alt,luauStringF2Alt,luauStringZF3Alt skipwhite skipempty oneline
+" syn region luauStringZF3Alt contained start=+^+ end=+'+   skip=+\\\\\|\\'+  contains=luauEscape,luauZEscape oneline
 
 " Section: Luau string syn-clustering
 
-syn cluster luauGeneralString contains=luauString
-syn cluster luauGeneralString add=luauStringF1,luauStringF2,luauStringF3
-syn cluster luauGeneralString add=luauStringF1Alt,luauStringF2Alt,luauStringF3Alt
-syn cluster luauGeneralString add=luauStringZF1,luauStringZF2,luauStringZF3
-syn cluster luauGeneralString add=luauStringZF1Alt,luauStringZF2Alt,luauStringZF3Alt
+" syn cluster luauGeneralString contains=luauString
+" syn cluster luauGeneralString add=luauStringF1,luauStringF2,luauStringF3
+" syn cluster luauGeneralString add=luauStringF1Alt,luauStringF2Alt,luauStringF3Alt
+" syn cluster luauGeneralString add=luauStringZF1,luauStringZF2,luauStringZF3
+" syn cluster luauGeneralString add=luauStringZF1Alt,luauStringZF2Alt,luauStringZF3Alt
 
 " Section: Luau numerics
 
@@ -130,65 +133,214 @@ syn cluster luauGeneralString add=luauStringZF1Alt,luauStringZF2Alt,luauStringZF
 " there are no formats for unsigned integers.
 
 " (1) regular integers
-syn match luauNumber "\<[[:digit:]_]\+\>"
+" syn match luauNumber "\<[[:digit:]_]\+\>\%(\.\)\@!"
 " (2) decimals; possible scientific E-notation with signed exponential
-syn match luauFloat  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>"
+" syn match luauFloat  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"
 " (3) same as (3) with implicit zero on mantissa's most significant digit
-syn match luauFloat  "\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>"
+" syn match luauFloat  "\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"
 " scientific E-notation with integer mantissa
-syn match luauNumber  "\<[[:digit:]_]\+[eE][-+]\=[[:digit:]_]\+\>"
+" syn match luauNumber  "\<[[:digit:]_]\+[eE][-+]\=[[:digit:]_]\+\>\%(\.\)\@!"
 " (4) hex-format integers 
-syn match luauNumber "\<0[xX][[:xdigit:]_]\+\>"
+" syn match luauNumber "\<0[xX][[:xdigit:]_]\+\>\%(\.\)\@!"
 " (5) binary-format integers (w.r.t bit32 library)
-syn match luauNumber "\<0[bB][01_]\+\>"
+" syn match luauNumber "\<0[bB][01_]\+\>\%(\.\)\@!"
+
+" Section: syntax command generator - expressions
+" there are many expression contexts. some are simply for raw expressions,
+" like a while loop control expression or the top level anonymous wrapper ( ).
+" many contexts allow you to write a list of expressions. some contexts, like
+" table contents, allow you to choose between a list of expressions and a structured
+" form [(exp)] = (exp) & (var) = (exp).
+" the main two contexts for us to model are  the standard and the
+" list style to cover most areas, and combining them with other syntax rules to
+" form our syntax plugin.
+" this means we need two (or more) parallel copies of the entire expression model,
+" as the syn-nextgroup might differ in target to reflect that contrast in behavior.
+" we can merely allow commas in all cases to fix this issue - this would not
+" give us too much grief as long as the end user is typing proper Luau.
+" despite that logic, maybe it could be useful to adopt the parallel model, as
+" the grammar of Luau distinguishes between exp and explist. in that case,
+" in order not to have to copy and paste for all changes to the
+" common expression model, we use this generator.
+
+let s:expmap = {
+      \ 'string': [
+      \   'syn region luau%tString matchgroup=luau%tString start="\[\z(=*\)\[" end="\]\z1\]"   contains=luauEscape%nxt',
+        \ 'syn region luau%tString matchgroup=luau%tString start=+''+ end=+''+ skip=+\\\\\|\\''+  contains=luauEscape oneline%nxt',
+        \ 'syn region luau%tString matchgroup=luau%tString start=+"+ end=+"+ skip=+\\\\\|\\"+  contains=luauEscape oneline%nxt',
+        \ 'syn match luau%tStringF1            /".\{-}\\$/           contains=luauEscape,luauEOLEscape nextgroup=luau%tStringF3,luau%tStringZF2,luau%tStringF3 skipwhite skipnl',
+        \ 'syn match luau%tStringF2 contained  /^.\{-}\\$/           contains=luauEscape,luauEOLEscape nextgroup=luau%tStringF2,luau%tStringZF2,luau%tStringF3 skipwhite skipnl',
+        \ 'syn match luau%tStringF3 contained  /^.\{-}\%(\\\)\@1<!"/ contains=luauEscape%nxt',
+        \ 'syn match luau%tStringF1Alt /''.\{-}\\$/                    contains=luauEscape,luauEOLEscape nextgroup=luau%tStringF2Alt,luau%tStringZF2Alt,luau%tStringF3Alt skipnl skipwhite',
+        \ 'syn match luau%tStringF2Alt /^.\{-}\\$/           contained contains=luauEscape,luauEOLEscape nextgroup=luau%tStringF2Alt,luau%tStringZF2Alt,luau%tStringF3Alt skipnl skipwhite',
+        \ 'syn match luau%tStringF3Alt /^.\{-}\%(\\\)\@1<!''/ contained contains=luauEscape%nxt',
+        \ 'syn region luau%tStringZF1           start=+"+ end=+\\z+ skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape nextgroup=luau%tStringZF2,luau%tStringF2,luau%tStringZF3 skipwhite skipempty oneline',
+        \ 'syn region luau%tStringZF2 contained start=+^+ end=+\\z+ skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape nextgroup=luau%tStringZF2,luau%tStringF2,luau%tStringZF3 skipwhite skipempty oneline',
+        \ 'syn region luau%tStringZF3 contained start=+^+ end=+"+   skip=+\\\\\|\\"+ contains=luauEscape,luauZEscape oneline%nxt',
+        \ 'syn region luau%tStringZF1Alt           start=+''+ end=+\\z+ skip=+\\\\\|\\''+  contains=luauEscape,luauZEscape nextgroup=luau%tStringZF2Alt,luau%tStringF2Alt,luau%tStringZF3Alt skipwhite skipempty oneline',
+        \ 'syn region luau%tStringZF2Alt contained start=+^+ end=+\\z+ skip=+\\\\\|\\''+  contains=luauEscape,luauZEscape nextgroup=luau%tStringZF2Alt,luau%tStringF2Alt,luau%tStringZF3Alt skipwhite skipempty oneline',
+        \ 'syn region luau%tStringZF3Alt contained start=+^+ end=+''+   skip=+\\\\\|\\''+  contains=luauEscape,luauZEscape oneline%nxt' ],
+      \ 'number': [ 
+        \ 'syn match luau%tNumber "\<[[:digit:]_]\+\>\%(\.\)\@!"%nxt',
+        \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%tFloat  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"%nxt'},
+        \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%tFloat  "\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"%nxt'},
+        \ 'syn match luau%tNumber "\<[[:digit:]_]\+[eE][-+]\=[[:digit:]_]\+\>\%(\.\)\@!"%nxt',
+        \ 'syn match luau%tNumber "\<0[xX][[:xdigit:]_]\+\>\%(\.\)\@!"%nxt',
+        \ 'syn match luau%tNumber "\<0[bB][01_]\+\>\%(\.\)\@!"%nxt' ] }
+
+let s:hilinkmap = {
+      \ 'string': 'luauString',
+      \  'number': 'luauNumber'
+      \ }
+
+let s:_expout = []
+let s:_hilinkout = {}
+
+" embed a specific syntax command template with the given data and add it to
+" the script expression generator stack - string
+function! s:_embed_strexp(mval, gkdata, ekey) abort
+  if (has_key(s:hilinkmap, a:ekey))
+    let l:hilink = s:hilinkmap[a:ekey]
+
+    if (!has_key(s:_hilinkout, l:hilink))
+      let l:hlout = []
+      let s:_hilinkout[l:hilink] = l:hlout
+    else
+      let l:hlout = s:_hilinkout[l:hilink]
+    endif
+  endif
+
+  call s:_embed_exp(a:mval, a:gkdata, l:hlout)
+endfunction
+
+" same as above, for dictionary-based syntax template
+function! s:_embed_dexp(mval, gkdata, ekey) abort
+  if (has_key(a:mval, 'hilink'))
+    let l:hilink = a:mval.hilink
+  elseif (has_key(s:hilinkmap, a:ekey))
+    let l:hilink = s:hilinkmap[a:ekey]
+  endif
+  if (exists('l:hilink'))
+    if (!has_key(s:_hilinkout, l:hilink))
+      let l:hlout = []
+      let s:_hilinkout[l:hilink] = l:hlout
+    else
+      let l:hlout  = s:_hilinkout[l:hilink]
+    endif
+  endif
+
+  call s:_embed_exp(a:mval.cmd, a:gkdata, l:hlout)
+endfunction
+
+function! s:_embed_exp(exp, gkdata, ...) abort
+  let l:exp = a:exp
+  for [l:gktoken, l:gkval] in items(a:gkdata)
+    let l:exp = substitute(l:exp, printf('%%%s', l:gktoken), l:gkval, 'g')
+  endfor
+  call add(s:_expout, l:exp)
+  echo exists('a:1')
+  if (exists('a:1'))
+    call add(a:1, matchstr(l:exp, 'luau\k\+'))
+  endif
+endfunction
+
+" add a new expression context to the expression syntax command generator
+" stack
+let s:_default_gkdata = {'t': '', 'nxt': ''}
+function! s:_exp_new(grpdata) abort
+  for [l:ekey, l:evalue] in items(s:expmap)
+    if has_key(a:grpdata, l:ekey)
+      let l:grpkeydata = a:grpdata[l:ekey]
+    else
+      continue
+    endif
+
+    for l:syndata in l:evalue
+      if type(l:syndata) ==# v:t_string
+        call s:_embed_strexp(l:syndata, l:grpkeydata, l:ekey)
+      elseif type(l:syndata) ==# v:t_dict
+        call s:_embed_dexp(l:syndata, l:grpkeydata, l:ekey)
+      endif
+    endfor
+  endfor
+endfunction
+
+function! s:_process_expstack()
+  for l:syntax_query in s:_expout
+    execute l:syntax_query
+  endfor
+endfunction
+
+function! s:_process_hilinkstack()
+  for [l:houtkey, l:houtlist] in items(s:_hilinkout)
+    for l:hout in l:houtlist
+      execute printf('hi def link %s %s', l:hout, l:houtkey)
+    endfor
+  endfor
+endfunction
+
+call s:_exp_new({'string': {'t': '', 'nxt': ''}, 'number': {'t': '', 'nxt': ''}})
+call s:_process_expstack()
 
 " Section: Luau grammar
-syn cluster luauK contains=luauK_Local,luauK_Function
+syn cluster luauK contains=luauK_Local,luauK_Function,luauK_Do
+syn cluster luauS contains=luauS_Wrap,luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar,luauS_ColonInvocation
 " exp membership determination
 " prefixexp: simpleexp -> asexp -> exp
 " luauCallback: 'function' funcbody -> prefixexp -> exp
 " luauInvoke: functioncall -> prefixexp -> exp
 " luauExpWrap: '(' exp ')' -> prefixexp -> exp
 syn cluster luauE contains=luauE_Callback,luauE_Wrap,luauE_Var,luauE_Variadic
+syn cluster luauE add=luauNumber,luauFloat,@luauGeneralString
 syn cluster luauE2 contains=luauE2_Invoke,luauE2_Dot,luauE2_Colon,luauE2_Bracket
 
 syn cluster luauL contains=luauL_Callback,luauL_Wrap,luauL_Var,luauL_Variadic
+syn cluster luauL add=luauL_Number,luauL_Float,@luauL_GeneralString
 syn cluster luauL2 contains=luauL2_Invoke,luauL2_Dot,luauL2_Colon,luauL2_Bracket,luauL2_Sep
 
-" luauE2 - expression splitters
+" NOTE: suffix 2 on the grammar class label luauX stands for 'X splitter'
+
+" luauE2 - (E)xpression splitters
 syn match luauE2_Dot /\./ contained nextgroup=@luauE skipwhite
 syn region luauE2_Invoke matchgroup=luauE2_Invoke start="(" end=")" contained contains=@luauL nextgroup=@luauE2 skipwhite
 syn match luauE2_Colon /\%(:\s*\)\@<=\K\k*\%(\s*\%((\|"\|'\|\[=*\[\)\)\@=/ contained nextgroup=luauE2_Invoke skipwhite skipnl
 syn region luauE2_Bracket matchgroup=luauE2_Bracket start="\[" end="\]" contained contains=@luauE nextgroup=@luauE2 skipwhite
 
-" luauL2 - list expression splitters, notably including a comma
+" luauL2 - (L)ist expression splitters, notably including a comma
 syn match luauL2_Sep /,/ contained nextgroup=@luauL skipwhite skipempty
 syn match luauL2_Dot /\./ contained nextgroup=@luauL skipwhite
 syn region luauL2_Invoke matchgroup=luauL2_Invoke start="(" end=")" contained contains=@luauL nextgroup=@luauL2 skipwhite
 syn match luauL2_Colon /\%(:\s*\)\@<=\K\k*\%(\s*\%((\|"\|'\|\[=*\[\)\)\@=/ contained nextgroup=luauL2_Invoke skipwhite
 syn region luauL2_Bracket matchgroup=luauL2_Bracket start="\[" end="\]" contained contains=@luauE nextgroup=@luauL2 skipwhite
 
-" luauE - single expressions
+" luauE - single (E)xpressions
 syn keyword luauE_Callback function contained nextgroup=luauE_FunctionParams skipwhite
-syn region luauE_FunctionParams matchgroup=luauDelimiter start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luauE_Block
-syn region luauE_Block matchgroup=luauDelimiter start=")" matchgroup=luauStatement end="end" transparent contains=TOP contained
+syn region luauE_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luauE_Block
+syn region luauE_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauK_Function end="end" transparent contains=TOP contained
 
-syn match luauE_Var /\K\k*/ contained nextgroup=@luauE2 skipwhite
-syn match luauE_Var /\K\k*\%(\s*\%(\.\|:\|\[\|(\)\)\@=/ contained nextgroup=@luauE2 skipwhite
+syn match luauE_Var /\K\k*/ contains=luauE_InvokedVar contained nextgroup=@luauE2 skipwhite
+syn match luauE_InvokedVar /\K\k*\%(\s*\%(:\|(\)\)\@=/ contained nextgroup=@luauE2 skipwhite
 syn region luauE_Wrap matchgroup=luauE_Wrap start="(" end=")" transparent contained contains=@luauE nextgroup=@luauE2 skipwhite
 syn match luauE_Variadic /\.\.\./ contained
 
-" luauL - list-contained expressions
+" luauL - (L)ist-contained expressions
 syn keyword luauL_Callback function contained nextgroup=luauL_FunctionParams skipwhite
-syn region luauL_FunctionParams matchgroup=luauDelimiter start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luauL_Block
-syn region luauL_Block matchgroup=luauDelimiter start=")" matchgroup=luauStatement end="end" transparent contains=TOP contained nextgroup=luauL2_Sep skipwhite
+syn region luauL_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luauL_Block
+syn region luauL_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauStatement end="end" transparent contains=TOP contained nextgroup=luauL2_Sep skipwhite
 
-syn match luauL_Var /\K\k*/ contained nextgroup=@luauL2 skipwhite
-syn match luauL_Var /\K\k*\%(\s*\%(\.\|:\|\[\|(\|\,\)\)\@=/ contained nextgroup=@luauL2 skipwhite
+syn match luauL_Number "\<[[:digit:]_]\+\>\%(\.\)\@!" contained nextgroup=luauL2_Sep
+syn match luauL_Float  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!" contained nextgroup=luauL2_Sep
+syn match luauL_Float  "\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!" contained nextgroup=luauL2_Sep
+syn match luauL_Number  "\<[[:digit:]_]\+[eE][-+]\=[[:digit:]_]\+\>\%(\.\)\@!" contained nextgroup=luauL2_Sep
+syn match luauL_Number "\<0[xX][[:xdigit:]_]\+\>\%(\.\)\@!" contained nextgroup=luauL2_Sep
+syn match luauL_Number "\<0[bB][01_]\+\>\%(\.\)\@!" contained nextgroup=luauL2_Sep
+
+syn match luauL_Var /\K\k*/ contains=luauL_InvokedVar contained nextgroup=@luauL2 skipwhite
+syn match luauL_InvokedVar /\K\k*\%(\s*\%(:\|(\)\)\@=/ contained nextgroup=@luauL2 skipwhite
 syn region luauL_Wrap matchgroup=luauL_Wrap start="(" end=")" transparent contained contains=@luauE nextgroup=@luauL2 skipwhite
 syn match luauL_Variadic /\.\.\./ contained nextgroup=luauL2_Sep skipwhite
 
-" luauA - variable assignment syntax
+" luauA - variable (A)ssignment syntax
 syn match luauA_Symbol /=/ contained nextgroup=@luauL skipwhite
 syn match luauA_Dot /\./ contained nextgroup=luauA_DottedVar,luauA_HungVar,luauA_TailVar skipwhite
 syn match luauA_DottedVar /\K\k*\%(\s*\.\)\@=/ contained nextgroup=luauA_Dot skipwhite
@@ -196,7 +348,7 @@ syn match luauA_HungVar /\K\k*\%(\s*,\)\@=/ contained nextgroup=luauA_Comma skip
 syn match luauA_TailVar /\K\k*\%(\s*=\)\@=/ contained nextgroup=luauA_Symbol skipwhite
 syn match luauA_Comma /,/ contained nextgroup=luauA_DottedVar,luauA_HungVar,luauA_TailVar skipwhite skipnl
 
-" luauK - keyword, luauF - function header, luauB - bindings
+" luauK - (K)eyword, luauF - (F)unction header, luauB - (B)indings
 
 " Top Level Keyword: function
 syn keyword luauK_Function function nextgroup=luauF_Name skipwhite
@@ -204,13 +356,36 @@ syn match luauF_Name /\K\k*/ contained nextgroup=luauF_Sep,luauF_Colon,luauE_Fun
 syn match luauF_Method /\K\k*/ contained nextgroup=luauE_FunctionParams skipwhite
 syn match luauF_Sep /\./ contained nextgroup=luauF_Name skipwhite
 syn match luauF_Colon /:/ contained nextgroup=luauF_Method skipwhite
+syn match luauF_ParamDelim /(/ contained
+syn match luauF_ParamDelim /)/ contained
 
 " Top Level Keyword: local
 syn keyword luauK_Local local nextgroup=luauK_Function,luauB_Name skipwhite
 syn match luauB_Name /\K\k*/ contained nextgroup=luauB_Sep,luauA_Symbol skipwhite skipnl
 syn match luauB_Sep /,/ contained nextgroup=luauB_Name skipwhite
 
-" luauS
+" Top Level Keyword: do (anonymous block)
+syn region luauK_Do matchgroup=luauK_Keyword start="do" end="end" transparent contains=TOP
+
+" luauR - (R)epeat
+
+" Top Level Repeat: while
+syn region luauR_While matchgroup=luauR_While start="while" end="do"me=e-2 contains=@luauE nextgroup=luauR_Do
+syn region luauR_Do matchgroup=luauR_Keyword start="do" end="end" transparent contained contains=TOP
+
+syn keyword luauR_For for nextgroup=luauD_HeadBinding skipwhite
+
+" luauD - (D)omain of iteration
+syn match luauD_HeadBinding /\K\k*/ contained nextgroup=luauD_CanonListBindingSep,luauD_ExpRangeStart,luauD_CanonRange skipwhite
+syn match luauD_CanonListBinding /\K\k*/ contained nextgroup=luauD_CanonListBindingSep,luauD_CanonRange skipwhite
+syn match luauD_CanonListBindingSep /,/ contained nextgroup=luauD_CanonListBinding skipwhite skipnl
+
+syn region luauD_CanonRange matchgroup=luauD_CanonRange start="in" end="do"me=e-2 contained contains=@luauL nextgroup=luauR_Do
+
+syn region luauD_ExpRangeStart matchgroup=luauD_ExpRangeStart start="=" end=","me=e-1 contained contains=@luauE nextgroup=luauD_ExpRangeStep
+syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="do"me=e-2 contained contains=@luauE nextgroup=luauR_Do
+
+" luauS - top level syntactic (S)tatements
 
 " Top Level Statement: top level variables
 syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ nextgroup=luauV_Dot skipwhite
@@ -221,10 +396,11 @@ syn match luauS_TailVar /\K\k*\%(\s*=\)\@=/ nextgroup=luauA_Symbol skipwhite
 syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\K\k*\|\]\|:\)\@<!(" end=")" transparent contains=@luauE nextgroup=@luauE2 skipwhite skipnl
 
 " Top Level Statement: function or method invocation
-syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ nextgroup=luauE2_Invoke skipwhite
+syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ contained nextgroup=luauE2_Invoke skipwhite
 syn match luauS_ColonInvocation /\K\k*\%(\s*:\)\@=/ nextgroup=luauV_Colon skipwhite skipnl
 
-" luauV - operators on top level variables
+" luauV - operators on top level (V)ariables
+
 syn match luauV_Dot /\./ transparent contained nextgroup=luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar skipwhite
 syn match luauV_Colon /:/ transparent contained nextgroup=luauS_InvokedVar skipwhite
 
@@ -369,19 +545,37 @@ hi def link luauEOLEscape             luauEscape
 hi def link luauAnonymousFunction     luauStatement
 hi def link luauK_Function            luauStatement
 hi def link luauK_Local               luauStatement
+hi def link luauK_Keyword             luauStatement
+hi def link luauR_While               luauStatement
+hi def link luauR_Keyword             luauStatement
+hi def link luauD_CanonRange          luauOperator
+hi def link luauA_Symbol              luauOperator
+
+hi def link luauD_ExpRangeStart       luauA_Symbol
+
 hi def link luauE_Callback            luauStatement
 hi def link luauL_Callback            luauE_Callback
+
 hi def link luauE_Variadic            luauSpecial
 hi def link luauL_Variadic            luauE_Variadic
+
 hi def link luauF_Name                luauFunction
 hi def link luauF_Method              luauF_Name
+
+hi def link luauF_ParamDelim          luauDelimiter
+
 hi def link luauS_InvokedVar          luauFunction
+hi def link luauE_InvokedVar          luauS_InvokedVar
+hi def link luauL_InvokedVar          luauS_InvokedVar
+
 hi def link luauS_HungVar             luauIdentifier
 hi def link luauA_HungVar             luauS_HungVar
+
 hi def link luauS_TailVar             luauIdentifier
 hi def link luauA_TailVar             luauS_TailVar
-hi def link luauS_ColonInvocation     luauIdentifier
-" hi def link luauE2_Invoke             Operator
+
+call s:_process_hilinkstack()
+
 if (g:luauHighlightBuiltins)
   hi def link luauBuiltin           Function
 
