@@ -2,7 +2,8 @@
 " Language:     Luau 0.544
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 9 (luau-vim v0.2.0) " Options:      XXX Set options before loading the plugin.
+" Last Change:  2022 Sep 12 (luau-vim v0.2.0)
+" Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (default 1)
 "               - luauHighlightTypes = 0 or 1
 "               - luauHighlightBuiltins = 0 or 1
@@ -280,11 +281,15 @@ syn match luauL2_Sep /,/ contained nextgroup=@luauL skipwhite skipempty
 
 " luauA - variable (A)ssignment syntax
 syn match luauA_Symbol /=/ contained nextgroup=@luauL skipwhite
-syn match luauA_Dot /\./ contained nextgroup=luauA_DottedVar,luauA_HungVar,luauA_TailVar skipwhite
+syn match luauA_Symbol '+=\|-=\|\/=\|\*=\|\^=\|\.\.=' contained nextgroup=@luauE skipwhite
+syn cluster luauA contains=luauA_DottedVar,luauA_HungVar,luauA_TailVar,luauA_DictRef
+syn match luauA_Dot /\./ contained nextgroup=@luauA skipwhite
 syn match luauA_DottedVar /\K\k*\%(\s*\.\)\@=/ contained nextgroup=luauA_Dot skipwhite
+syn match luauA_DictRef /\K\k*\%(\s*\[\)\@=/ contained nextgroup=luauA_DictKey skipwhite
+syn region luauA_DictKey start="\[" end="\]" transparent contained contains=@luauE nextgroup=luauA_Comma,luauA_DictKey,luauA_Dot,luauA_Symbol skipwhite
 syn match luauA_HungVar /\K\k*\%(\s*,\)\@=/ contained nextgroup=luauA_Comma skipwhite
 syn match luauA_TailVar /\K\k*\%(\s*=\)\@=/ contained nextgroup=luauA_Symbol skipwhite
-syn match luauA_Comma /,/ contained nextgroup=luauA_DottedVar,luauA_HungVar,luauA_TailVar skipwhite skipnl
+syn match luauA_Comma /,/ contained nextgroup=@luauA skipwhite skipnl
 
 " luauK - (K)eyword, luauF - (F)unction header, luauB - (B)indings
 
@@ -335,7 +340,9 @@ syn keyword luauC_Else else contained
 " Top Level Statement: top level variables
 syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ nextgroup=luauV_Dot skipwhite
 syn match luauS_HungVar /\K\k*\%(\s*,\)\@=/ nextgroup=luauA_Comma skipwhite
-syn match luauS_TailVar /\K\k*\%(\s*=\)\@=/ nextgroup=luauA_Symbol skipwhite
+syn match luauS_TailVar /\K\k*\%(\s*\%(=\|+=\|-=\|\/=\|\*=\|\^=\|\.\.=\)\)\@=/ nextgroup=luauA_Symbol skipwhite
+syn match luauS_DictRef /\K\k*\%(\s*\[\)\@=/ nextgroup=luauS_DictKey skipwhite
+syn region luauS_DictKey start="\[" end="\]" transparent contained contains=@luauE nextgroup=luauV_Dot,luauV_Colon,luauS_DictKey,luauA_Comma,luauA_Symbol skipwhite
 
 " Top Level Statement: anonymous wrapped expression
 syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\K\k*\|\]\|:\)\@<!(" end=")" transparent contains=@luauE nextgroup=@luauE2 skipwhite skipnl
@@ -349,6 +356,7 @@ syn match luauS_ColonInvocation /\K\k*\%(\s*:\)\@=/ nextgroup=luauV_Colon skipwh
 syn match luauV_Dot /\./ transparent contained nextgroup=luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar skipwhite
 syn match luauV_Colon /:/ transparent contained nextgroup=luauS_InvokedVar skipwhite
 
+
 if (g:luauHighlightTypes)
   " One of Luau's signature features is a rich type system.
   " * luau-lang.org/typecheck
@@ -357,6 +365,8 @@ if (g:luauHighlightTypes)
 endif
 
 if (g:luauHighlightBuiltins)
+  " The Luau builtin functions are straightforward.
+  " There are some extra debug library functions in Roblox.
   syn keyword luauBuiltin assert collectgarbage error gcinfo nextgroup=luauE2_Invoke
   syn keyword luauBuiltin getfenv getmetatable ipairs loadstring newproxy nextgroup=luauE2_Invoke
   syn keyword luauBuiltin next pairs pcall print rawget rawequal rawset require nextgroup=luauE2_Invoke
@@ -367,28 +377,28 @@ if (g:luauHighlightBuiltins)
 
   syn match luauLibraryDot /\./ transparent contained nextgroup=luauDotBit32,luauDotCoroutine,luauDotString,luauDotTable,luauDotMath,luauDotOS,luauDotDebug,luauDotUTF8
 
-  syn keyword luauDotBit32 lrotate lshift replace rrotate rshift contained
+  syn keyword luauDotBit32 lrotate lshift replace rrotate rshift contained nextgroup=luauE2_Invoke
 
-  syn keyword luauDotCoroutine close create isyieldable resume running status wrap yield contained
+  syn keyword luauDotCoroutine close create isyieldable resume running status wrap yield contained nextgroup=luauE2_Invoke
 
-  syn keyword luauDotString byte char find format gmatch gsub len lower contained
-  syn keyword luauDotString match pack packsize rep reverse split sub unpack upper contained
+  syn keyword luauDotString byte char find format gmatch gsub len lower contained nextgroup=luauE2_Invoke
+  syn keyword luauDotString match pack packsize rep reverse split sub unpack upper contained nextgroup=luauE2_Invoke
 
-  syn keyword luauDotTable create clear clone concat foreach foreachi find freeze contained
-  syn keyword luauDotTable getn insert isfrozen maxn move pack remove sort unpack contained
+  syn keyword luauDotTable create clear clone concat foreach foreachi find freeze contained nextgroup=luauE2_Invoke
+  syn keyword luauDotTable getn insert isfrozen maxn move pack remove sort unpack contained nextgroup=luauE2_Invoke
 
-  syn keyword luauDotMath abs acos asin atan atan2 ceil clamp cos cosh deg exp contained
-  syn keyword luauDotMath floor fmod frexp huge ldexp log log10 max min modf noise pi contained
-  syn keyword luauDotMath pow rad random randomseed round sign sin sinh sqrt tan tanh contained
+  syn keyword luauDotMath abs acos asin atan atan2 ceil clamp cos cosh deg exp contained nextgroup=luauE2_Invoke
+  syn keyword luauDotMath floor fmod frexp huge ldexp log log10 max min modf noise pi contained nextgroup=luauE2_Invoke
+  syn keyword luauDotMath pow rad random randomseed round sign sin sinh sqrt tan tanh contained nextgroup=luauE2_Invoke
 
-  syn keyword luauDotOS clock date difftime time contained
+  syn keyword luauDotOS clock date difftime time contained nextgroup=luauE2_Invoke
 
-  syn keyword luauDotDebug info traceback contained
+  syn keyword luauDotDebug info traceback contained nextgroup=luauE2_Invoke
   if (g:luauHighlightRoblox)
-    syn keyword luauDotDebug profilebegin profileend resetmemorycategory setmemorycategory contained
+    syn keyword luauDotDebug profilebegin profileend resetmemorycategory setmemorycategory contained nextgroup=luauE2_Invoke
   endif
 
-  syn keyword luauDotUTF8 char codepoint codes len offset contained
+  syn keyword luauDotUTF8 char codepoint codes len offset contained nextgroup=luauE2_Invoke
 endif
 
 if (g:luauHighlightRoblox)
