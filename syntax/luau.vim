@@ -1,9 +1,8 @@
 " Vim syntax file
-" Language:     Luau 0.543
+" Language:     Luau 0.544
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 7 (luau-vim v0.2.0)
-" Options:      XXX Set options before loading the plugin.
+" Last Change:  2022 Sep 9 (luau-vim v0.2.0) " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (default 1)
 "               - luauHighlightTypes = 0 or 1
 "               - luauHighlightBuiltins = 0 or 1
@@ -113,12 +112,12 @@ let s:expmap = {
         \ 'syn cluster luau%pGeneralString add=luau%pStringZF1,luau%pStringZF2,luau%pStringZF3',
         \ 'syn cluster luau%pGeneralString add=luau%pStringZF1Alt,luau%pStringZF2Alt,luau%pStringZF3Alt' ],
       \ 'number': [ 
-        \ 'syn match luau%pNumber "\<[[:digit:]_]\+\>\%%(\.\)\@!"%n',
-        \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%pFloat  "\<[[:digit:]_]\+\.[[:digit:]_]*\%%([eE][-+]\=[[:digit:]_]\+\)\=\>\%%(\.\)\@!"%n'},
-        \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%pFloat  "\.[[:digit:]_]\+\%%([eE][-+]\=[[:digit:]_]\+\)\=\>\%%(\.\)\@!"%n'},
-        \ 'syn match luau%pNumber "\<[[:digit:]_]\+[eE][-+]\=[[:digit:]_]\+\>\%%(\.\)\@!"%n',
-        \ 'syn match luau%pNumber "\<0[xX][[:xdigit:]_]\+\>\%%(\.\)\@!"%n',
-        \ 'syn match luau%pNumber "\<0[bB][01_]\+\>\%%(\.\)\@!"%n' ],
+        \ 'syn match luau%pNumber "\<[[:digit:]_]\+\>\%(\.\)\@!"%n',
+        \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%pFloat  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"%n'},
+        \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%pFloat  "\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"%n'},
+        \ 'syn match luau%pNumber "\<[[:digit:]_]\+[eE][-+]\=[[:digit:]_]\+\>\%(\.\)\@!"%n',
+        \ 'syn match luau%pNumber "\<0[xX][[:xdigit:]_]\+\>\%(\.\)\@!"%n',
+        \ 'syn match luau%pNumber "\<0[bB][01_]\+\>\%(\.\)\@!"%n' ],
       \ 'expc': [
         \ 'syn cluster luau%t contains=luau%t_Callback,luau%t_Wrap,luau%t_Var,luau%t_Variadic,luau%pNumber,luau%pFloat,@luau%pGeneralString',
         \ 'syn cluster luau%t add=luau%pNumber,luau%pFloat,@luau%pGeneralString',
@@ -128,13 +127,13 @@ let s:expmap = {
         \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luau%t_Block',
         \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauK_Function end="end" transparent contains=TOP contained%n',
         \ 'syn match luau%t_Var /\K\k*/ contains=luau%t_InvokedVar contained nextgroup=@luau%t2 skipwhite',
-        \ 'syn match luau%t_InvokedVar /\K\k*\%%(\s*\%%(:\|(\)\)\@=/ contained nextgroup=@luau%t2 skipwhite',
+        \ 'syn match luau%t_InvokedVar /\K\k*\%(\s*\%(:\|(\)\)\@=/ contained nextgroup=@luau%t2 skipwhite',
         \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_Variadic /\.\.\./ contained%n' ],
       \ 'exp2': [
         \ 'syn match luau%t2_Dot /\./ contained nextgroup=@luau%t skipwhite',
         \ 'syn region luau%t2_Invoke matchgroup=luau%t2_Invoke start="(" end=")" contained contains=@luau%l nextgroup=@luau%t2 skipwhite',
-        \ 'syn match luau%t2_Colon /\%%(:\s*\)\@<=\K\k*\%%(\s*\%%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke skipwhite skipnl',
+        \ 'syn match luau%t2_Colon /\%(:\s*\)\@<=\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke skipwhite skipnl',
         \ 'syn region luau%t2_Bracket matchgroup=luau%t2_Bracket start="\[" end="\]" contained contains=@luau%e nextgroup=@luau%t2 skipwhite' ] }
 
 let s:hilinkmap = {
@@ -150,16 +149,13 @@ let s:_hilinkout = {}
 function! s:_embed_strexp(mval, gkdata, ekey) abort
   if (has_key(s:hilinkmap, a:ekey))
     let l:hilink = s:hilinkmap[a:ekey]
-
-    if (!has_key(s:_hilinkout, l:hilink))
-      let l:hlout = []
-      let s:_hilinkout[l:hilink] = l:hlout
-    else
-      let l:hlout = s:_hilinkout[l:hilink]
-    endif
   endif
 
-  call s:_embed_exp(a:mval, a:gkdata, l:hlout)
+  if exists('l:hilink')
+    call s:_embed_exp(a:mval, a:gkdata, l:hilink)
+  else
+    call s:_embed_exp(a:mval, a:gkdata)
+  endif
 endfunction
 
 " same as above, for dictionary-based syntax template
@@ -169,95 +165,52 @@ function! s:_embed_dexp(mval, gkdata, ekey) abort
   elseif (has_key(s:hilinkmap, a:ekey) && !has_key(a:mval, 'hilinkoff'))
     let l:hilink = s:hilinkmap[a:ekey]
   endif
-  if (exists('l:hilink'))
-    if (!has_key(s:_hilinkout, l:hilink))
-      let l:hlout = []
-      let s:_hilinkout[l:hilink] = l:hlout
-    else
-      let l:hlout  = s:_hilinkout[l:hilink]
-    endif
-  endif
 
-  call s:_embed_exp(a:mval.cmd, a:gkdata, l:hlout)
+  if exists('l:hilink')
+    call s:_embed_exp(a:mval.cmd, a:gkdata, l:hilink)
+  else
+    call s:_embed_exp(a:mval.cmd, a:gkdata)
+  endif
+endfunction
+
+function! s:_parse_tokenbody(tsrc, tmap)
+  let l:ttarg = a:tsrc
+  for [l:tkey, l:tval] in items(a:tmap)
+    let l:ttarg = substitute(l:ttarg, '%' . l:tkey, l:tval, 'g')
+  endfor
+  return l:ttarg
 endfunction
 
 function! s:_embed_exp(exp, gkdata, ...) abort
-  let l:exp = a:exp
-  let l:cursor = 0
-  let l:special = v:false
-  let l:tail = ''
+  let l:exp = s:_parse_tokenbody(a:exp, a:gkdata)
 
-  while l:cursor < len(l:exp)
-    " get current working character
-    let l:curchar = l:exp[l:cursor]
+  " echo l:exp
+  
+  if empty(l:exp)
+    return
+  endif
 
-    " see if it's a special character in a non-special context
-    if (!l:special && l:curchar ==# '%')
-      let l:special = v:true
-    endif
-
-    " work with a nonempty special token stack
-    while !empty(l:tail)
-      " get working token
-      " if there's a mapped group key in input
-      if a:gkdata[l:tail]
-        let l:gkval = a:gkdata[l:tail]
-        " update the cursor position
-        " we start the cursor before the resolved token value
-        " that's because it might have some unresolved tokens itself
-        let l:cursor -= len(l:tail) - 1
-        " update the syntax command
-        let l:exp = strpart(l:exp, 0, l:cursor) . l:gkval . strpart(l:exp, l:cursor + len(l:tail) + 1)
-        " reset tail
-        let l:tail = ''
-
-      " if we've got no more characters in the token...
-      elseif empty(l:tail)
-        " we need to remove the entire token
-        " all that's left to remove is the token delimiter '%'
-        " update the cursor position for this
-        let l:cursor -= 1
-        " and now the command
-        let l:exp = strpart(l:exp, 0, l:cursor) . strpart(l:exp, l:cursor + 1)
-        " reset tail
-        let l:tail = ''
-
-      " if there are more characters in the token...
-      else
-        " remove the last character and repeat process
-        let l:tail = l:tail[:-2]
-        let l:cursor -= 1
-      endif
-    endwhile
-    
-    if (l:special)
-      if iskeyword(l:curchar)
-        let l:tail += l:curchar
-        let l:cursor += 1
-      else
-        if (empty(l:tail) && l:curchar ==# '%')
-          let l:cursor -= 1
-          let l:exp = strpart(l:exp, 0, l:cursor) . strpart(l:exp, l:cursor + 1)
-        endif
-        let l:special = v:false
-      endif
-    endif
-  endwhile
-
-  echom l:exp
-
-  " for [l:gktoken, l:gkval] in items(a:gkdata)
-    " let l:gkval = substitute(l:gkval, '%', '%%', 'g')
-    " printf may be contributing to needless obscurity on this pattern
-    " \%(\%(^\|[^%]\)\%(%%\)*\)\@<=%<TOKEN>
-    " the lookbehind is to preserve escaped % signs in the syntax template
-    "let l:exp = substitute(l:exp, printf('\%%(\%%(^\|[^%%]\)\%%(%%%%\)*\)\@<=%%%s', l:gktoken), l:gkval, 'g')
-  " endfor
- "  let l:exp = substitute(l:exp, '%%', '%', 'g')
   call add(s:_expout, l:exp)
 
   if (exists('a:1') && (l:exp[4:10] !=# 'cluster'))
-    call add(a:1, matchstr(l:exp, 'luau\k\+'))
+    let l:hlexp = s:_parse_tokenbody(a:1, a:gkdata)
+    let l:hlsrc = matchstr(l:exp, 'luau\k\+')
+
+    if empty(l:hlsrc)
+      throw 'empty highlight source on expression' . l:exp
+    endif
+    if (empty(l:hlexp) || l:hlsrc ==# l:hlexp)
+      return
+    endif
+
+    if !has_key(s:_hilinkout, l:hlexp)
+      let l:hlout = []
+      let s:_hilinkout[l:hlexp] = l:hlout
+    else
+      let l:hlout = s:_hilinkout[l:hlexp]
+    endif
+
+    call add(l:hlout, l:hlsrc)
   endif
 endfunction
 
@@ -290,6 +243,7 @@ endfunction
 function! s:_process_hilinkstack()
   for [l:houtkey, l:houtlist] in items(s:_hilinkout)
     for l:hout in l:houtlist
+      "echo printf('hi def link %s %s', l:hout, l:houtkey)
       execute printf('hi def link %s %s', l:hout, l:houtkey)
     endfor
   endfor
@@ -299,20 +253,21 @@ endfunction
 
 " @luauE, @luauE2, luauNumber, luauFloat, @luauGeneralString
 call s:_exp_new({
-      \ 'string': {},
-      \ 'number': {},
-      \ 'expc':   {'t': 'E'},
-      \ 'exp':    {'t': 'E', 'e': 'E', 'l': 'L'}
-      \ 'exp2':   {} })
+     \ 'string': {           'n': '',  'p': ''                   },
+     \ 'number': {           'n': '',  'p': ''                   },
+     \ 'expc':   {'t': 'E',  'n': '',  'p': ''                   },
+     \ 'exp':    {'t': 'E',  'n': '',          'e': 'E', 'l': 'L'},
+     \ 'exp2':   {'t': 'E',                    'e': 'E', 'l': 'L'} })
 " @luauL, @luauL2, luauL_Number, luauL_Float, @luauL_GeneralString
-let s:_lexp_nxt1 = ' contained nextgroup=luau%l2_Sep skipwhite'
-let s:_lexp_nxt2 = ',luau%l2_Sep'
-let s:_lexp_nxt3 = ' nextgroup=luau%l2_Sep skipwhite'
+let s:_lexp_nxt1 = ' contained nextgroup=luauL2_Sep skipwhite'
+let s:_lexp_nxt2 = ',luauL2_Sep'
+let s:_lexp_nxt3 = ' nextgroup=luauL2_Sep skipwhite'
 call s:_exp_new({
-      \ 'string': {'t': 'L', 'n': s:_lexp_nxt1, 'p': 'L_', 'l': 'L'},
-      \ 'number': {'t': 'L', 'n': s:_lexp_nxt1, 'p': 'L_', 'l': 'L'},
-      \ 'expc':   {'t': 'L', 'n': s:_lexp_nxt2, 'p': 'L_'},
-      \ 'exp':    {'t': 'L', 'n': s:_lexp_nxt3, 'e', 'E', 'l': 'L'} })
+     \ 'string': {           'n': s:_lexp_nxt1, 'p': 'L_',           'l': 'L'},
+     \ 'number': {           'n': s:_lexp_nxt1, 'p': 'L_',           'l': 'L'},
+     \ 'expc':   {'t': 'L',  'n': s:_lexp_nxt2, 'p': 'L_',           'l': 'L'},
+     \ 'exp':    {'t': 'L',  'n': s:_lexp_nxt3,            'e': 'E', 'l': 'L'},
+     \ 'exp2':   {'t': 'L',                                'e': 'E', 'l': 'L'} })
 call s:_process_expstack()
 
 syn cluster luauK contains=luauK_Local,luauK_Function,luauK_Do
@@ -350,7 +305,7 @@ syn region luauK_Do matchgroup=luauK_Keyword start="do" end="end" transparent co
 " luauR - (R)epeat
 
 " Top Level Repeat: while
-syn region luauR_While matchgroup=luauR_While start="while" end="do"me=e-2 contains=@luauE nextgroup=luauR_Do
+syn region luauR_While matchgroup=luauR_Keyword start="while" end="do"me=e-2 transparent contains=@luauE nextgroup=luauR_Do
 syn region luauR_Do matchgroup=luauR_Keyword start="do" end="end" transparent contained contains=TOP
 
 syn keyword luauR_For for nextgroup=luauD_HeadBinding skipwhite
@@ -376,14 +331,13 @@ syn match luauS_TailVar /\K\k*\%(\s*=\)\@=/ nextgroup=luauA_Symbol skipwhite
 syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\K\k*\|\]\|:\)\@<!(" end=")" transparent contains=@luauE nextgroup=@luauE2 skipwhite skipnl
 
 " Top Level Statement: function or method invocation
-syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/  nextgroup=luauE2_Invoke skipwhite
+syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ nextgroup=luauE2_Invoke skipwhite
 syn match luauS_ColonInvocation /\K\k*\%(\s*:\)\@=/ nextgroup=luauV_Colon skipwhite skipnl
 
 " luauV - operators on top level (V)ariables
 
 syn match luauV_Dot /\./ transparent contained nextgroup=luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar skipwhite
 syn match luauV_Colon /:/ transparent contained nextgroup=luauS_InvokedVar skipwhite
-
 
 if (g:luauHighlightTypes)
   " One of Luau's signature features is a rich type system.
@@ -460,24 +414,42 @@ if (g:luauHighlightRoblox)
     syn keyword rbxDatatype Region3int16 TweenInfo UDim Vector2int16 nextgroup=rbxDataDot
     syn keyword rbxDatatype Vector3int16 nextgroup=rbxDataDot
     syn match rbxDataDot /\./ contained nextgroup=rbxDotData
-    syn keyword rbxDotData new contained
+    syn keyword rbxDotData new contained nextgroup=luauE2_Invoke
+
+    syn keyword rbxDatatype CFrame nextgroup=rbxCFrameDot
+    syn match rbxCFrameDot /\./ contained nextgroup=rbxDotCFrame,rbxDotData
+    syn keyword rbxDotCFrame lookAt fromEulerAnglesXYZ fromEulerAnglesYXZ contained nextgroup=luauE2_Invoke
+    syn keyword rbxDotCFrame Angles fromOrientation fromAxisAngle fromMatrix contained nextgroup=luauE2_Invoke
 
     syn keyword rbxDatatype Color3 nextgroup=rbxColor3Dot
     syn match rbxColor3Dot /\./ contained nextgroup=rbxDotColor3,rbxDotData
-    syn keyword rbxDotColor3 fromRGB, fromHSV, fromHex contained
+    syn keyword rbxDotColor3 fromRGB, fromHSV, fromHex contained nextgroup=luauE2_Invoke
 
     syn keyword rbxDatatype DateTime nextgroup=rbxDateTimeDot
     syn match rbxDateTimeDot /\./ contained nextgroup=rbxDotDateTime,rbxDotData
-    syn keyword rbxDotDateTime fromUnixTimestamp fromUnixTimestampMillis 
+    syn keyword rbxDotDateTime fromUnixTimestamp fromUnixTimestampMillis nextgroup=luauE2_Invoke
+    syn keyword rbxDotDateTime fromUniversalTime fromLocalTime fromIsoDate nextgroup=luauE2_Invoke
 
     syn keyword rbxDatatype Enums nextgroup=rbxEnumsMethod
     syn match rbxEnumsMethod /:/ contained nextgroup=rbxMethodEnums
-    syn keyword rbxMethodEnums GetEnums contained
+    syn keyword rbxMethodEnums GetEnums contained nextgroup=luauE2_Invoke
 
     syn keyword rbxDatatype Font nextgroup=rbxFontDot
+    syn match rbxFontDot /\./ contained nextgroup=rbxDotFont,rbxDotData
+    syn keyword rbxDotFont fromEnum contained nextgroup=luauE2_Invoke
+
     syn keyword rbxDatatype UDim2 nextgroup=rbxUDim2Dot
+    syn match rbxUDim2Dot /\./ contained nextgroup=rbxDotUDim2,rbxDotData
+    syn keyword rbxDotUDim2 fromScale fromOffset contained nextgroup=luauE2_Invoke
+
     syn keyword rbxDatatype Vector2 nextgroup=rbxVector2Dot
-    syn keyword rbxDatatype Vector3 nextgroup=rbxVector3Dot
+    syn match rbxVector2Dot /\./ contained nextgroup=rbxDotVector2_const,rbxDotData
+    syn keyword rbxDotVector2_const zero one xAxis yAxis contained
+
+    syn keyword rbxDatatype Vector3 nextgroup=rbxVector3Dot,rbxDotData
+    syn match rbxVector3Dot /\./ contained nextgroup=rbxDotVector3,rbxDotVector3_const
+    syn keyword rbxDotVector3_const zero one xAxis yAxis zAxis contained
+    syn keyword rbxDotVector3 FromNormalId FromAxis contained nextgroup=luauE2_Invoke
 
     syn keyword rbxDatatype Instance nextgroup=rbxInstanceDot
     syn match rbxInstanceDot /\./ contained nextgroup=rbxDotInstance
@@ -566,12 +538,27 @@ if (g:luauHighlightBuiltins)
   if (g:luauHighlightRoblox)
     hi def link rbxIdentifier         Identifier
     hi def link rbxBuiltin            Function
+    hi def link rbxMethod             Function
     hi def link rbxInstantiator       Structure
+    hi def link rbxConstant           luauConstant
 
     hi def link rbxLibrary            rbxBuiltin
     hi def link rbxDotTask            rbxLibrary
 
     hi def link rbxMethodGame         rbxInstantiator
+
+    hi def link rbxDatatype           rbxIdentifier
+    hi def link rbxDotData            rbxInstantiator
+    hi def link rbxDotCFrame          rbxInstantiator
+    hi def link rbxDotColor3          rbxInstantiator
+    hi def link rbxDotDateTime        rbxInstantiator
+    hi def link rbxMethodEnums        rbxMethod
+    hi def link rbxDotFont            rbxInstantiator
+    hi def link rbxDotUDim2           rbxInstantiator
+    hi def link rbxDotVector2_const   rbxConstant
+    hi def link rbxDotVector3_const   rbxConstant
+    hi def link rbxDotVector3         rbxInstantiator
+    hi def link rbxDotInstance        rbxInstantiator
   endif
 endif
 

@@ -21,6 +21,13 @@ do
 end
 
 while tes() do
+  for i = 1, 2, 3 do
+
+  end
+
+end
+
+local function test()
 
 end
 
@@ -36,7 +43,7 @@ local d = "dfsdfdfsfds\
       ffsdfds"
 function test(fsdfsd)
   local test = "ffff\
-    sdfsd\"fds"
+    sdfsd\"fds", function(testesttse) end
   function test()
 
   end
@@ -46,12 +53,13 @@ local test = function(fdfdfdf)
   asdfsf.test()
   local test = "Fdsfsdf"
 end
-
+Axes.new()
+Vector2.zero
+Vector3.zero
 local function test()
   print("test")
-  test("test")
+  test("test", function() end, "tesT")
 end
-
 (function(aa)
   aaaa
 end)()
