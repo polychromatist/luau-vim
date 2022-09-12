@@ -36,7 +36,58 @@ for atfff,ffsdf in test() do
 end
 
 for i = 1, 1, 1, 1, 2 do
+  while test do
 
+  end
+end
+
+local function test()
+
+  local function omg()
+
+  end
+end
+if test then
+
+end
+
+if test then
+  sdfsf
+elseif test then
+
+else
+  if test then
+sdfsdfdsf
+  elseif test then
+    ffdsfs
+  else
+
+  end
+  sdfsdf
+end
+
+if test then
+  sdfsdf
+  if aaa then
+dfadfdfsfdf
+  else
+sdfsdfsdfsdfsdfsdf
+  end
+  sdfsdf
+end
+
+if test then
+  if aaa then
+aaa
+  elseif test then
+aa
+  end
+end
+
+if test then
+  if test then
+    e
+  end
 end
 
 local d = "dfsdfdfsfds\
