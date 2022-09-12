@@ -326,10 +326,9 @@ syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\
 
 " luauC - top level (C)onditional
 syn region luauC_If matchgroup=luauC_Keyword start="\<if\>" end="\<then\>"me=e-4 transparent contains=@luauE nextgroup=luauC_Then
-syn region luauC_Then matchgroup=luauC_Keyword start="\<then\>" end="\<end\>" transparent contained contains=@luauTop,luauC_ElseifThen,luauC_Else
-syn region luauC_ElseifThen matchgroup=luauC_Keyword start="\<elseif\>" end="\<then\>" transparent contained contains=@luauE
+syn region luauC_Then matchgroup=luauC_Keyword start="\<then\>" end="\<end\>" transparent contained contains=@luauTop,luauC_Elseif,luauC_Else
+syn region luauC_Elseif matchgroup=luauC_Keyword start="\<elseif\>" end="\<then\>" transparent contained contains=@luauE nextgroup=luauC_Then
 syn keyword luauC_Else else contained
-"syn region luauC_Else matchgroup=luauC_Keyword start="\<else\>" end="\<end\>" transparent contained contains=@luauTop,luauC_ElseifThen
 
 " luauS - top level syntactic (S)tatements
 
@@ -506,7 +505,6 @@ hi def link luauK_Keyword             luauStatement
 hi def link luauR_For                 luauStatement
 hi def link luauR_Keyword             luauStatement
 hi def link luauC_Keyword             luauConditional
-hi def link luauC_Else                luauConditional
 hi def link luauD_CanonRange          luauOperator
 hi def link luauA_Symbol              luauOperator
 
@@ -532,6 +530,8 @@ hi def link luauA_HungVar             luauS_HungVar
 
 hi def link luauS_TailVar             luauIdentifier
 hi def link luauA_TailVar             luauS_TailVar
+
+hi def link luauC_Else                luauC_Keyword
 
 call s:_process_hilinkstack()
 

@@ -48,25 +48,28 @@ local function test()
   end
 end
 if test then
-
+sdfsdf
+else
+sdfsdf
 end
-
 if test then
   sdfsf
 elseif test then
-
+sdfdsfs
 else
+  sdfsdf
   if test then
 sdfsdfdsf
   elseif test then
     ffdsfs
   else
-
+sdfsdf
   end
   sdfsdf
 end
 
 if test then
+  local test = "hello"
   sdfsdf
   if aaa then
 dfadfdfsfdf
@@ -75,12 +78,13 @@ sdfsdfsdfsdfsdfsdf
   end
   sdfsdf
 end
+sd
 
 if test then
   if aaa then
 aaa
   elseif test then
-aa
+    aa
   end
 end
 
