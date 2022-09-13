@@ -9,8 +9,20 @@ local t = {
     "i'm johnny test"
   },
   yeah(); -1 - 3;
-  ["test"] = #({1, 2, 3})
+  ["test"] = #({1, 2, 3}),
 }
+
+if test and (if normal then die elseif crazy then live else something)(1 + 1 / 3) then
+  _G.inf = math.huge + 2, test
+  local test = math.pi
+  local yo = whats.this(), tesT()
+  local yes = omg:test(...), lol
+
+  ff
+end
+
+local we, are, trying = if good then letsgo() elseif masomenos-1 then holdup(true) else goback(time("Now")), ..., #_G
+
 
 print("hel\z
   lo\z

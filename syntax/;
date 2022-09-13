@@ -121,7 +121,7 @@ let s:expmap = {
         \ 'syn keyword luau%pNil nil%n',
         \ 'syn keyword luau%pBoolean true false%n' ],
       \ 'expc': [
-        \ 'syn cluster luau%t contains=luau%t_Callback,luau%t_Wrap,luau%t_Var,luau%t_Variadic,luau%t_Table,luau%t_InlineIf,luau%t_BUiltinTmpl',
+        \ 'syn cluster luau%t contains=luau%t_Callback,luau%t_Wrap,luau%t_Var,luau%t_Variadic,luau%t_Table,luau%t_InlineIf',
         \ 'syn cluster luau%t add=luau%pNumber,luau%pFloat,@luau%pGeneralString',
         \ 'syn cluster luau%t add=luau%pNil,luau%pBoolean',
         \ 'syn cluster luau%t2 contains=luau%t2_Invoke,luau%t2_Dot,luau%t2_Colon,luau%t2_Bracket,luau%t2_Binop%n' ],
@@ -132,7 +132,7 @@ let s:expmap = {
         \ 'syn match luau%t_Var /\K\k*/ transparent contains=luau%t_InvokedVar contained nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_InvokedVar /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained contains=@luauGeneralBuiltin nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_ColonInvoked /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
-        \ 'syn match luau%t_BuiltinTmpl /\<\K\k*[.:]\K\k*\>/ contained contains=@luauGeneralBuiltin,luau%t_InvokedVar nextgroup=@luau%t2 skipwhite skipnl',
+        \ 'syn match luau%t_BuiltinTmpl /\<\K\k*\.\K\k*\>/ contained contains=@luauGeneralBuiltin nextgroup=luau%t2_Invoke skipwhite skipnl'
         \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_Variadic /\.\.\./ contained%n',
         \ 'syn match luau%t_Uop /#\|-\|\<not\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
