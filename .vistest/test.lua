@@ -1,5 +1,17 @@
 ((function(ffff) fsdfsddffdsf end))()
 
+local t = {
+  453245,
+  test = 444,
+  4444; (function() end)();
+  "test",
+  yeah = {
+    "i'm johnny test"
+  },
+  yeah(); -1 - 3;
+  ["test"] = #({1, 2, 3})
+}
+
 print("hel\z
   lo\z
   fdsf")
@@ -22,6 +34,7 @@ end
 local hello = 3 + 2
 local what = (a + b), "3" ~= "3"
 local goodbye = -test
+
 while tes() do
   for i = 1, 2, 3 do
 

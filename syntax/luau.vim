@@ -106,10 +106,10 @@ let s:expmap = {
         \ 'syn region luau%pStringZF2Alt contained start=+^+ end=+\\z+ skip=+\\\\\|\\''+  contains=luauEscape,luauZEscape nextgroup=luau%pStringZF2Alt,luau%pStringF2Alt,luau%pStringZF3Alt skipwhite skipempty oneline',
         \ 'syn region luau%pStringZF3Alt contained start=+^+ end=+''+   skip=+\\\\\|\\''+  contains=luauEscape,luauZEscape oneline%n',
         \ 'syn cluster luau%pGeneralString contains=luau%pString',
-        \ 'syn cluster luau%pGeneralString add=luau%pStringF1,luau%pStringF2,luau%pStringF3',
-        \ 'syn cluster luau%pGeneralString add=luau%pStringF1Alt,luau%pStringF2Alt,luau%pStringF3Alt',
-        \ 'syn cluster luau%pGeneralString add=luau%pStringZF1,luau%pStringZF2,luau%pStringZF3',
-        \ 'syn cluster luau%pGeneralString add=luau%pStringZF1Alt,luau%pStringZF2Alt,luau%pStringZF3Alt' ],
+        \ 'syn cluster luau%pGeneralString add=luau%pStringF1',
+        \ 'syn cluster luau%pGeneralString add=luau%pStringF1Alt',
+        \ 'syn cluster luau%pGeneralString add=luau%pStringZF1',
+        \ 'syn cluster luau%pGeneralString add=luau%pStringZF1Alt' ],
       \ 'number': [ 
         \ 'syn match luau%pNumber "\<[[:digit:]_]\+\>\%(\.\)\@!"%n',
         \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%pFloat  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"%n'},
@@ -118,7 +118,7 @@ let s:expmap = {
         \ 'syn match luau%pNumber "\<0[xX][[:xdigit:]_]\+\>\%(\.\)\@!"%n',
         \ 'syn match luau%pNumber "\<0[bB][01_]\+\>\%(\.\)\@!"%n' ],
       \ 'expc': [
-        \ 'syn cluster luau%t contains=luau%t_Callback,luau%t_Wrap,luau%t_Var,luau%t_Variadic,luau%pNumber,luau%pFloat,@luau%pGeneralString',
+        \ 'syn cluster luau%t contains=luau%t_Callback,luau%t_Wrap,luau%t_Var,luau%t_Variadic,luau%t_Table,luau%pNumber,luau%pFloat,@luau%pGeneralString',
         \ 'syn cluster luau%t add=luau%pNumber,luau%pFloat,@luau%pGeneralString',
         \ 'syn cluster luau%t2 contains=luau%t2_Invoke,luau%t2_Dot,luau%t2_Colon,luau%t2_Bracket,luau%t2_Binop%n' ],
       \ 'exp': [
@@ -130,6 +130,7 @@ let s:expmap = {
         \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_Variadic /\.\.\./ contained%n',
         \ 'syn match luau%t_Uop /#\|-\|\<not\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
+        \ 'syn region luau%t_Table matchgroup=luauStructure start="{" end="}" transparent contained contains=@luau%l,@luauT%n'
         \ ],
       \ 'exp2': [
         \ 'syn match luau%t2_Dot /\./ contained nextgroup=@luau%t skipwhite',
@@ -278,12 +279,14 @@ syn cluster luauR contains=luauR_While,luauR_Repeat,luauR_For
 syn cluster luauC contains=luauC_If
 syn cluster luauTop contains=@luauK,@luauS,@luauR,@luauC
 
+syn cluster luauA contains=luauA_DottedVar,luauA_HungVar,luauA_TailVar,luauA_DictRef
+syn cluster luauT contains=luauT_NDictK,luauT_EDictK,luauT_Symbol,luauT_Semicolon
+
 syn match luauL2_Sep /,/ contained nextgroup=@luauL,luauL_Uop skipwhite skipempty
 
 " luauA - variable (A)ssignment syntax
 syn match luauA_Symbol /=/ contained nextgroup=@luauL,luauL_Uop skipwhite
 syn match luauA_Symbol '+=\|-=\|\/=\|\*=\|\^=\|\.\.=' contained nextgroup=@luauE,luauE_Uop skipwhite
-syn cluster luauA contains=luauA_DottedVar,luauA_HungVar,luauA_TailVar,luauA_DictRef
 syn match luauA_Dot /\./ contained nextgroup=@luauA skipwhite
 syn match luauA_DottedVar /\K\k*\%(\s*\.\)\@=/ contained nextgroup=luauA_Dot skipwhite
 syn match luauA_DictRef /\K\k*\%(\s*\[\)\@=/ contained nextgroup=luauA_DictKey skipwhite
@@ -356,6 +359,12 @@ syn match luauS_ColonInvocation /\K\k*\%(\s*:\)\@=/ nextgroup=luauV_Colon skipwh
 
 syn match luauV_Dot /\./ transparent contained nextgroup=luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar skipwhite
 syn match luauV_Colon /:/ transparent contained nextgroup=luauS_InvokedVar skipwhite
+
+" luauT - (T)able fields
+syn match luauT_Symbol /=/ contained nextgroup=@luauL,luauL_Uop skipwhite
+syn match luauT_Semicolon /;/ contained nextgroup=@luauL,@luauT,luauL_Uop skipwhite skipempty
+syn region luauT_EDictK matchgroup=luauDelimiter start="\[" end="\]" transparent contains=@luauE,luauE_Uop nextgroup=luauT_Symbol skipwhite
+syn match luauT_NDictK /\K\k*\%(\s*=\)\@=/ contained nextgroup=luauT_Symbol skipwhite
 
 
 if (g:luauHighlightTypes)
@@ -520,6 +529,8 @@ hi def link luauD_CanonRange          luauOperator
 hi def link luauA_Symbol              luauOperator
 
 hi def link luauD_ExpRangeStart       luauA_Symbol
+
+hi def link luauT_Symbol              luauA_Symbol
 
 hi def link luauE_Callback            luauStatement
 hi def link luauL_Callback            luauE_Callback
