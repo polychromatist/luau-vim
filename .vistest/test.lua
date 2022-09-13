@@ -11,7 +11,6 @@ local t = {
   yeah(); -1 - 3;
   ["test"] = #({1, 2, 3}),
 }
-
 if test and (if normal then die elseif crazy then live else something)(1 + 1 / 3) then
   _G.inf = math.huge + 2, test
   local test = math.pi
