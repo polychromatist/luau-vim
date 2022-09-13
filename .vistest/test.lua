@@ -19,14 +19,17 @@ a.b.c, test = f.test, (function() print("test") end)(...)
 do
   print("test")
 end
-
+local hello = 3 + 2
+local what = (a + b), "3" ~= "3"
+local goodbye = -test
 while tes() do
   for i = 1, 2, 3 do
 
   end
 
 end
-
+a["tesT"] = omg
+a[(function() return "lol" end)].dabest["thing"], yea.lol, yo["sup"] = "test"
 local function test()
 
 end
@@ -34,10 +37,11 @@ end
 for atfff,ffsdf in test() do
 
 end
-
 for i = 1, 1, 1, 1, 2 do
   while test do
+    if thing() then
 
+    end
   end
 end
 
