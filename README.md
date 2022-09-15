@@ -1,5 +1,12 @@
-<p style="align: center">
-  <img src="luau-vim-repologo-640x320.png" />
+<style>
+img[src*='#center'] { 
+    display: block;
+    margin: auto;
+}
+</style>
+
+<p>
+  <img src="luau-vim-repologo-640x320.png#center" />
 </p>
 
 # luau-vim
