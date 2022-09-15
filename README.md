@@ -3,7 +3,7 @@
 <img style="float: left;" src="luau-vim-repologo-160x160.png"/>
 
 Vimscript syntax highlighting plugin for Luau and Roblox Luau. 
-This plugin intends to provide good support for Luau and Roblox Luau in Vim, Neovim and other vimscript plugin respecting flavors of Vim.
+This plugin intends to provide good support for Luau and Roblox Luau in Vim, Neovim, and other flavors of Vim.
 
 It's still experimental. You may be surprised by highlighting that bleeds over or appears missing. If that's important to you, it's important to [create an issue](https://github.com/polychromatist/luau-vim/issues).
 
@@ -12,11 +12,11 @@ It's still experimental. You may be surprised by highlighting that bleeds over o
 Here you can see some screenshots of luau-vim v0.1, in the [moonfly theme](https://github.com/bluz71/vim-moonfly-colors).
 Please note it's an older version.
 
-![three, add method](screenshots/three-add.png)
+![protomodroot: \<module\>().pathparse()](screenshots/protomodroot_parser1.png)
 
-![geoplane, Box type](screenshots/geoplane-box-type.png)
+![@evaera/matter/lib/World#query()](screenshots/evaera_matter_world_query.png)
 
-![geoplane, Mesh3.CSCMatrix](screenshots/geoplane-mesh3-cscmat-nfn.png)
+![geoplane/Mesh3/CSCMatrix: MAT_GAUSSELIM_USWAP()](screenshots/geoplane-mesh3-cscmat-nfn.png)
 
 ## Installation
 Installing is as simple as pulling the repo with your preferred plugin manager.
