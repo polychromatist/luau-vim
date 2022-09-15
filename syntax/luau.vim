@@ -42,7 +42,16 @@ syn keyword luauIdentifier _G _VERSION
 " syn keyword luauConstant nil
 
 syn match luauComment "--.*$" contains=luauTodo
-syn region luauComment matchgroup=luauComment start="--\[\z(=*\)\[" end="\]\z1\]" contains=luauTodo
+syn region luauComment matchgroup=luauComment start="--\[\z(=*\)\[" end="\]\z1\]" contains=luauTodo,luauDirective
+syn region luauDirectiveHeader start="\%^" end="\K"me=e-1 transparent contains=luauComment,luauDirective
+syn match luauDirective /\s*\zs--!\(strict\|nonstrict\|nocheck\)\ze\s*$/ contained
+syn match luauDirective /^\s*\zs--!nolint\ze\s/ contained nextgroup=luauLintWarnings skipwhite
+syn match luauLintWarnings /.*$/ contained contains=luauLintWarning
+syn keyword luauLintWarning UnknownGlobal DeprecatedGlobal GlobalUsedAsLocal LocalShadow SameLineStatement MultiLineStatement contained skipwhite
+syn keyword luauLintWarning LocalUnused FunctionUnused ImportUnused BuiltinGlobalWrite PlaceholderRead UnreachableCode contained skipwhite
+syn keyword luauLintWarning UnknownType ForRange UnbalancedAssignment ImplicitReturn DuplicateLocal FormatString TableLiteral contained skipwhite
+syn keyword luauLintWarning UninitializedLocal DuplicateFunction DeprecatedApi TableOperations DuplicateCondition MisleadingAndOr contained skipwhite
+syn keyword luauLintWarning CommentDirective IntegerParsing ComparisonPrecedence contained skipwhite
 
 syn keyword luauTodo TODO FIXME XXX NOTE contained
 
@@ -127,7 +136,7 @@ let s:expmap = {
         \ 'syn cluster luau%t2 contains=luau%t2_Invoke,luau%t2_Dot,luau%t2_Colon,luau%t2_Bracket,luau%t2_Binop%n' ],
       \ 'exp': [
         \ 'syn keyword luau%t_Callback function contained nextgroup=luau%t_FunctionParams skipwhite',
-        \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luau%t_Block',
+        \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")"me=e-1 contained contains=luauB_Param nextgroup=luau%t_Block',
         \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauK_Function end="end" transparent contains=@luauTop contained%n',
         \ 'syn match luau%t_Var /\K\k*/ transparent contains=luau%t_InvokedVar,@luauGeneralBuiltin contained nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_InvokedVar /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
@@ -322,9 +331,11 @@ syn match luauF_ParamDelim /)/ contained
 syn keyword luauK_Return return nextgroup=@luauL,luauL_Uop skipwhite
 
 " Top Level Keyword: local
-syn keyword luauK_Local local nextgroup=luauB_Function,luauB_Name skipwhite
-syn match luauB_Name /\K\k*/ contained nextgroup=luauB_Sep,luauA_Symbol skipwhite skipnl
-syn match luauB_Sep /,/ contained nextgroup=luauB_Name skipwhite
+syn keyword luauK_Local local nextgroup=luauB_Function,luauB_LocalVar skipwhite
+syn match luauB_LocalVar /\K\k*/ contained nextgroup=luauB_Sep,luauA_Symbol skipwhite skipnl
+syn match luauB_LocalVarSep /,/ contained nextgroup=luauB_LocalVar skipwhite
+syn match luauB_Param /\K\k/ contained nextgroup=luauB_ParamSep
+syn match luauB_ParamSep /,/ contained nextgroup=luauB_Param skipwhite
 syn keyword luauB_Function function nextgroup=luauF_Method skipwhite
 
 " Top Level Keyword: do (anonymous block)
@@ -393,6 +404,9 @@ syn match luauT_NDictK /\K\k*\%(\s*=\)\@=/ contained nextgroup=luauT_Symbol skip
 if (g:luauHighlightTypes)
   " One of Luau's signature features is a rich type system.
   " * luau-lang.org/typecheck
+
+  syn region luauB_LocalVarType start=/:/ end=/,/me=e-1 end=/=/me=e-1 transparent contained contains=@luauType nextgroup=luauB_LocalVarSep,luauA_Symbol skipwhite
+  syn match luauB_LocalVarSep /:/ contained nextgroup=luauB_LocalVarType skipwhite
 
 
 endif
@@ -546,7 +560,10 @@ hi def link luauSpecial               Special
 hi def link luauTodo                  Todo
 hi def link luauStructure             Structure
 hi def link luauDelimiter             Delimiter
+hi def link luauDirective             Underlined
+hi def link luauLintWarning           SpecialComment
 
+hi def link luauLintWarnings          luauComment
 hi def link luauZEscape               luauEscape
 hi def link luauEOLEscape             luauEscape
 hi def link luauAnonymousFunction     luauStatement
