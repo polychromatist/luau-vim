@@ -128,7 +128,7 @@ let s:expmap = {
       \ 'exp': [
         \ 'syn keyword luau%t_Callback function contained nextgroup=luau%t_FunctionParams skipwhite',
         \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luau%t_Block',
-        \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauK_Function end="end" transparent contains=@luauTop,luauF_Return contained%n',
+        \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauK_Function end="end" transparent contains=@luauTop contained%n',
         \ 'syn match luau%t_Var /\K\k*/ transparent contains=luau%t_InvokedVar,@luauGeneralBuiltin contained nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_InvokedVar /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_ColonInvoked /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
@@ -393,6 +393,7 @@ syn match luauT_NDictK /\K\k*\%(\s*=\)\@=/ contained nextgroup=luauT_Symbol skip
 if (g:luauHighlightTypes)
   " One of Luau's signature features is a rich type system.
   " * luau-lang.org/typecheck
+
 
 endif
 
