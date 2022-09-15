@@ -1,3 +1,4 @@
 *.swp
-*.old.vim
 *.old
+.example*
+.vistest
