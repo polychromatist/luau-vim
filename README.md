@@ -38,7 +38,7 @@ If you don't want a plugin manager, please see a guide on [how to install vim pl
 
 Modify these variables in the head of your vimrc, before the plugin is loaded.
 
-Example: `let g:luauRobloxIncludeAPIDump = 1`. Note that a value of 1 means on, or set, similarly with 0 and off, or unset.
+Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, or set, similarly with 0 and off, or unset.
 
 <table>
   <thead>
