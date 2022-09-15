@@ -128,15 +128,15 @@ let s:expmap = {
       \ 'exp': [
         \ 'syn keyword luau%t_Callback function contained nextgroup=luau%t_FunctionParams skipwhite',
         \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")"me=e-1 contained contains=@luauBindings nextgroup=luau%t_Block',
-        \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauK_Function end="end" transparent contains=TOP contained%n',
+        \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauK_Function end="end" transparent contains=@luauTop,luauF_Return contained%n',
         \ 'syn match luau%t_Var /\K\k*/ transparent contains=luau%t_InvokedVar,@luauGeneralBuiltin contained nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_InvokedVar /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_ColonInvoked /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_BuiltinTmpl /\<\K\k*[.:]\K\k*\>/ contained contains=@luauGeneralBuiltin,luau%t_InvokedVar nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_Variadic /\.\.\./ contained%n',
-        \ 'syn match luau%t_Uop /#\|-\|\<not\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
-        \ 'syn region luau%t_Table matchgroup=luauStructure start="{" end="}" transparent contained contains=@luau%l,@luauT%n',
+        \ 'syn match luau%t_Uop /#\|-\%(-\)\@!\|\<not\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
+        \ 'syn region luau%t_Table matchgroup=luauStructure start="{" end="}" transparent contained contains=@luau%l,@luauT,luauComment%n',
         \ 'syn region luau%t_InlineIf matchgroup=luauC_Keyword start="\<if\>" end="\<then\>"me=e-4 transparent contained contains=@luau%e,luau%e_Uop nextgroup=luau%t_InlineThen',
         \ 'syn region luau%t_InlineThen matchgroup=luauC_Keyword start="\<then\>" end="\<else\>" transparent contained contains=@luau%e,luau%e_Uop,luau%t_InlineElseif nextgroup=@luau%t,luau%t_Uop skipwhite',
         \ 'syn region luau%t_InlineElseif matchgroup=luauC_Keyword start="\<elseif\>" end="\<then\>" transparent contained contains=@luau%e,luau%e_Uop nextgroup=@luau%e,luau%e_Uop skipwhite' ],
@@ -145,7 +145,7 @@ let s:expmap = {
         \ 'syn match luau%t2_Colon /\:/ transparent contained nextgroup=luau%t_ColonInvoked skipwhite',
         \ 'syn region luau%t2_Invoke matchgroup=luau%t2_Invoke start="(" end=")" contained contains=@luau%l,luau%l_Uop nextgroup=@luau%t2 skipwhite',
         \ 'syn region luau%t2_Bracket matchgroup=luau%t2_Bracket start="\[" end="\]" contained contains=@luau%e,luau%e_Uop nextgroup=@luau%t2 skipwhite',
-        \ 'syn match luau%t2_Binop /+\|-\|\*\|\/\|\^\|%\|\.\.\|<=\?\|>=\?\|[~=]=\|\<and\>\|\<or\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite'] }
+        \ 'syn match luau%t2_Binop /+\|-\%(-\)\@!\|\*\|\/\|\^\|%\|\.\.\|<=\?\|>=\?\|[~=]=\|\<and\>\|\<or\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite'] }
 
 let s:hilinkmap = {
       \ 'string': 'luauString',
@@ -285,11 +285,11 @@ call s:_exp_new({
      \ 'exp2':   {'t': 'L',                                'e': 'E', 'l': 'L' } })
 call s:_process_expstack()
 
-syn cluster luauK contains=luauK_Local,luauK_Function,luauK_Do
+syn cluster luauK contains=luauK_Local,luauK_Function,luauK_Do,luauK_Return,luauK_Break,luauK_Continue
 syn cluster luauS contains=luauS_Wrap,luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar,luauS_ColonInvocation,luauS_DictRef
 syn cluster luauR contains=luauR_While,luauR_Repeat,luauR_For
 syn cluster luauC contains=luauC_If
-syn cluster luauTop contains=@luauK,@luauS,@luauR,@luauC,@luauGeneralBuiltin
+syn cluster luauTop contains=@luauK,@luauS,@luauR,@luauC,@luauGeneralBuiltin,luauComment
 
 syn cluster luauA contains=luauA_DottedVar,luauA_HungVar,luauA_TailVar,luauA_DictRef
 syn cluster luauT contains=luauT_NDictK,luauT_EDictK,luauT_Symbol,luauT_Semicolon
@@ -307,7 +307,7 @@ syn match luauA_HungVar /\K\k*\%(\s*,\)\@=/ contained nextgroup=luauA_Comma skip
 syn match luauA_TailVar /\K\k*\%(\s*=\)\@=/ contained nextgroup=luauA_Symbol skipwhite
 syn match luauA_Comma /,/ contained nextgroup=@luauA skipwhite skipnl
 
-" luauK - (K)eyword, luauF - (F)unction header, luauB - (B)indings
+" luauK - (K)eyword, luauF - (F)unction, luauB - (B)indings
 
 " Top Level Keyword: function
 syn keyword luauK_Function function nextgroup=luauF_Name skipwhite
@@ -318,10 +318,14 @@ syn match luauF_Colon /:/ contained nextgroup=luauF_Method skipwhite
 syn match luauF_ParamDelim /(/ contained
 syn match luauF_ParamDelim /)/ contained
 
+" Top Level Keyword: return
+syn keyword luauK_Return return nextgroup=@luauL,luauL_Uop skipwhite
+
 " Top Level Keyword: local
-syn keyword luauK_Local local nextgroup=luauK_Function,luauB_Name skipwhite
+syn keyword luauK_Local local nextgroup=luauB_Function,luauB_Name skipwhite
 syn match luauB_Name /\K\k*/ contained nextgroup=luauB_Sep,luauA_Symbol skipwhite skipnl
 syn match luauB_Sep /,/ contained nextgroup=luauB_Name skipwhite
+syn keyword luauB_Function function nextgroup=luauF_Method skipwhite
 
 " Top Level Keyword: do (anonymous block)
 syn region luauK_Do matchgroup=luauK_Keyword start="\<do\>" end="\<end\>" transparent contains=TOP
@@ -330,20 +334,25 @@ syn region luauK_Do matchgroup=luauK_Keyword start="\<do\>" end="\<end\>" transp
 
 " Top Level Repeat: while
 syn region luauR_While matchgroup=luauR_Keyword start="\<while\>" end="\<do\>"me=e-2 transparent contains=@luauE,luauE_Uop nextgroup=luauR_Do
-syn region luauR_Do matchgroup=luauR_Keyword start="\<do\>" end="\<end\>" transparent contained contains=TOP
-syn region luauR_Repeat matchgroup=luauR_Keyword start="\<repeat\>" end="\<until\>" transparent contains=TOP nextgroup=@luauE,luauE_Uop skipwhite skipnl
+syn region luauR_Do matchgroup=luauR_Keyword start="\<do\>" end="\<end\>" transparent contained contains=@luauTop
+syn region luauR_Repeat matchgroup=luauR_Keyword start="\<repeat\>" end="\<until\>" transparent contains=@luauTop nextgroup=@luauE,luauE_Uop skipwhite skipnl
 
 syn keyword luauR_For for nextgroup=luauD_HeadBinding skipwhite
 
+" Top Level Keywords: break, continue
+syn keyword luauK_Break break
+syn keyword luauK_Continue continue
+
 " luauD - (D)omain of iteration
+
 syn match luauD_HeadBinding /\K\k*/ contained nextgroup=luauD_CanonListBindingSep,luauD_ExpRangeStart,luauD_CanonRange skipwhite
 syn match luauD_CanonListBinding /\K\k*/ contained nextgroup=luauD_CanonListBindingSep,luauD_CanonRange skipwhite
 syn match luauD_CanonListBindingSep /,/ contained nextgroup=luauD_CanonListBinding skipwhite skipnl
 
-syn region luauD_CanonRange matchgroup=luauD_CanonRange start="\<in\>" end="\<do\>"me=e-2 contained contains=@luauL,luauL_Uop nextgroup=luauR_Do
+syn region luauD_CanonRange matchgroup=luauD_CanonRange start="\<in\>" end="\<do\>"me=e-2 transparent contained contains=@luauL,luauL_Uop nextgroup=luauR_Do
 
-syn region luauD_ExpRangeStart matchgroup=luauD_ExpRangeStart start="=" end=","me=e-1 contained contains=@luauE,luauE_Uop nextgroup=luauD_ExpRangeStep
-syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\>"me=e-2 contained contains=@luauE,luauE_Uop nextgroup=luauR_Do
+syn region luauD_ExpRangeStart matchgroup=luauD_ExpRangeStart start="=" end=","me=e-1 transparent contained contains=@luauE,luauE_Uop nextgroup=luauD_ExpRangeStep
+syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\>"me=e-2 transparent contained contains=@luauE,luauE_Uop nextgroup=luauR_Do
 
 " luauS - top level syntactic (S)tatements
 
@@ -367,27 +376,23 @@ syn match luauV_Dot /\./ transparent contained nextgroup=luauS_DottedVar,luauS_H
 syn match luauV_Colon /:/ transparent contained nextgroup=luauS_InvokedVar skipwhite
 
 " luauC - top level & contained (C)onditional
+
+" Top Level Statement: if branch
 syn region luauC_If matchgroup=luauC_Keyword start="\<if\>" end="\<then\>"me=e-4 transparent contains=@luauE,luauE_Uop nextgroup=luauC_Then
 syn region luauC_Then matchgroup=luauC_Keyword start="\<then\>" end="\<end\>" transparent contained contains=@luauTop,luauC_Elseif,luauC_Else
 syn region luauC_Elseif matchgroup=luauC_Keyword start="\<elseif\>" end="\<then\>" transparent contained contains=@luauE,luauE_Uop nextgroup=luauC_Then
 syn keyword luauC_Else else contained
 
 " luauT - (T)able fields
+
 syn match luauT_Symbol /=/ contained nextgroup=@luauL,luauL_Uop skipwhite
 syn match luauT_Semicolon /;/ contained nextgroup=@luauL,@luauT,luauL_Uop skipwhite skipempty
 syn region luauT_EDictK matchgroup=luauDelimiter start="\[" end="\]" transparent contained contains=@luauE,luauE_Uop nextgroup=luauT_Symbol skipwhite
 syn match luauT_NDictK /\K\k*\%(\s*=\)\@=/ contained nextgroup=luauT_Symbol skipwhite
 
-" syn region luauE_InlineIf matchgroup=luauC_Keyword start="\<if\>" end="\<then\>"me=e-4 transparent contained contains=@luauE,luauE_Uop nextgroup=luauE_InlineThen
-" syn region luauE_InlineThen matchgroup=luauC_Keyword start="\<then\>" end="\<else\>" transparent contained contains=@luauE,luauE_Uop,luauE_InlineElseif nextgroup=@luauE,luauE_Uop
-" syn region luauE_InlineElseif matchgroup=luauC_Keyword start="\<elseif\>" end="\<then\>" transparent contained contains=@luauE,luauE_Uop
-
-" syn cluster luauE add=luauE_InlineIf
-
 if (g:luauHighlightTypes)
   " One of Luau's signature features is a rich type system.
   " * luau-lang.org/typecheck
-  
 
 endif
 
@@ -547,6 +552,9 @@ hi def link luauAnonymousFunction     luauStatement
 hi def link luauK_Function            luauStatement
 hi def link luauK_Local               luauStatement
 hi def link luauK_Keyword             luauStatement
+hi def link luauK_Return              luauStatement
+hi def link luauK_Break               luauStatement
+hi def link luauK_Continue            luauStatement
 hi def link luauR_For                 luauStatement
 hi def link luauR_Keyword             luauStatement
 hi def link luauC_Keyword             luauConditional
@@ -586,6 +594,8 @@ hi def link luauS_TailVar             luauIdentifier
 hi def link luauA_TailVar             luauS_TailVar
 
 hi def link luauC_Else                luauC_Keyword
+
+hi def link luauB_Function            luauK_Function
 
 call s:_process_hilinkstack()
 
