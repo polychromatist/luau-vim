@@ -1,6 +1,6 @@
 # luau-vim
 
-<img style="float: left;" src="luau-vim-repologo-320x320.png"/>
+<img style="float: left;" src="luau-vim-repologo-160x160.png"/>
 
 Vimscript syntax highlighting plugin for Luau and Roblox Luau. 
 This plugin intends to provide good support for Luau and Roblox Luau in Vim, Neovim and other vimscript plugin respecting flavors of Vim.
