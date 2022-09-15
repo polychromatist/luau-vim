@@ -1,10 +1,3 @@
-<style>
-img[src*='#center'] { 
-    display: block;
-    margin: auto;
-}
-</style>
-
 <p>
   <img src="luau-vim-repologo-640x320.png#center" />
 </p>
