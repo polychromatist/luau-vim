@@ -138,7 +138,7 @@ Example: `let g:luauRobloxIncludeAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td><a href="https://luau-lang.org/library">library</a></td>
-      <td>globals</td><td>y<sup>2</sup></td>
+      <td>globals</td><td>y</td>
     </tr>
     <tr>
       <td />
@@ -164,4 +164,5 @@ Example: `let g:luauRobloxIncludeAPIDump = 1`. Note that a value of 1 means on, 
 </table>
 
 (1) A lightweight interface to a Roblox linter/LSP is planned. I recommend [ALE](https://github.com/dense-analysis/ale) which supports the (Roblox) Luau linter [selene](https://github.com/Kampfkarren/selene)
-(2) The autolooad module is being prepared to fetch Roblox API data in order to generate proper highlight groups on Roblox types and Enums, etc.
+
+(2) The autoload module is being prepared to fetch Roblox API data in order to generate proper highlight groups on Roblox types and Enums, etc.
