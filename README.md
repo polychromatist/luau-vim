@@ -11,7 +11,7 @@ It's still experimental. You may be surprised by highlighting that bleeds over o
 
 v0.2.0
 
-[moonfly theme dark](https://github.com/bluz71/vim-moonfly-colors): `protomodroot: \<module\>().pathparse()`
+[PaperColor light](https://github.com/NLKNguyen/papercolor-theme): `protomodroot: <module>().pathparse()`
 
 ![protomodroot: \<module\>().pathparse()](screenshots/protomodroot_parser1.png)
 
@@ -19,7 +19,7 @@ elflord dark: [`@evaera/matter/lib/World#query()`](https://github.com/evaera/mat
 
 ![@evaera/matter/lib/World#query()](screenshots/evaera_matter_world_query.png)
 
-[PaperColor light](https://github.com/NLKNguyen/papercolor-theme): `geoplane/Mesh3/CSCMatrix: MAT_GAUSSELIM_USWAP()`
+[moonfly theme dark](https://github.com/bluz71/vim-moonfly-colors): `geoplane/Mesh3/CSCMatrix: MAT_GAUSSELIM_USWAP()`
 
 ![geoplane/Mesh3/CSCMatrix: MAT_GAUSSELIM_USWAP()](screenshots/geoplane-mesh3-cscmat-nfn.png)
 
