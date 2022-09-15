@@ -1,8 +1,9 @@
 # luau-vim
 
 <img style="float: left;" src="luau-vim-repologo-320x320.png"/>
+
 Vimscript syntax highlighting plugin for Luau and Roblox Luau. 
-This plugin intends to provide good support for Luau and Roblox Luau in Vim, Neovim and other vimscript plugin respecting flavors of Vim, with fine control.
+This plugin intends to provide good support for Luau and Roblox Luau in Vim, Neovim and other vimscript plugin respecting flavors of Vim.
 
 It's still experimental. You may be surprised by highlighting that bleeds over or appears missing. If that's important to you, it's important to [create an issue](https://github.com/polychromatist/luau-vim/issues).
 
@@ -50,7 +51,7 @@ Example: `let g:luauRobloxIncludeAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td><code>luauHighlightTypes = 0 | 1</code></td>
-      <td>default 1. If set, syntax groups will be modified to try to match types in cases like binding lists or after function headers, and will fully realize top/block-level type definitions. If not, such definitions are treated like tables, and type declarations may appear strange. Not recommended as off when dealing with strictly typed code.</td>
+      <td><em>Not Fully Implemented</em> default 1. If set, syntax groups will be modified to try to match types in cases like binding lists or after function headers, and will fully realize top/block-level type definitions. If not, such definitions are treated like tables, and type annotations  may appear strange. Not recommended as off when dealing with strictly typed code.</td>
     </tr>
     <tr>
       <td><code>luauHighlightRoblox = 0 | 1</code></td>
@@ -58,7 +59,7 @@ Example: `let g:luauRobloxIncludeAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td><code>luauIncludeRobloxAPIDump = 0 | 1</code></td>
-      <td><em>Not Yet Implemented</em> default 0. If set, and as long as <code>luauHighlightRoblox</code> is set, luau.vim (v0.2.1+) will attempt to grab Roblox APIs from a <a href="https://github.com/MaximumADHD/Roblox-Client-Tracker">continuously refreshed, user-defined API endpoint</a>. The APIs are, for now, parsed using regex on the compact, raw text format specified in the linked repo rather than JSON.</td>
+      <td><em>Not Fully Implemented</em> default 0. If set, and as long as <code>luauHighlightRoblox</code> is set, luau.vim (v0.2.1+) will attempt to grab Roblox APIs from a <a href="https://github.com/MaximumADHD/Roblox-Client-Tracker">continuously refreshed, user-defined API endpoint</a>. The APIs are, for now, parsed using regex on the compact, raw text format specified in the linked repo rather than JSON.</td>
     </tr>
     <tr>
       <td><code>luauRobloxAPIDumpURL = [string_url]</code></td>
@@ -80,36 +81,87 @@ Example: `let g:luauRobloxIncludeAPIDump = 1`. Note that a value of 1 means on, 
     <th>meaning</th>
   </thead>
   <tbody>
+    <tr><td>y</td><td>implemented</td></tr>
+    <tr><td>y*</td><td>implemented, but still experimental</td></tr>
+    <tr><td>m</td><td>planned next minor version</td></tr>
+    <tr><td>n</td><td>unsupported / not yet implemented</td></tr>
   </tbody>
 </table>
-y: implemented
 
-y%: mostly implemented / implemented, but target is volatile
-
-%: partially implemented (i.e. somewhat works)
-
-n: not yet implemented / implementation status unknown
-
-y!: implemented, recent issues
-
-x: no intention to implement
-
-### Core
 <table>
-  <caption>Core Syntax</caption>
-
-  <tr>
-  </tr>
+  <caption>Support</caption>
+  <thead>
+    <th>category</th>
+    <th>item</th>
+    <th>status</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://luau-lang.org/syntax">syntax</a></td>
+      <td>literals</td><td>y</td>
+    </tr>
+    <tr>
+      <td />
+      <td>continue</td><td>y</td>
+    </tr>
+    <tr>
+      <td />
+      <td>compoundop</td><td>y</td>
+    </tr>
+    <tr>
+      <td />
+      <td>type annotations</td><td>m</td>
+    </tr>
+    <tr>
+      <td />
+      <td>exp: if-then-else</td><td>y*</td>
+    </tr>
+    <tr>
+      <td><a href="https://luau-lang.org/linting">linting</a></td>
+      <td>linter</td><td>n<sup>1</sup></td>
+    </tr>
+    <tr>
+      <td />
+      <td>directives</td><td>y</td>
+    </tr>
+    <tr>
+      <td><a href="https://luau-lang.org/grammar">grammar</a></td>
+      <td>exp</td><td>y*</td>
+    </tr>
+    <tr>
+      <td />
+      <td>stat</td><td>y*</td>
+    </tr>
+    <tr>
+      <td />
+      <td><a href="https://luau-lang.org/typecheck">Type</a></td><td>m</td>
+    </tr>
+    <tr>
+      <td><a href="https://luau-lang.org/library">library</a></td>
+      <td>globals</td><td>y<sup>2</sup></td>
+    </tr>
+    <tr>
+      <td />
+      <td><code>math</code>, etc</td><td>y</td>
+    </tr>
+    <tr>
+      <td><a href="https://create.roblox.com/docs/engine">roblox</a></td>
+      <td>globals</td><td>y</td>
+    </tr>
+    <tr>
+      <td />
+      <td>datatype</td><td>y*</td>
+    </tr>
+    <tr>
+      <td />
+      <td>types</td><td>m<sup>2</sup></td>
+    </tr>
+    <tr>
+      <td />
+      <td>Enum</td><td>m<sup>2</sup></td>
+    </tr>
+  </tbody>
 </table>
-- base Lua syntax: y
-  - inherited from default Lua vim style
-- base Luau syntax: y%
-  - inline "if"-style x-ary operator: n
-  - type: n
-- Roblox functions: y%
-  - auto-generate: %
 
-### Other
-- method invocations: y%
-  - need to make optional
-- linting: n
+(1) A lightweight interface to a Roblox linter/LSP is planned. I recommend [ALE](https://github.com/dense-analysis/ale) which supports the (Roblox) Luau linter [selene](https://github.com/Kampfkarren/selene)
+(2) The autolooad module is being prepared to fetch Roblox API data in order to generate proper highlight groups on Roblox types and Enums, etc.
