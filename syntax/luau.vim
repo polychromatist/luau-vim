@@ -367,6 +367,11 @@ syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\
 
 " luauS - top level syntactic (S)tatements
 
+" luauS and luauV resemble exp, but since there are some more
+" fundamental differences (luauS is advertised at the top level, etc),
+" it may not be wise at this time to go forward with using s:_exp_new or
+" anything of that nature. this mostly behaves fine as-is
+
 " Top Level Statement: variable tokens
 syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_Dot skipwhite
 syn match luauS_HungVar /\K\k*\%(\s*,\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauA_Comma skipwhite
@@ -416,7 +421,6 @@ endif
 syn cluster luauGeneralBuiltin contains=luauBuiltin,luauLibrary,luauIdentifier
 syn cluster luauGeneralBuiltinDot contains=luauLibraryDot
 if (g:luauHighlightBuiltins)
-
   " The Luau builtin functions are straightforward.
   " There are some extra debug library functions in Roblox.
   syn keyword luauBuiltin assert collectgarbage error gcinfo nextgroup=luauE2_Invoke
