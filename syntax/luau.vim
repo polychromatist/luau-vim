@@ -2,12 +2,12 @@
 " Language:     Luau 0.544
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 12 (luau-vim v0.2.0)
+" Last Change:  2022 Sep 15 (luau-vim v0.2.0)
 " Options:      XXX Set options before loading the plugin.
-"               luauHighlightAll = 0 or 1 (default 1)
-"               - luauHighlightTypes = 0 or 1
-"               - luauHighlightBuiltins = 0 or 1
-"               - luauHighlightRoblox = 0 or 1
+"               luauHighlightAll = 0 or 1 (no default)
+"               - luauHighlightTypes = 0 or 1 (default 1)
+"               - luauHighlightBuiltins = 0 or 1 (default 1)
+"               - luauHighlightRoblox = 0 or 1 (default 1)
 "               luauRobloxIncludeAPIDump = 0 or 1 (default 0)
 "               - luauRobloxAPIDumpURL = < url >
 "                 (default 'https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker/roblox/API-Dump.txt')
@@ -25,11 +25,14 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if !exists('g:luauHighlightAll')
-  let g:luauHighlightAll = 1
+  let g:luauHighlightTypes = exists('g:luauHighlightTypes') ? g:luauHighlightTypes : 1
+  let g:luauHighlightBuiltins = exists('g:luauHighlightBuiltins') ? g:luauHighlightBuiltins : 1
+  let g:luauHighlightRoblox = exists('g:luauHighlightRoblox') ? g:luauHighlightRoblox : 1
+else
+  let g:luauHighlightTypes = g:luauHighlightAll
+  let g:luauHighlightBuiltins = g:luauHighlightAll
+  let g:luauHighlightRoblox = g:luauHighlightAll
 endif
-let g:luauHighlightTypes = g:luauHighlightAll
-let g:luauHighlightBuiltins = g:luauHighlightAll
-let g:luauHighlightRoblox = g:luauHighlightAll
 if !exists('g:luauRobloxIncludeAPIDump')
   let g:luauRobloxIncludeAPIDump = 0
 endif
@@ -38,11 +41,9 @@ syn case match
 
 syn keyword luauIdentifier _G _VERSION
 
-" syn keyword luauBoolean false true
-" syn keyword luauConstant nil
-
 syn match luauComment "--.*$" contains=luauTodo
 syn region luauComment matchgroup=luauComment start="--\[\z(=*\)\[" end="\]\z1\]" contains=luauTodo,luauDirective
+
 syn region luauDirectiveHeader start="\%^" end="\K"me=e-1 transparent contains=luauComment,luauDirective
 syn match luauDirective /\s*\zs--!\(strict\|nonstrict\|nocheck\)\ze\s*$/ contained
 syn match luauDirective /^\s*\zs--!nolint\ze\s/ contained nextgroup=luauLintWarnings skipwhite
@@ -132,7 +133,7 @@ let s:expmap = {
       \ 'expc': [
         \ 'syn cluster luau%t contains=luau%t_Callback,luau%t_Wrap,luau%t_Var,luau%t_Variadic,luau%t_Table,luau%t_InlineIf,luau%t_BUiltinTmpl',
         \ 'syn cluster luau%t add=luau%pNumber,luau%pFloat,@luau%pGeneralString',
-        \ 'syn cluster luau%t add=luau%pNil,luau%pBoolean',
+        \ 'syn cluster luau%t add=luau%pNil,luau%pBoolean,luauComment',
         \ 'syn cluster luau%t2 contains=luau%t2_Invoke,luau%t2_Dot,luau%t2_Colon,luau%t2_Bracket,luau%t2_Binop%n' ],
       \ 'exp': [
         \ 'syn keyword luau%t_Callback function contained nextgroup=luau%t_FunctionParams skipwhite',
@@ -370,7 +371,7 @@ syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\
 " luauS and luauV resemble exp, but since there are some more
 " fundamental differences (luauS is advertised at the top level, etc),
 " it may not be wise at this time to go forward with using s:_exp_new or
-" anything of that nature. this mostly behaves fine as-is
+" anything of that nature
 
 " Top Level Statement: variable tokens
 syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_Dot skipwhite
