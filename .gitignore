@@ -1,4 +1,4 @@
 *.swp
 *.old
-.example*
-.vistest
+*.example*
+*.vistest
