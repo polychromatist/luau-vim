@@ -306,7 +306,7 @@ syn cluster luauT contains=luauT_NDictK,luauT_EDictK,luauT_Symbol,luauT_Semicolo
 syn match luauL2_Sep /,/ contained nextgroup=@luauL,luauL_Uop skipwhite skipempty
 
 " luauA - variable (A)ssignment syntax
-syn match luauA_Symbol /=/ contained nextgroup=@luauL,luauL_Uop skipwhite
+syn match luauA_Symbol /=/ contained nextgroup=@luauL,luauL_Uop skipwhite skipnl
 syn match luauA_Symbol '+=\|-=\|\/=\|\*=\|\^=\|\.\.=' contained nextgroup=@luauE,luauE_Uop skipwhite
 syn match luauA_Dot /\./ contained nextgroup=@luauA skipwhite
 syn match luauA_DottedVar /\K\k*\%(\s*\.\)\@=/ contained nextgroup=luauA_Dot skipwhite
@@ -332,14 +332,14 @@ syn keyword luauK_Return return nextgroup=@luauL,luauL_Uop skipwhite
 
 " Top Level Keyword: local
 syn keyword luauK_Local local nextgroup=luauB_Function,luauB_LocalVar skipwhite
-syn match luauB_LocalVar /\K\k*/ contained nextgroup=luauB_Sep,luauA_Symbol skipwhite skipnl
+syn match luauB_LocalVar /\K\k*/ contained nextgroup=luauB_LocalVarSep,luauA_Symbol skipwhite skipnl
 syn match luauB_LocalVarSep /,/ contained nextgroup=luauB_LocalVar skipwhite
 syn match luauB_Param /\K\k/ contained nextgroup=luauB_ParamSep
 syn match luauB_ParamSep /,/ contained nextgroup=luauB_Param skipwhite
-syn keyword luauB_Function function nextgroup=luauF_Method skipwhite
+syn keyword luauB_Function function contained nextgroup=luauF_Method skipwhite
 
 " Top Level Keyword: do (anonymous block)
-syn region luauK_Do matchgroup=luauK_Keyword start="\<do\>" end="\<end\>" transparent contains=TOP
+syn region luauK_Do matchgroup=luauK_Keyword start="\<do\>" end="\<end\>" transparent contains=@luauTop
 
 " luauR - (R)epeat
 
@@ -371,18 +371,20 @@ syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\
 syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_Dot skipwhite
 syn match luauS_HungVar /\K\k*\%(\s*,\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauA_Comma skipwhite
 syn match luauS_TailVar /\K\k*\%(\s*\%(=\|+=\|-=\|\/=\|\*=\|\^=\|\.\.=\)\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauA_Symbol skipwhite
-syn match luauS_DictRef /\K\k*\%(\s*\[\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauS_DictKey skipwhite
-syn region luauS_DictKey start="\[" end="\]" transparent contained contains=@luauE,luauE_Uop nextgroup=luauV_Dot,luauV_Colon,luauS_DictKey,luauA_Comma,luauA_Symbol skipwhite
+syn match luauS_DictRef /\K\k*\%(\s*\[\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_DictKey skipwhite
 
 " Top Level Statement: anonymous wrapped expression
 syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\K\k*\|\]\|:\)\@<!(" end=")" transparent contains=@luauE,luauE_Uop nextgroup=@luauE2 skipwhite skipnl
 
-" Top Level Statement: function or method invocation
-syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ nextgroup=luauE2_Invoke skipwhite
+ " Top Level Statement: function or method invocation
+syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ nextgroup=luauV_Invoke skipwhite
 syn match luauS_ColonInvocation /\K\k*\%(\s*:\)\@=/ nextgroup=luauV_Colon skipwhite skipnl
 
 " luauV - operators on top level (V)ariables
 
+syn cluster luauV contains=luauV_Invoke,luauV_DictKey,luauV_Dot,luauV_Colon
+syn region luauV_Invoke matchgroup=luauV_Invoke start="(" end=")" contained contains=@luauL,luauL_Uop nextgroup=@luauV
+syn region luauV_DictKey start="\[" end="\]" transparent contained contains=@luauE,luauE_Uop nextgroup=@luauV,luauA_Comma,luauA_Symbol skipwhite
 syn match luauV_Dot /\./ transparent contained nextgroup=luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar skipwhite
 syn match luauV_Colon /:/ transparent contained nextgroup=luauS_InvokedVar skipwhite
 
