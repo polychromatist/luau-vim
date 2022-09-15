@@ -9,12 +9,17 @@ It's still experimental. You may be surprised by highlighting that bleeds over o
 
 ## Screenshots
 
-Here you can see some screenshots of luau-vim v0.1, in the [moonfly theme](https://github.com/bluz71/vim-moonfly-colors).
-Please note it's an older version.
+v0.2.0
+
+[moonfly theme dark](https://github.com/bluz71/vim-moonfly-colors): `protomodroot: \<module\>().pathparse()`
 
 ![protomodroot: \<module\>().pathparse()](screenshots/protomodroot_parser1.png)
 
+elflord dark: [`@evaera/matter/lib/World#query()`](https://github.com/evaera/matter/blob/dc6edffcb1e41fb1b34ebbacb052fb10f445e417/lib/World.lua#L555)
+
 ![@evaera/matter/lib/World#query()](screenshots/evaera_matter_world_query.png)
+
+[PaperColor light](https://github.com/NLKNguyen/papercolor-theme): `geoplane/Mesh3/CSCMatrix: MAT_GAUSSELIM_USWAP()`
 
 ![geoplane/Mesh3/CSCMatrix: MAT_GAUSSELIM_USWAP()](screenshots/geoplane-mesh3-cscmat-nfn.png)
 
