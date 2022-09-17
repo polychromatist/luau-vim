@@ -1,8 +1,8 @@
 " Vim syntax file
-" Language:     Luau 0.544
+" Language:     Luau 0.5xx
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 15 (luau-vim v0.2.0)
+" Last Change:  2022 Sep 17 (luau-vim v0.3.0)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (no default)
 "               - luauHighlightTypes = 0 or 1 (default 1)
