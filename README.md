@@ -55,7 +55,7 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td><code>luauHighlightTypes = 0 | 1</code></td>
-      <td><em>Not Fully Implemented</em> default 1. If set, syntax groups will be modified to try to match types in cases like binding lists or after function headers, and will fully realize top/block-level type definitions. If not, such definitions are treated like tables, and type annotations  may appear strange. Not recommended as off when dealing with strictly typed code.</td>
+      <td>default 1. If set, syntax groups will be modified to try to match types in cases like binding lists or after function headers, and will fully realize top/block-level type definitions. If not, such definitions are treated like tables, and type annotations  may appear strange. Not recommended as off when dealing with strictly typed code.</td>
     </tr>
     <tr>
       <td><code>luauHighlightRoblox = 0 | 1</code></td>
