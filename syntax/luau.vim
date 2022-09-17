@@ -431,11 +431,11 @@ if (g:luauHighlightTypes)
   " type keyword. it only accepts a single keyword and an angle-bracketed
   " function generic type list.
 
-  syn cluster luauType contains=luauType_Name,luauType_Table,luauType_FunctionGen,luauType_FunctionParam,luauType_StringSingleton,luauType_BoolSingleton
-  syn cluster luauTypeL contains=luauTypeL_Name,luauTypeL_Table,luauTypeL_FunctionGen,luauTypeL_FunctionParam,luauTypeL_Variadic,luauTypeL_StringSingleton,luauTypeL_BoolSingleton
+  syn cluster luauType contains=luauType_Name,luauType_Module,luauType_Table,luauType_FunctionGen,luauType_FunctionParam,luauType_StringSingleton,luauType_BoolSingleton
+  syn cluster luauTypeL contains=luauTypeL_Name,luauTypeL_Module,luauTypeL_Table,luauTypeL_FunctionGen,luauTypeL_FunctionParam,luauTypeL_Variadic,luauTypeL_StringSingleton,luauTypeL_BoolSingleton
   syn cluster luauType2 contains=luauType2_Binop
   syn cluster luauTypeL2 contains=luauTypeL2_Binop,luauTypeL2_Sep
-  syn cluster luauTypeParam contains=luauTypeParam_Pack,luauTypeParam_Variadic,luauTypeParam_Name,luauTypeParam_Table,luauTypeParam_FunctionGen,luauTypeParam_FunctionParam,luauTypeParam_StringSingleton,luauTypeParam_BoolSingleton
+  syn cluster luauTypeParam contains=luauTypeParam_Pack,luauTypeParam_Variadic,luauTypeParam_Name,luauTypeParam_Module,luauTypeParam_Table,luauTypeParam_FunctionGen,luauTypeParam_FunctionParam,luauTypeParam_StringSingleton,luauTypeParam_BoolSingleton
   syn cluster luauTypeParam2 contains=luauTypeParam2_Sep,luauTypeParam2_Binop
 
   syn match luauTypeL2_Sep /,/ contained nextgroup=@luauTypeL skipwhite skipnl
@@ -453,14 +453,17 @@ if (g:luauHighlightTypes)
   syn match luauB_LocalVarColon /:/ contained nextgroup=luauType_LocalVar skipwhite
 
   " Note: TypeParams entry point (syn-nextgroup)
-  syn match luauType_Name /\<\K\k*\%(\.\|:\)\@!/ contained nextgroup=@luauType2,luauType_Uop,luauType_Param skipwhite
-  syn match luauTypeL_Name /\<\K\k*\%(\.\|:\)\@!/ contained nextgroup=@luauTypeL2,luauTypeL_Uop,luauTypeL_Param skipwhite
-  syn match luauTypeParam_Name /\<\K\k*\%(\.\|:\)\@!/ contained nextgroup=@luauTypeParam2,luauTypeParam_Uop,luauTypeParam_Param skipwhite
+  syn match luauType_Name /\<\K\k*\%(\.\|\s*:\)\@!/ contained nextgroup=@luauType2,luauType_Uop,luauType_Param skipwhite
+  syn match luauTypeL_Name /\<\K\k*\%(\.\|\s*:\)\@!/ contained nextgroup=@luauTypeL2,luauTypeL_Uop,luauTypeL_Param skipwhite
+  syn match luauTypeParam_Name /\<\K\k*\%(\.\|\s*:\)\@!/ contained nextgroup=@luauTypeParam2,luauTypeParam_Uop,luauTypeParam_Param skipwhite
 
   " Note: TypeParams entry point (syn-nextgroup)
-  syn match luauType_ModuleName /\<\K\k*\.\K\k*\>/ contained nextgroup=@luauType2,luauType_Uop,luauType_Param skipwhite
-  syn match luauTypeL_ModuleName /\<\K\k*\.\K\k*\>/ contained nextgroup=@luauTypeL2,luauTypeL_Uop,luauTypeL_Param skipwhite
-  syn match luauTypeParam_ModuleName /\<\K\k*\.\K\k*\>/ contained nextgroup=@luauTypeParam2,luauTypeParam_Uop,luauTypeParam_Param skipwhite
+  syn match luauType_Module /\<\K\k*\s*\./ contained nextgroup=luauType_Name skipwhite
+  syn match luauTypeL_Module /\<\K\k*\s*\./ contained nextgroup=luauTypeL_Name skipwhite
+  syn match luauTypeParam_Module /\<\K\k*\s*\./ contained nextgroup=luauTypeParam_Name skipwhite
+  " syn match luauType_ModuleName /\<\K\k*\.\K\k*\>/ contained nextgroup=@luauType2,luauType_Uop,luauType_Param skipwhite
+  " syn match luauTypeL_ModuleName /\<\K\k*\.\K\k*\>/ contained nextgroup=@luauTypeL2,luauTypeL_Uop,luauTypeL_Param skipwhite
+  " syn match luauTypeParam_ModuleName /\<\K\k*\.\K\k*\>/ contained nextgroup=@luauTypeParam2,luauTypeParam_Uop,luauTypeParam_Param skipwhite
 
   " singleton types
   syn region luauType_StringSingleton matchgroup=luauString start=+\z("\|'\)+ end=+\z1+ contained nextgroup=@luauType2,luauType_Uop skipwhite
