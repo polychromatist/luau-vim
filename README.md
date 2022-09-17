@@ -2,8 +2,7 @@
 
 <img style="float: left;" src="luau-vim-repologo-160x160.png"/>
 
-Vimscript syntax highlighting plugin for Luau and Roblox Luau. 
-This plugin intends to provide good support for Luau and Roblox Luau in Vim, Neovim, and other flavors of Vim.
+Vimscript syntax plugin for Luau and Roblox Luau. This plugin intends to provide good support for Luau and Roblox Luau in Vim, Neovim, and other flavors of Vim.
 
 It's still experimental. You may be surprised by highlighting that bleeds over or appears missing. If that's important to you, it's important to [create an issue](https://github.com/polychromatist/luau-vim/issues).
 
@@ -64,7 +63,7 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td><code>luauIncludeRobloxAPIDump = 0 | 1</code></td>
-      <td><em>Not Fully Implemented</em> default 0. If set, and as long as <code>luauHighlightRoblox</code> is set, luau.vim (v0.2.1+) will attempt to grab Roblox APIs from a <a href="https://github.com/MaximumADHD/Roblox-Client-Tracker">continuously refreshed, user-defined API endpoint</a>. The APIs are, for now, parsed using regex on the compact, raw text format specified in the linked repo rather than JSON.</td>
+      <td><em>Not Fully Implemented</em> default 0. If set, and as long as <code>luauHighlightRoblox</code> is set, luau.vim (v0.3.1+) will attempt to grab Roblox APIs from a <a href="https://github.com/MaximumADHD/Roblox-Client-Tracker">continuously refreshed, user-defined API endpoint</a>. The APIs are, for now, parsed using regex on the compact, raw text format specified in the linked repo rather than JSON.</td>
     </tr>
     <tr>
       <td><code>luauRobloxAPIDumpURL = [string_url]</code></td>
@@ -115,7 +114,7 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td />
-      <td>type annotations</td><td>m</td>
+      <td>type annotations</td><td>y*</td>
     </tr>
     <tr>
       <td />
@@ -139,7 +138,7 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td />
-      <td><a href="https://luau-lang.org/typecheck">Type</a></td><td>m</td>
+      <td><a href="https://luau-lang.org/typecheck">Type</a></td><td>y*</td>
     </tr>
     <tr>
       <td><a href="https://luau-lang.org/library">library</a></td>
