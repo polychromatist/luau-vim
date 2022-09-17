@@ -430,6 +430,9 @@ if (g:luauHighlightTypes)
   " there's also a sort of type-level binding when defining types using the
   " type keyword. it only accepts a single keyword and an angle-bracketed
   " function generic type list.
+  
+  " TODO: ColonReturnType on keyworded functions
+  " TODO: re-add type annotations to expression-level functions (callbacks)
 
   syn cluster luauType contains=luauType_Name,luauType_Module,luauType_Table,luauType_FunctionGen,luauType_FunctionParam,luauType_StringSingleton,luauType_BoolSingleton
   syn cluster luauTypeL contains=luauTypeL_Name,luauTypeL_Module,luauTypeL_Table,luauTypeL_FunctionGen,luauTypeL_FunctionParam,luauTypeL_Variadic,luauTypeL_StringSingleton,luauTypeL_BoolSingleton
