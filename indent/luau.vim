@@ -11,7 +11,7 @@ if exists("b:did_indent")
 endif
 let b:did_indent = 1
 
-setlocal indentexpr=GetLuaIndent()
+setlocal indentexpr=GetLuauIndent()
 
 " To make Vim call GetLuaIndent() when it finds '\s*end' or '\s*until'
 " on the current line ('else' is default and includes 'elseif').
@@ -20,11 +20,11 @@ setlocal indentkeys+=0=end,0=until
 setlocal autoindent
 
 " Only define the function once.
-if exists("*GetLuaIndent")
+if exists("*GetLuauIndent")
   finish
 endif
 
-function! GetLuaIndent()
+function! GetLuauIndent()
   " Find a non-blank line above the current line.
   let prevlnum = prevnonblank(v:lnum - 1)
 
@@ -41,7 +41,7 @@ function! GetLuaIndent()
   if midx == -1
     let midx = match(prevline, '{\s*$')
     if midx == -1
-      let midx = match(prevline, '\<function\>\s*\%(<[<>[:keyword:][:space:],[]:{}''".?|&]*>\)\?\s*\%(\k\|[.:]\)\{-}\s*(')
+      let midx = match(prevline, '\<function\>\s*[[:keyword:].:]*\%(<[<>[:keyword:][:space:],\[\]:{}''".?|&]*>\)\?\s*(')
     endif
   endif
 
