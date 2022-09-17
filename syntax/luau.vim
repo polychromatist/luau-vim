@@ -449,13 +449,13 @@ if (g:luauHighlightTypes)
   syn match luauTypeL_Uop /?/ contained nextgroup=@luauTypeL2 skipwhite
   syn match luauTypeParam_Uop /?/ contained nextgroup=@luauTypeParam2 skipwhite
 
-  syn region luauType_LocalVar start=/[^,=[:space:]?]/ end=/,/me=e-1 end=/=/me=e-1 transparent contained contains=@luauType nextgroup=luauB_LocalVarSep,luauA_Symbol skipwhite
+  syn region luauType_LocalVar start=/[^,=[:space:]?]/ end=/,/me=e-1 end=/=/me=e-1 end=/$/ transparent contained contains=@luauType nextgroup=luauB_LocalVarSep,luauA_Symbol skipwhite
   syn match luauB_LocalVarColon /:/ contained nextgroup=luauType_LocalVar skipwhite
 
   " Note: TypeParams entry point (syn-nextgroup)
-  syn match luauType_Name /\<\K\k*\%(\.\)\@!/ contained nextgroup=@luauType2,luauType_Uop,luauType_Param skipwhite
-  syn match luauTypeL_Name /\<\K\k*\%(\.\)\@!/ contained nextgroup=@luauTypeL2,luauTypeL_Uop,luauTypeL_Param skipwhite
-  syn match luauTypeParam_Name /\<\K\k*\%(\.\)\@!/ contained nextgroup=@luauTypeParam2,luauTypeParam_Uop,luauTypeParam_Param skipwhite
+  syn match luauType_Name /\<\K\k*\%(\.\|:\)\@!/ contained nextgroup=@luauType2,luauType_Uop,luauType_Param skipwhite
+  syn match luauTypeL_Name /\<\K\k*\%(\.\|:\)\@!/ contained nextgroup=@luauTypeL2,luauTypeL_Uop,luauTypeL_Param skipwhite
+  syn match luauTypeParam_Name /\<\K\k*\%(\.\|:\)\@!/ contained nextgroup=@luauTypeParam2,luauTypeParam_Uop,luauTypeParam_Param skipwhite
 
   " Note: TypeParams entry point (syn-nextgroup)
   syn match luauType_ModuleName /\<\K\k*\.\K\k*\>/ contained nextgroup=@luauType2,luauType_Uop,luauType_Param skipwhite
@@ -480,9 +480,15 @@ if (g:luauHighlightTypes)
   syn region luauTypeL_FunctionGen matchgroup=luauStructure start=+<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luauTypeL_Function skipwhite
   syn region luauTypeParam_FunctionGen matchgroup=luauStructure start=+<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luauTypeParam_Function skipwhite
 
-  syn region luauType_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=luauType_Arrow skipwhite
-  syn region luauTypeL_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=luauTypeL_Arrow skipwhite
-  syn region luauTypeParam_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=luauTypeParam_Arrow skipwhite
+  " FunctionType having ( [TypeList] ) for the parameter fragment was
+  " incomplete, as you can also name the parameters within this heading using
+  " a colon infix format
+  syn region luauType_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luauType_Arrow skipwhite
+  syn region luauTypeL_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luauTypeL_Arrow skipwhite
+  syn region luauTypeParam_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luauTypeParam_Arrow skipwhite
+
+  syn match luauTypeFParam_Name /\K\k*\%(\s*:\)\@=/ contained nextgroup=luauTypeFParam_Sep skipwhite
+  syn region luauTypeFParam_Sep start=/:/ end=/,/me=e-1 end=/)/me=e-1 transparent contained contains=@luauType skipwhite
 
   syn match luauType_Arrow /->/ contained nextgroup=@luauType,luauType_Pack skipwhite skipnl
   syn match luauTypeL_Arrow /->/ contained nextgroup=@luauTypeL,luauTypeL_Pack skipwhite skipnl
@@ -507,7 +513,7 @@ if (g:luauHighlightTypes)
 
   syn region luauType_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luauType2,luauType_Uop skipwhite
   syn region luauTypeL_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luauTypeL2,luauTypeL_Uop skipwhite
-  syn region luauTypeParam_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Sep,luauTypeProp_Key nextgroup=@luauTypeParam2,luauParamType_Uop skipwhite
+  syn region luauTypeParam_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luauTypeParam2,luauParamType_Uop skipwhite
 
   syn match luauTypeProp_Name /\K\k*\%(\s*:\)\@=/ contained nextgroup=luauTypeProp_Sep skipwhite skipnl
   syn region luauTypeProp_Sep start=/:/ end=/,/ end=/}/me=e-1 transparent contained contains=@luauType skipwhite
@@ -550,7 +556,7 @@ if (g:luauHighlightBuiltins)
   syn keyword luauBuiltin getfenv getmetatable ipairs loadstring newproxy nextgroup=luauE2_Invoke
   syn keyword luauBuiltin next pairs pcall print rawget rawequal rawset require nextgroup=luauE2_Invoke
   syn keyword luauBuiltin setfenv select setmetatable tonumber tostring nextgroup=luauE2_Invoke
-  syn match luauBuiltin /type\%(\s*[^[:keyword:][:space:]]\)\@=/ nextgroup=luauE2_Invoke
+  syn match luauBuiltin /\<type\%(\s*[^[:keyword:][:space:]]\)\@=/ nextgroup=luauE2_Invoke
   syn keyword luauBuiltin typeof unpack xpcall nextgroup=luauE2_Invoke
 
   syn keyword luauLibrary bit32 coroutine string table math os debug utf8 nextgroup=luauLibraryDot

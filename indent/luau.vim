@@ -2,7 +2,8 @@
 " Language:	Luau
 " Maintainer:	Marcus Aurelius Farias <marcus.cf 'at' bol.com.br>
 " First Author:	Max Ischenko <mfi 'at' ukr.net>
-" Last Change:	2017 Jun 13
+" Modified By: polychromatist <polychromatist 'at' proton.me>
+" Last Change:	2022 Sep 17
 
 " Only load this indent file when no other was loaded.
 if exists("b:did_indent")
@@ -40,7 +41,7 @@ function! GetLuaIndent()
   if midx == -1
     let midx = match(prevline, '{\s*$')
     if midx == -1
-      let midx = match(prevline, '\<function\>\s*\%(\k\|[.:]\)\{-}\s*(')
+      let midx = match(prevline, '\<function\>\s*\%(<[<>[:keyword:][:space:],[]:{}''".?|&]*>\)\?\s*\%(\k\|[.:]\)\{-}\s*(')
     endif
   endif
 
