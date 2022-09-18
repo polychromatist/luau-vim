@@ -242,7 +242,7 @@ endfunction
 
 " add a new expression context to the expression syntax command generator
 " stack
-function! s:expNew(synmap, himap, synout, hiout, grpdata) abort
+function! s:newExp(synmap, himap, synout, hiout, grpdata) abort
   for [l:ekey, l:evalue] in items(a:synmap)
     if has_key(a:grpdata, l:ekey)
       let l:grpkeydata = a:grpdata[l:ekey]
@@ -260,13 +260,13 @@ function! s:expNew(synmap, himap, synout, hiout, grpdata) abort
   endfor
 endfunction
 
-function! s:processExpStack(a:stack)
+function! s:processExpStack(stack)
   for l:syntax_query in a:stack
     execute l:syntax_query
   endfor
 endfunction
 
-function! s:processHighlightMap(a:hioutmap)
+function! s:processHighlightMap(hioutmap)
   for [l:houtkey, l:houtlist] in items(a:hioutmap)
     for l:hout in l:houtlist
       execute printf('hi def link %s %s', l:hout, l:houtkey)
@@ -460,43 +460,29 @@ if (g:luauHighlightTypes)
 
   let s:typehilinkmap = {}
   " luauType
-  s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
+  call s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
         \ 'typec':  {'T': 'Type'},
         \ 'type':   {'T': 'Type'},
-        \ 'type2':  {'T': 'Type'},
-        \ })
+        \ 'type2':  {'T': 'Type'} })
   " luauTypeL
-  s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
+  call s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
         \ 'typec':  {'T': 'TypeL'},
         \ 'type':   {'T': 'TypeL'},
-        \ 'type2':  {'T': 'TypeL'},
-        \ })
+        \ 'type2':  {'T': 'TypeL'} })
   " luauTypeParam
-  " NOTE: luauTypeParam_Pack is not contained in Param because it is covered
-  "       by luauTypeParam_Paren
-  "       This is because FunctionParam and Pack can't be differentiated until
-  "       after the region ends, posing a hard-to-resolve ambiguity
-  "       So we just combine both cases - due to their similar contents, this
-  "       has a decent result. If the user is typing decent Luau, this should
-  "       not be a problem.
-  "       However, in cases where a Pack can be disambiguated, such as after
-  "       the arrow operator, we have kept the syntax rule.
-  s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
+  call s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
         \ 'typec':  {'T': 'TypeParam'},
         \ 'type':   {'T': 'TypeParam'},
-        \ 'type2':  {'T': 'TypeParam'},
-        \ })
-  s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
+        \ 'type2':  {'T': 'TypeParam'} })
+  call s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
         \ 'typec':  {'T': 'CastE'},
         \ 'type':   {'T': 'CastE'},
-        \ 'type2':  {'T': 'CastE'},
-        \ })
-  s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
+        \ 'type2':  {'T': 'CastE'} })
+  call s:newExp(s:typemap, s:typehilinkmap, s:typeout, s:typehilinkout, {
         \ 'typec':  {'T': 'CastL'},
         \ 'type':   {'T': 'CastL'},
-        \ 'type2':  {'T': 'CastL'},
-        \ })
-  s:processExpStack(s:typeout)
+        \ 'type2':  {'T': 'CastL'} })
+  call s:processExpStack(s:typeout)
 
 
   " syn cluster luauType contains=luauType_Name,luauType_Module,luauType_Table,luauType_FunctionGen,luauType_FunctionParam,luauType_StringSingleton,luauType_BoolSingleton,luauType_SpecialTypeOf
@@ -857,7 +843,7 @@ hi def link luauC_Else                luauC_Keyword
 
 hi def link luauB_Function            luauK_Function
 
-call s:processHighlightMap(s:hilinkout)
+call s:processHighlightMap(s:exphilinkout)
 if exists('s:typehilinkout')
   call s:processHighlightMap(s:typehilinkout)
 endif
