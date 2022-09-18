@@ -41,7 +41,7 @@ function! GetLuauIndent()
   if midx == -1
     let midx = match(prevline, '{\s*$')
     if midx == -1
-      let midx = match(prevline, '\<function\>\s*[[:keyword:].:]*\%(<[<>[:keyword:][:space:],\[\]:{}''".?|&]*>\)\?\s*(')
+      let midx = match(prevline, '\<function\>\s*[[:keyword:].:]*\%(<[()<>[:keyword:][:space:],\[\]:{}''".?|&]*>\)\?\s*(')
     endif
   endif
 
