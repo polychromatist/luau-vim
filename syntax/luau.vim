@@ -15,6 +15,10 @@
 "                 (default 'robloxapi')
 "               - luauRobloxNonstandardTypesAreErrors = 0 or 1
 "                 (default 0)
+"
+
+" TODO: make functions adopt the following region format:
+"   syn region start="function" end="end"
 
 
 if exists('b:current_syntax')
@@ -140,10 +144,10 @@ let s:expmap = {
         \ 'syn region luau%t_CallbackGen matchgroup=luauStructure start="<" end=">" transparent contained contains=@luauTypeGenParam nextgroup=luau%t_FunctionParams skipwhite skipnl',
         \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")"me=e-1 contained contains=luauB_Param nextgroup=luau%t_Block',
         \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start=")" matchgroup=luauK_Function end="end" transparent contains=@luauTop contained%n',
-        \ 'syn match luau%t_Var /\K\k*/ transparent contains=luau%t_InvokedVar,@luauGeneralBuiltin contained nextgroup=@luau%t2 skipwhite',
+        \ 'syn match luau%t_Var /\K\k*/ transparent contains=luau%t_InvokedVar contained nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_InvokedVar /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_ColonInvoked /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
-        \ 'syn match luau%t_BuiltinTmpl /\<\K\k*[.:]\K\k*\>/ contained contains=@luauGeneralBuiltin,luau%t_InvokedVar nextgroup=@luau%t2 skipwhite skipnl',
+        \ 'syn match luau%t_BuiltinTmpl /\%(\s\|(\)\@1<=\<\K\k*[.:]\K\k*\>/ contained contains=@luauGeneralBuiltin,luau%t_InvokedVar nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_Variadic /\.\.\./ contained%n',
         \ 'syn match luau%t_Uop /#\|-\%(-\)\@!\|\<not\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
@@ -341,6 +345,7 @@ syn keyword luauK_Local local nextgroup=luauB_Function,luauB_LocalVar skipwhite
 syn match luauB_LocalVar /\K\k*/ contained nextgroup=luauB_LocalVarColon,luauB_LocalVarSep,luauA_Symbol skipwhite skipnl
 syn match luauB_LocalVarSep /,/ contained nextgroup=luauB_LocalVar skipwhite
 syn match luauB_Param /\K\k*/ contained nextgroup=luauB_ParamSep,luauB_ParamColon skipwhite
+syn match luauB_Param /\.\.\./ contained nextgroup=luauB_ParamVariadicColon skipwhite
 syn match luauB_ParamSep /,/ contained nextgroup=luauB_Param skipwhite skipnl
 syn keyword luauB_Function function contained nextgroup=luauF_Method skipwhite
 
@@ -379,11 +384,6 @@ syn region luauD_ExpRangeStart matchgroup=luauD_ExpRangeStart start="=" end=","m
 syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\>"me=e-2 transparent contained contains=@luauE,luauE_Uop nextgroup=luauR_Do
 
 " luauS - top level syntactic (S)tatements
-
-" luauS and luauV resemble exp, but since there are some more
-" fundamental differences (luauS is advertised at the top level, etc),
-" it may not be wise at this time to go forward with using s:_exp_new or
-" anything of that nature
 
 " Top Level Statement: variable tokens
 syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_Dot skipwhite
@@ -453,7 +453,7 @@ if (g:luauHighlightTypes)
           \ ],
         \ 'type': [
           \ {'hilink': 'luauOperator', 'cmd': 'syn match luau%T_Uop /?/ contained nextgroup=@luau%T2 skipwhite'},
-          \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite' },
+          \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\>\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite' },
           \ 'syn match luau%T_Module /\<\K\k*\s*\.\%(\s*\K\)\@=/ contained nextgroup=luau%T_Name skipwhite',
           \ 'syn region luau%T_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ 'syn region luau%T_FunctionGen matchgroup=luauStructure start=+\%(\k\s*\)\@<!<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luau%T_FunctionParam skipwhite',
@@ -462,7 +462,7 @@ if (g:luauHighlightTypes)
           \ 'syn region luau%T_ExpInference matchgroup=luauDelimiter start=+(+ end=+\%((\)\@1<!)+ transparent contained contains=@luauE nextgroup=@luau%T2 skipwhite skipnl',
           \ {'hilink': 'luauString', 'cmd': 'syn region luau%T_StringSingleton matchgroup=luauString start=+\z("\|''\)+ end=+\z1+ contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
           \ {'hilink': 'luauBoolean', 'cmd': 'syn keyword luau%T_BoolSingleton true false contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
-          \ 'syn region luau%T_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luau%T_Arrow skipwhite',
+          \ 'syn region luau%T_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luau%T_Arrow skipwhite',
           \ {'hilink': 'luauStructure', 'cmd': 'syn match luau%T_Arrow /->/ contained nextgroup=@luau%T,luau%T_Pack skipwhite skipnl' },
           \ 'syn region luau%T_Pack matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=@luau%T2 skipwhite' ],
         \ 'type2': [
@@ -504,7 +504,7 @@ if (g:luauHighlightTypes)
   syn cluster luauTypeL2 add=luauTypeL2_Sep
   syn cluster luauTypeParam2 add=luauTypeParam2_Sep
   syn cluster luauType add=luauType_FunctionParam
-  syn cluster luauTypeL add=luauTypeL_FunctionParam,luauTypeL_Variadic
+  syn cluster luauTypeL add=luauTypeL_FunctionParam,luauTypeL_Variadic,luauTypeL_GenPack
   syn cluster luauTypeParam add=luauTypeParam_Paren,luauTypeParam_Variadic,luauTypeParam_GenPack
   syn cluster luauCastE2 add=@luauE2
   syn cluster luauCastL2 add=@luauL2
@@ -514,19 +514,25 @@ if (g:luauHighlightTypes)
 
   syn region luauType_LocalVar start=/[^,=[:space:]?]/ end=/,/me=e-1 end=/=/me=e-1 end=/$/ transparent contained contains=@luauType nextgroup=luauB_LocalVarSep,luauA_Symbol skipwhite
   syn region luauType_ParamBinding start=/[^,=[:space:]?]/ end=/,/me=e-1 end=/)/me=e-1 end=/$/ transparent contained contains=@luauType nextgroup=luauB_ParamSep skipwhite
+  syn region luauType_ParamVariadicBinding start=/[^,=[:space:]?]/ end=/)/me=e-1 transparent contained contains=@luauType,luauTypeL_Variadic,luauTypeL_GenPack skipwhite
   syn match luauB_LocalVarColon /:/ contained nextgroup=luauType_LocalVar skipwhite
   syn match luauB_ParamColon /:/ contained nextgroup=luauType_ParamBinding skipwhite
+  syn match luauB_ParamVariadicColon /:/ contained nextgroup=luauType_ParamVariadicBinding skipwhite
 
-  syn region luauTypeParam_Paren matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luauType_Arrow,@luauTypeParam2 skipwhite
+  syn region luauTypeParam_Paren matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luauType_Arrow,@luauTypeParam2 skipwhite
 
   syn match luauTypeFParam_Name /\K\k*\%(\s*:\)\@=/ contained nextgroup=luauTypeFParam_Sep skipwhite
   syn region luauTypeFParam_Sep start=/:/ end=/,/me=e-1 end=/)/me=e-1 transparent contained contains=@luauType skipwhite
+  syn match luauTypeFParam_Variadic /\%(\k\s*\)\@<!\.\.\.\%(\s*:\)\@=/ contained nextgroup=luauTypeFParam_VariadicStop skipwhite
+  syn region luauTypeFParam_VariadicStop start=/:/ end=/)/me=e-1 transparent contained contains=@luauType,luauTypeL_Variadic,luauTypeL_GenPack skipwhite
 
-  syn match luauTypeL_Variadic /\%(\k\s*\)\@<!\.\.\./ contained nextgroup=@luauType skipwhite
-  syn match luauTypeParam_Variadic /\%(\k\s*\)\@<!\.\.\./ contained nextgroup=@luauTypeParam skipwhite
+  syn match luauTypeL_Variadic /\%(\k\s*\)\@<!\.\.\.\%(\s*:\)\@!/ contained nextgroup=@luauType skipwhite
+  syn match luauTypeParam_Variadic /\%(\k\s*\)\@<!\.\.\.\%(\s*:\)\@!/ contained nextgroup=@luauTypeParam skipwhite
 
-  syn match luauTypeParam_GenPack /\K\k\*\%(\s*\.\.\.\)\@=/ transparent contained nextgroup=luauTypeParam_GenSymbol
-  syn match luauTypeParam_GenSymbol /\.\.\./ contained nextgroup=@luauTypeParam2
+  syn match luauTypeL_GenPack /\<\K\k*\>\%(\s*\.\.\.\)\@=/ transparent contained nextgroup=luauTypeL_GenSymbol
+  syn match luauTypeL_GenSymbol /\.\.\./ contained
+  syn match luauTypeParam_GenPack /\<\K\k*\>\%(\s*\.\.\.\)\@=/ transparent contained nextgroup=luauTypeParam_GenSymbol skipwhite
+  syn match luauTypeParam_GenSymbol /\.\.\./ contained nextgroup=@luauTypeParam2 skipwhite
 
   " used in luau%T_Table
 
