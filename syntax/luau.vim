@@ -2,7 +2,7 @@
 " Language:     Luau 0.545
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 17 (luau-vim v0.3.0)
+" Last Change:  2022 Sep 17 (luau-vim v0.3.0b)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (no default)
 "               - luauHighlightTypes = 0 or 1 (default 1)
@@ -433,6 +433,13 @@ if (g:luauHighlightTypes)
   " there's also a sort of type-level binding when defining types using the
   " type keyword. it only accepts a single keyword and an angle-bracketed
   " function generic type list.
+
+  " thanks to typecasting, there is also an insertion of type expressions into
+  " both expression-level contexts. that's because we can have a binary
+  " operator from the expression context right after a typecast:
+  "   local n1: any
+  "   local n2: any
+  "   local n3 = n1 :: number + n2 :: number
   
   " TODO: ColonReturnType on keyworded functions
   
@@ -447,12 +454,12 @@ if (g:luauHighlightTypes)
         \ 'type': [
           \ {'hilink': 'luauOperator', 'cmd': 'syn match luau%T_Uop /?/ contained nextgroup=@luau%T2 skipwhite'},
           \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite' },
-          \ 'syn match luau%T_Module /\<\K\k*\s*\./ contained nextgroup=luau%T_Name skipwhite',
+          \ 'syn match luau%T_Module /\<\K\k*\s*\.\%(\s*\K\)\@=/ contained nextgroup=luau%T_Name skipwhite',
           \ 'syn region luau%T_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ 'syn region luau%T_FunctionGen matchgroup=luauStructure start=+\%(\k\s*\)\@<!<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luau%T_FunctionParam skipwhite',
           \ 'syn region luau%T_Param matchgroup=luauDelimiter start=+<+ end=+>+ transparent contained contains=@luauTypeParam nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ {'hilink': 'luauPreProc', 'cmd': 'syn keyword luau%T_SpecialTypeOf typeof nextgroup=luau%T_ExpInference skipwhite'},
-          \ 'syn region luau%T_ExpInference matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauE nextgroup=@luau%T2 skipwhite skipnl',
+          \ 'syn region luau%T_ExpInference matchgroup=luauDelimiter start=+(+ end=+\%((\)\@1<!)+ transparent contained contains=@luauE nextgroup=@luau%T2 skipwhite skipnl',
           \ {'hilink': 'luauString', 'cmd': 'syn region luau%T_StringSingleton matchgroup=luauString start=+\z("\|''\)+ end=+\z1+ contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
           \ {'hilink': 'luauBoolean', 'cmd': 'syn keyword luau%T_BoolSingleton true false contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
           \ 'syn region luau%T_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luau%T_Arrow skipwhite',
