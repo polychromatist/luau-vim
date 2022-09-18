@@ -262,6 +262,9 @@ endfunction
 
 function! s:processExpStack(stack)
   for l:syntax_query in a:stack
+    if exists('s:_debugexpstackprint')
+      echo l:syntax_query
+    endif
     execute l:syntax_query
   endfor
 endfunction
@@ -278,7 +281,7 @@ endfunction
 
 " @luauE, @luauE2, luauNumber, luauFloat, @luauGeneralString
 let s:exp_nxt1 = ' nextgroup=luauE2_Binop skipwhite'
-call s:newExp(s:expmap, s:expout, s:exphilinkout, {
+call s:newExp(s:expmap, s:exphilinkmap, s:expout, s:exphilinkout, {
      \ 'string': {           'n': s:exp_nxt1,   'p': ''                     },
      \ 'number': {           'n': s:exp_nxt1,   'p': ''                     },
      \ 'const':  {           'n': s:exp_nxt1,   'p': ''                     },
@@ -289,7 +292,7 @@ call s:newExp(s:expmap, s:expout, s:exphilinkout, {
 let s:lexp_nxt1 = ' contained nextgroup=luauL2_Sep,luauL2_Binop skipwhite'
 let s:lexp_nxt2 = ',luauL2_Sep'
 let s:lexp_nxt3 = ' nextgroup=luauL2_Sep skipwhite'
-call s:newExp(s:expmap, s:expout, s:exphilinkout, {
+call s:newExp(s:expmap, s:exphilinkmap, s:expout, s:exphilinkout, {
      \ 'string': {           'n': s:lexp_nxt1, 'p': 'L_',                     },
      \ 'number': {           'n': s:lexp_nxt1, 'p': 'L_',                     },
      \ 'const':  {           'n': s:lexp_nxt1, 'p': 'L_'                      },
@@ -439,17 +442,17 @@ if (g:luauHighlightTypes)
   let s:typemap = {
         \ 'typec': [
           \ 'syn cluster luau%T contains=luau%T_Name,luau%T_Module,luau%T_Table,luau%T_FunctionGen,luau%T_StringSingleton,luau%T_BoolSingleton,luau%T_SpecialTypeOf',
-          \ 'syn cluster luau%T2 contains=luau%T2_Binop%n',
+          \ 'syn cluster luau%T2 contains=luau%T2_Binop',
           \ ],
         \ 'type': [
           \ {'hilink': 'luauOperator', 'cmd': 'syn match luau%T_Uop /?/ contained nextgroup=@luau%T2 skipwhite'},
-          \ 'syn region luau%T_Param matchgroup=luauDelimiter start=+<+ end=+>+ transparent contained contains=@luauTypeParam nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite' },
           \ 'syn match luau%T_Module /\<\K\k*\s*\./ contained nextgroup=luau%T_Name skipwhite',
           \ 'syn region luau%T_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luau%T2,luau%T_Uop skipwhite',
-          \ 'syn region luau%T_FunctionGen matchgroup=luauStructure start=+<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luau%T_FunctionParam skipwhite',
+          \ 'syn region luau%T_FunctionGen matchgroup=luauStructure start=+\%(\k\s*\)\@<!<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luau%T_FunctionParam skipwhite',
+          \ 'syn region luau%T_Param matchgroup=luauDelimiter start=+<+ end=+>+ transparent contained contains=@luauTypeParam nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ {'hilink': 'luauPreProc', 'cmd': 'syn keyword luau%T_SpecialTypeOf typeof nextgroup=luau%T_ExpInference skipwhite'},
-          \ 'syn region luau%T_ExpInference matchgroup=luauDelimiter start=+(+ end=+)+ transparent contains=@luauE nextgroup=@luau%T2 skipwhite skipnl',
+          \ 'syn region luau%T_ExpInference matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauE nextgroup=@luau%T2 skipwhite skipnl',
           \ {'hilink': 'luauString', 'cmd': 'syn region luau%T_StringSingleton matchgroup=luauString start=+\z("\|''\)+ end=+\z1+ contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
           \ {'hilink': 'luauBoolean', 'cmd': 'syn keyword luau%T_BoolSingleton true false contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
           \ 'syn region luau%T_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luau%T_Arrow skipwhite',
@@ -496,16 +499,16 @@ if (g:luauHighlightTypes)
   syn cluster luauType add=luauType_FunctionParam
   syn cluster luauTypeL add=luauTypeL_FunctionParam,luauTypeL_Variadic
   syn cluster luauTypeParam add=luauTypeParam_Paren,luauTypeParam_Variadic,luauTypeParam_GenPack
-  syn cluster luauCastE2 add=@luauE
-  syn cluster luauCastL2 add=@luauL
+  syn cluster luauCastE2 add=@luauE2
+  syn cluster luauCastL2 add=@luauL2
 
   syn match luauTypeL2_Sep /,/ contained nextgroup=@luauTypeL skipwhite skipnl
   syn match luauTypeParam2_Sep /,/ contained nextgroup=@luauTypeParam skipwhite skipnl
 
   syn region luauType_LocalVar start=/[^,=[:space:]?]/ end=/,/me=e-1 end=/=/me=e-1 end=/$/ transparent contained contains=@luauType nextgroup=luauB_LocalVarSep,luauA_Symbol skipwhite
-  syn region luauType_Param start=/[^,=[:space:]?]/ end=/,/me=e-1 end=/)/me=e-1 end=/$/ transparent contained contains=@luauType nextgroup=luauB_ParamSep skipwhite
+  syn region luauType_ParamBinding start=/[^,=[:space:]?]/ end=/,/me=e-1 end=/)/me=e-1 end=/$/ transparent contained contains=@luauType nextgroup=luauB_ParamSep skipwhite
   syn match luauB_LocalVarColon /:/ contained nextgroup=luauType_LocalVar skipwhite
-  syn match luauB_ParamColon /:/ contained nextgroup=luauType_Param skipwhite
+  syn match luauB_ParamColon /:/ contained nextgroup=luauType_ParamBinding skipwhite
 
   syn region luauTypeParam_Paren matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luauType_Arrow,@luauTypeParam2 skipwhite
 
@@ -803,9 +806,9 @@ hi def link luauTypedef_Symbol        luauA_Symbol
 " hi def link luauType_BoolSingleton    luauBoolean
 " hi def link luauTypeL_BoolSingleton   luauType_BoolSingleton
 " hi def link luauTypeParam_BoolSingleton             luauType_BoolSingleton
-hi def link luauType_SpecialTypeOf    luauStructure
-hi def link luauTypeL_SpecialTypeOf    luauType_SpecialTypeOf
-hi def link luauTypeParam_SpecialTypeOf    luauType_SpecialTypeOf
+" hi def link luauType_SpecialTypeOf    luauStructure
+" hi def link luauTypeL_SpecialTypeOf    luauType_SpecialTypeOf
+" hi def link luauTypeParam_SpecialTypeOf    luauType_SpecialTypeOf
 
 hi def link luauD_ExpRangeStart       luauA_Symbol
 
