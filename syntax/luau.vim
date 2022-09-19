@@ -284,18 +284,19 @@ endfunction
 " Section: Luau grammar
 
 " @luauE, @luauE2, luauNumber, luauFloat, @luauGeneralString
-let s:exp_nxt1 = ' nextgroup=luauE2_Binop skipwhite'
+let s:exp_nxt1 = ' nextgroup=luauE2_Binop,luauE2_CastSymbol skipwhite'
+let s:exp_nxt2 = ' nextgroup=luauE2_CastSymbol skipwhite'
 call s:newExp(s:expmap, s:exphilinkmap, s:expout, s:exphilinkout, {
      \ 'string': {           'n': s:exp_nxt1,   'p': ''                     },
      \ 'number': {           'n': s:exp_nxt1,   'p': ''                     },
      \ 'const':  {           'n': s:exp_nxt1,   'p': ''                     },
      \ 'expc':   {'t': 'E',  'n': '',           'p': ''                     },
-     \ 'exp':    {'t': 'E',  'n': '',                   'e': 'E', 'l': 'L'  },
+     \ 'exp':    {'t': 'E',  'n': s:exp_nxt2,           'e': 'E', 'l': 'L'  },
      \ 'exp2':   {'t': 'E',                             'e': 'E', 'l': 'L'  } })
 " @luauL, @luauL2, luauL_Number, luauL_Float, @luauL_GeneralString
-let s:lexp_nxt1 = ' contained nextgroup=luauL2_Sep,luauL2_Binop skipwhite'
+let s:lexp_nxt1 = ' contained nextgroup=luauL2_Sep,luauL2_Binop,luauL2_CastSymbol skipwhite'
 let s:lexp_nxt2 = ',luauL2_Sep'
-let s:lexp_nxt3 = ' nextgroup=luauL2_Sep skipwhite'
+let s:lexp_nxt3 = ' nextgroup=luauL2_Sep,luauL2_CastSymbol skipwhite'
 call s:newExp(s:expmap, s:exphilinkmap, s:expout, s:exphilinkout, {
      \ 'string': {           'n': s:lexp_nxt1, 'p': 'L_',                     },
      \ 'number': {           'n': s:lexp_nxt1, 'p': 'L_',                     },
@@ -462,11 +463,13 @@ if (g:luauHighlightTypes)
           \ 'syn region luau%T_ExpInference matchgroup=luauDelimiter start=+(+ end=+\%((\)\@1<!)+ transparent contained contains=@luauE nextgroup=@luau%T2 skipwhite skipnl',
           \ {'hilink': 'luauString', 'cmd': 'syn region luau%T_StringSingleton matchgroup=luauString start=+\z("\|''\)+ end=+\z1+ contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
           \ {'hilink': 'luauBoolean', 'cmd': 'syn keyword luau%T_BoolSingleton true false contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
-          \ 'syn region luau%T_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luau%T_Arrow skipwhite',
-          \ {'hilink': 'luauStructure', 'cmd': 'syn match luau%T_Arrow /->/ contained nextgroup=@luau%T,luau%T_Pack,luauTypeL_Variadic,luauTypeL_GenPack skipwhite skipnl' },
-          \ 'syn region luau%T_Pack matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=@luau%T2 skipwhite' ],
+          \ 'syn region luau%T_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luau%T_Arrow,luau%T_Uop skipwhite',
+          \ {'hilink': 'luauStructure', 'cmd': 'syn match luau%T_Arrow /->/ contained nextgroup=@luau%T,luau%T_Paren,luauTypeL_Variadic,luauTypeL_GenPack skipwhite skipnl' },
+          \ 'syn region luau%T_Paren matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luauType_Arrow,luau%T_Uop,@luauType%T2 skipwhite' ],
         \ 'type2': [
           \ {'hilink': 'luauStructure', 'cmd': 'syn match luau%T2_Binop /|\|&/ contained nextgroup=@luau%T skipwhite skipnl' } ] }
+
+  " \ 'syn region luau%T_Pack matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=@luau%T2 skipwhite' ],
 
   let s:typehilinkmap = {}
   " luauType
@@ -494,13 +497,6 @@ if (g:luauHighlightTypes)
         \ 'type2':  {'T': 'CastL'} })
   call s:processExpStack(s:typeout)
 
-
-  " syn cluster luauType contains=luauType_Name,luauType_Module,luauType_Table,luauType_FunctionGen,luauType_FunctionParam,luauType_StringSingleton,luauType_BoolSingleton,luauType_SpecialTypeOf
-  " syn cluster luauType2 contains=luauType2_Binop
-  " syn cluster luauTypeL contains=luauTypeL_Name,luauTypeL_Module,luauTypeL_Table,luauTypeL_FunctionGen,luauTypeL_FunctionParam,luauTypeL_Variadic,luauTypeL_StringSingleton,luauTypeL_BoolSingleton,luauTypeL_SpecialTypeOf
-  " syn cluster luauTypeL2 contains=luauTypeL2_Binop,luauTypeL2_Sep
-  " syn cluster luauTypeParam contains=luauTypeParam_Variadic,luauTypeParam_Name,luauTypeParam_Module,luauTypeParam_Table,luauTypeParam_FunctionGen,luauTypeParam_Paren,luauTypeParam_StringSingleton,luauTypeParam_BoolSingleton,luauTypeParam_SpecialTypeOf
-  " syn cluster luauTypeParam2 contains=luauTypeParam2_Sep,luauTypeParam2_Binop
   syn cluster luauTypeL2 add=luauTypeL2_Sep
   syn cluster luauTypeParam2 add=luauTypeParam2_Sep
   syn cluster luauType add=luauType_FunctionParam
@@ -519,7 +515,7 @@ if (g:luauHighlightTypes)
   syn match luauB_ParamColon /:/ contained nextgroup=luauType_ParamBinding skipwhite
   syn match luauB_ParamVariadicColon /:/ contained nextgroup=luauType_ParamVariadicBinding skipwhite
 
-  syn region luauTypeParam_Paren matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luauType_Arrow,@luauTypeParam2 skipwhite
+  " syn region luauTypeParam_Paren matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luauType_Arrow,@luauTypeParam2 skipwhite
 
   syn match luauTypeFParam_Name /\K\k*\%(\s*:\)\@=/ contained nextgroup=luauTypeFParam_Sep skipwhite
   syn region luauTypeFParam_Sep start=/:/ end=/,/me=e-1 end=/)/me=e-1 transparent contained contains=@luauType skipwhite
@@ -539,76 +535,6 @@ if (g:luauHighlightTypes)
   syn match luauTypeProp_Name /\K\k*\%(\s*:\)\@=/ contained nextgroup=luauTypeProp_Sep skipwhite skipnl
   syn region luauTypeProp_Sep start=/:/ end=/,/ end=/}/me=e-1 transparent contained contains=@luauType skipwhite
   syn region luauTypeProp_Key matchgroup=luauDelimiter start=/\[/ end=/\]/ transparent contained contains=@luauType nextgroup=luauTypeProp_Sep skipwhite
-
-  " syn match luauType2_Binop /|\|&/ contained nextgroup=@luauType skipwhite skipnl
-  " syn match luauTypeL2_Binop /|\|&/ contained nextgroup=@luauTypeL skipwhite skipnl
-  " syn match luauTypeParam2_Binop /|\|&/ contained nextgroup=@luauTypeParam skipwhite skipnl
-
-  " syn match luauType_Uop /?/ contained nextgroup=@luauType2 skipwhite
-  " syn match luauTypeL_Uop /?/ contained nextgroup=@luauTypeL2 skipwhite
-  "syn match luauTypeParam_Uop /?/ contained nextgroup=@luauTypeParam2 skipwhite
-
-  " Note: TypeParams entry point (syn-nextgroup)
-  " syn match luauType_Name /\<\K\k*\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luauType2,luauType_Uop,luauType_Param skipwhite
-  " syn match luauTypeL_Name /\<\K\k*\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luauTypeL2,luauTypeL_Uop,luauTypeL_Param skipwhite
-  " syn match luauTypeParam_Name /\<\K\k*\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luauTypeParam2,luauTypeParam_Uop,luauTypeParam_Param skipwhite
-
-  " Note: TypeParams entry point (syn-nextgroup)
-  " syn match luauType_Module /\<\K\k*\s*\./ contained nextgroup=luauType_Name skipwhite
-  " syn match luauTypeL_Module /\<\K\k*\s*\./ contained nextgroup=luauTypeL_Name skipwhite
-  " syn match luauTypeParam_Module /\<\K\k*\s*\./ contained nextgroup=luauTypeParam_Name skipwhite
-
-  " syn keyword luauType_SpecialTypeOf typeof transparent nextgroup=luauType_ExpInference
-  " syn region luauType_ExpInference matchgroup=luauDelimiter start="(" end=")" transparent contains=@luauE nextgroup=@luauType2 skipwhite skipnl
-  " syn keyword luauTypeL_SpecialTypeOf typeof transparent nextgroup=luauTypeL_ExpInference
-  " syn region luauTypeL_ExpInference matchgroup=luauDelimiter start="(" end=")" transparent contains=@luauE nextgroup=@luauTypeL2 skipwhite skipnl
-  " syn keyword luauTypeParam_SpecialTypeOf typeof transparent nextgroup=luauTypeParam_ExpInference
-  " syn region luauTypeParam_ExpInference matchgroup=luauDelimiter start="(" end=")" transparent contains=@luauE nextgroup=@luauTypeParam2 skipwhite skipnl
-
-  " singleton types
-  " syn region luauType_StringSingleton matchgroup=luauString start=+\z("\|'\)+ end=+\z1+ contained nextgroup=@luauType2,luauType_Uop skipwhite
-  " syn region luauTypeL_StringSingleton matchgroup=luauString start=+\z("\|'\)+ end=+\z1+ contained nextgroup=@luauType2,luauTypeL_Uop skipwhite
-  " syn region luauTypeParam_StringSingleton matchgroup=luauString start=+\z("\|'\)+ end=+\z1+ contained nextgroup=@luauType2,luauTypeParams_Uop skipwhite
-  " syn keyword luauType_BoolSingleton true false contained nextgroup=@luauType2,luauType_Uop skipwhite
-  " syn keyword luauTypeL_BoolSingleton true false contained nextgroup=@luauTypeL2,luauTypeL_Uop skipwhite
-  " syn keyword luauTypeParam_BoolSingleton true false contained nextgroup=@luauTypeParam2,luauTypeParam_Uop skipwhite
-
-  " Note: TypeParams entry point (syn-contains)
-  " syn region luauType_Param matchgroup=luauDelimiter start=+<+ end=+>+ transparent contained contains=@luauTypeParam nextgroup=@luauType2,luauType_Uop skipwhite
-  " syn region luauTypeL_Param matchgroup=luauDelimiter start=+<+ end=+>+ transparent contained contains=@luauTypeParam nextgroup=@luauTypeL2,luauTypeL_Uop skipwhite
-  " syn region luauTypeParam_Param matchgroup=luauDelimiter start=+<+ end=+>+ transparent contained contains=@luauTypeParam nextgroup=@luauTypeParam2,luauTypeParam_Uop skipwhite
-
-  " Note: GenericTypeParameterList entry point (syn-contains)
-  " syn region luauType_FunctionGen matchgroup=luauStructure start=+<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luauType_FunctionParam skipwhite
-  " syn region luauTypeL_FunctionGen matchgroup=luauStructure start=+<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luauTypeL_FunctionParam skipwhite
-  " syn region luauTypeParam_FunctionGen matchgroup=luauStructure start=+<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luauTypeParam_FunctionParam skipwhite
-
-  " syn region luauType_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luauType_Arrow skipwhite
-  " syn region luauTypeL_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luauTypeL_Arrow skipwhite
-  " syn region luauTypeParam_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name nextgroup=luauTypeParam_Arrow skipwhite
-
-  " syn match luauType_Arrow /->/ contained nextgroup=@luauType,luauType_Pack skipwhite skipnl
-  " syn match luauTypeL_Arrow /->/ contained nextgroup=@luauTypeL,luauTypeL_Pack skipwhite skipnl
-  " syn match luauTypeParam_Arrow /->/ contained nextgroup=@luauTypeParam,luauTypeParam_Pack skipwhite skipnl
-
-  " syn region luauType_Pack matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=@luauType2 skipwhite
-  " syn region luauTypeL_Pack matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=@luauTypeL2 skipwhite
-  " syn region luauTypeParam_Pack matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL nextgroup=@luauTypeParam2 skipwhite
-
-  " nextgroup below is luauType rather than luauTypeL, because it's supposed
-  " to be the last element if it's in a type list
-
-  " TableType
-
-  " the grammar is missing the concise list type:
-  " { T }
-  " we'll be respecting it though
-  " from testing, it looks like the concise list type cannot be mixed
-  " with the proplist-based spec
-
-  " syn region luauType_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luauType2,luauType_Uop skipwhite
-  " syn region luauTypeL_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luauTypeL2,luauTypeL_Uop skipwhite
-  " syn region luauTypeParam_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luauTypeParam2,luauParamType_Uop skipwhite
 
   " GenericTypeParameterList
 
