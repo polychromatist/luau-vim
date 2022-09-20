@@ -2,7 +2,7 @@
 " Language:     Luau 0.545
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 17 (luau-vim v0.3.0b)
+" Last Change:  2022 Sep 19 (luau-vim v0.3.0b)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (no default)
 "               - luauHighlightTypes = 0 or 1 (default 1)
@@ -19,7 +19,6 @@
 
 " TODO: make functions adopt the following region format:
 "   syn region start="function" end="end"
-
 
 if exists('b:current_syntax')
   finish
@@ -310,7 +309,7 @@ syn cluster luauK contains=luauK_Local,luauK_Function,luauK_Do,luauK_Return,luau
 syn cluster luauS contains=luauS_Wrap,luauS_DottedVar,luauS_HungVar,luauS_TailVar,luauS_InvokedVar,luauS_ColonInvocation,luauS_DictRef
 syn cluster luauR contains=luauR_While,luauR_Repeat,luauR_For
 syn cluster luauC contains=luauC_If
-syn cluster luauTop contains=@luauK,@luauS,@luauR,@luauC,@luauGeneralBuiltin,luauComment
+syn cluster luauTop contains=@luauK,@luauS,@luauR,@luauC,@luauGeneralBuiltin,luauComment,@luauGeneralString
 
 syn cluster luauA contains=luauA_DottedVar,luauA_HungVar,luauA_TailVar,luauA_DictRef
 syn cluster luauT contains=luauT_NDictK,luauT_EDictK,luauT_Symbol,luauT_Semicolon
@@ -396,6 +395,8 @@ syn match luauS_DictRef /\K\k*\%(\s*\[\)\@=/ contains=@luauGeneralBuiltin nextgr
 syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\K\k*\|\]\|:\)\@<!(" end=")" transparent contains=@luauE,luauE_Uop nextgroup=@luauE2 skipwhite skipnl
 
  " Top Level Statement: function or method invocation
+" /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/
+" /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ 
 syn match luauS_InvokedVar /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ nextgroup=luauV_Invoke skipwhite
 syn match luauS_ColonInvocation /\K\k*\%(\s*:\)\@=/ nextgroup=luauV_Colon skipwhite skipnl
 
@@ -465,7 +466,7 @@ if (g:luauHighlightTypes)
           \ {'hilink': 'luauBoolean', 'cmd': 'syn keyword luau%T_BoolSingleton true false contained nextgroup=@luau%T2,luau%T_Uop skipwhite' },
           \ 'syn region luau%T_FunctionParam matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luau%T_Arrow,luau%T_Uop skipwhite',
           \ {'hilink': 'luauStructure', 'cmd': 'syn match luau%T_Arrow /->/ contained nextgroup=@luau%T,luau%T_Paren,luauTypeL_Variadic,luauTypeL_GenPack skipwhite skipnl' },
-          \ 'syn region luau%T_Paren matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luauType_Arrow,luau%T_Uop,@luauType%T2 skipwhite' ],
+          \ 'syn region luau%T_Paren matchgroup=luauDelimiter start=+(+ end=+)+ transparent contained contains=@luauTypeL,luauTypeFParam_Name,luauTypeFParam_Variadic nextgroup=luau%T_Arrow,luau%T_Uop,@luau%T2 skipwhite' ],
         \ 'type2': [
           \ {'hilink': 'luauStructure', 'cmd': 'syn match luau%T2_Binop /|\|&/ contained nextgroup=@luau%T skipwhite skipnl' } ] }
 
@@ -499,8 +500,8 @@ if (g:luauHighlightTypes)
 
   syn cluster luauTypeL2 add=luauTypeL2_Sep
   syn cluster luauTypeParam2 add=luauTypeParam2_Sep
-  syn cluster luauType add=luauType_FunctionParam
-  syn cluster luauTypeL add=luauTypeL_FunctionParam,luauTypeL_Variadic,luauTypeL_GenPack
+  syn cluster luauType add=luauType_Paren
+  syn cluster luauTypeL add=luauTypeL_Paren,luauTypeL_Variadic,luauTypeL_GenPack
   syn cluster luauTypeParam add=luauTypeParam_Paren,luauTypeParam_Variadic,luauTypeParam_GenPack
   syn cluster luauCastE2 add=@luauE2
   syn cluster luauCastL2 add=@luauL2
@@ -729,25 +730,7 @@ hi def link luauK_Type                luauKeyword
 hi def link luauD_CanonRange          luauOperator
 hi def link luauA_Symbol              luauOperator
 
-" hi def link luauType_Uop              luauOperator
-" hi def link luauTypeL_Uop             luauType_Uop
-" hi def link luauTypeParam_Uop         luauType_Uop
-" hi def link luauType2_Binop           luauStructure
-" hi def link luauTypeL2_Binop          luauType2_Binop
-" hi def link luauTypeParam2_Binop      luauType2_Binop
-" hi def link luauType_Arrow            luauStructure
-" hi def link luauTypeL_Arrow           luauType_Arrow
-" hi def link luauTypeParam_Arrow       luauType_Arrow
 hi def link luauTypedef_Symbol        luauA_Symbol
-" hi def link luauType_StringSingleton    luauString
-" hi def link luauTypeL_StringSingleton   luauType_StringSingleton
-" hi def link luauTypeParam_StringSingleton             luauType_StringSingleton
-" hi def link luauType_BoolSingleton    luauBoolean
-" hi def link luauTypeL_BoolSingleton   luauType_BoolSingleton
-" hi def link luauTypeParam_BoolSingleton             luauType_BoolSingleton
-" hi def link luauType_SpecialTypeOf    luauStructure
-" hi def link luauTypeL_SpecialTypeOf    luauType_SpecialTypeOf
-" hi def link luauTypeParam_SpecialTypeOf    luauType_SpecialTypeOf
 
 hi def link luauD_ExpRangeStart       luauA_Symbol
 

@@ -41,14 +41,14 @@ function! GetLuauIndent()
   if midx == -1
     let midx = match(prevline, '{\s*$')
     if midx == -1
-      let midx = match(prevline, '\<function\>\s*[[:keyword:].:]*\%(<[()<>[:keyword:][:space:],\[\]:{}''".?|&]*>\)\?\s*(')
+      let midx = match(prevline, '\<function\>\s*[[:keyword:].:]*\%(<[()<>[:keyword:][:space:],\[\]:{}''".?|&]\{-}>\)\?\s*(')
     endif
   endif
 
   if midx != -1
     " Add 'shiftwidth' if what we found previously is not in a comment and
     " an "end" or "until" is not present on the same line.
-    if synIDattr(synID(prevlnum, midx + 1, 1), "name") != "luaComment" && prevline !~ '\<end\>\|\<until\>'
+    if synIDattr(synID(prevlnum, midx + 1, 1), "name") != "luauComment" && prevline !~ '\<end\>\|\<until\>'
       let ind = ind + shiftwidth()
     endif
   endif
@@ -56,7 +56,7 @@ function! GetLuauIndent()
   " Subtract a 'shiftwidth' on end, else, elseif, until and '}'
   " This is the part that requires 'indentkeys'.
   let midx = match(getline(v:lnum), '^\s*\%(end\>\|else\>\|elseif\>\|until\>\|}\)')
-  if midx != -1 && synIDattr(synID(v:lnum, midx + 1, 1), "name") != "luaComment"
+  if midx != -1 && synIDattr(synID(v:lnum, midx + 1, 1), "name") !~ 'luau\%(Comment\|\%(E\|L\)_InlineIf\)'
     let ind = ind - shiftwidth()
   endif
 
