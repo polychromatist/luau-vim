@@ -147,7 +147,7 @@ let s:expmap = {
         \ 'syn match luau%t_InvokedVar /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_ColonInvoked /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_BuiltinTmpl /\%(\s\|(\)\@1<=\<\K\k*[.:]\K\k*\>/ contained contains=@luauGeneralBuiltin,luau%t_InvokedVar nextgroup=@luau%t2 skipwhite skipnl',
-        \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite',
+        \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t_Variadic /\.\.\./ contained%n',
         \ 'syn match luau%t_Uop /#\|-\%(-\)\@!\|\<not\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
         \ 'syn region luau%t_Table matchgroup=luauStructure start="{" end="}" transparent contained contains=@luau%l,@luauT,luauComment%n',
@@ -158,7 +158,7 @@ let s:expmap = {
         \ 'syn match luau%t2_Dot /\./ transparent contained nextgroup=@luau%t skipwhite',
         \ 'syn match luau%t2_Colon /\:/ transparent contained nextgroup=luau%t_ColonInvoked skipwhite',
         \ 'syn region luau%t2_Invoke matchgroup=luau%t2_Invoke start="(" end=")" contained contains=@luau%l,luau%l_Uop nextgroup=@luau%t2 skipwhite',
-        \ 'syn region luau%t2_Bracket matchgroup=luau%t2_Bracket start="\[" end="\]" contained contains=@luau%e,luau%e_Uop nextgroup=@luau%t2 skipwhite',
+        \ 'syn region luau%t2_Bracket matchgroup=luau%t2_Bracket start="\[" end="\]" contained contains=@luau%e,luau%e_Uop nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t2_Binop /+\|-\%(-\)\@!\|\*\|\/\|\^\|%\|\.\.\|<=\?\|>=\?\|[~=]=\|\<and\>\|\<or\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
         \ 'syn match luau%t2_CastSymbol /::/ contained nextgroup=@luauCast%t skipwhite'] }
 
@@ -386,10 +386,10 @@ syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\
 " luauS - top level syntactic (S)tatements
 
 " Top Level Statement: variable tokens
-syn match luauS_DottedVar /\K\k*\%(\s*\.\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_Dot skipwhite
-syn match luauS_HungVar /\K\k*\%(\s*,\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauA_Comma skipwhite
-syn match luauS_TailVar /\K\k*\%(\s*\%(=\|+=\|-=\|\/=\|\*=\|\^=\|\.\.=\)\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauA_Symbol skipwhite
-syn match luauS_DictRef /\K\k*\%(\s*\[\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_DictKey skipwhite
+syn match luauS_DottedVar /\<\K\k*\%(\s*\.\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_Dot skipwhite
+syn match luauS_HungVar /\%(end\)\@!\<\K\k*\%(\s*,\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauA_Comma skipwhite
+syn match luauS_TailVar /\<\K\k*\%(\s*\%(=\|+=\|-=\|\/=\|\*=\|\^=\|\.\.=\)\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauA_Symbol skipwhite
+syn match luauS_DictRef /\<\K\k*\%(\s*\[\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_DictKey skipwhite
 
 " Top Level Statement: anonymous wrapped expression
 syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\K\k*\|\]\|:\)\@<!(" end=")" transparent contains=@luauE,luauE_Uop nextgroup=@luauE2 skipwhite skipnl
