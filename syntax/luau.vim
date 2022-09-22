@@ -365,8 +365,10 @@ syn keyword luauK_Continue continue
 
 " Top Level Keyword: [export] type
 syn match luauK_Export /export\%(\s\+[^[:keyword:]]\)\@!/ nextgroup=luauK_Type skipwhite
-syn match luauK_Type /type\%(\s\+[^[:keyword:]]\)\@!/ nextgroup=luauTypedef_Name skipwhite
-syn match luauTypedef_Name /\K\k*/ contained nextgroup=luauTypedef_GenParam,luauTypedef_Symbol skipwhite
+syn match luauK_Type /type\%(\s\+[^[:keyword:]]\)\@!/ nextgroup=luauTypedef_DottedName,luauTypedef_Name skipwhite
+syn match luauTypedef_DottedName /\<\K\k*\>\%(\s*\.\)\@=/ contained nextgroup=luauTypedef_Dot skipwhite
+syn match luauTypedef_Dot /\./ contained nextgroup=luauTypedef_Name skipwhite
+syn match luauTypedef_Name /\<\K\k*\>\%(\s*\.\)\@!/ contained nextgroup=luauTypedef_GenParam,luauTypedef_Symbol skipwhite
 syn region luauTypedef_GenParam matchgroup=luauStructure start="<" end=">" transparent contained contains=@luauTypeGenParam nextgroup=luauTypedef_Symbol skipwhite skipnl
 syn match luauTypedef_Symbol /=/ contained nextgroup=@luauType skipwhite skipnl
 
@@ -452,10 +454,12 @@ if (g:luauHighlightTypes)
           \ 'syn cluster luau%T2 contains=luau%T2_Binop',
           \ ],
         \ 'type': [
+          \ {'hilink': 'luauIdentifier', 'cmd': 'syn keyword luau%T_Primitive any number string boolean function table thread userdata contained containedin=luau%T_Name' },
+          \ {'hilink': 'luauSpecial', 'cmd': 'syn keyword luau%T_Boundary never unknown contained containedin=luau%T_Name' },
           \ {'hilink': 'luauOperator', 'cmd': 'syn match luau%T_Uop /?/ contained nextgroup=@luau%T2 skipwhite'},
           \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\>\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite' },
           \ 'syn match luau%T_Module /\<\K\k*\s*\.\%(\s*\K\)\@=/ contained nextgroup=luau%T_Name skipwhite',
-          \ 'syn region luau%T_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key nextgroup=@luau%T2,luau%T_Uop skipwhite',
+          \ 'syn region luau%T_Table matchgroup=luauStructure start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key,luauComment nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ 'syn region luau%T_FunctionGen matchgroup=luauStructure start=+\%(\k\s*\)\@<!<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luau%T_FunctionParam skipwhite',
           \ 'syn region luau%T_Param matchgroup=luauDelimiter start=+<+ end=+>+ transparent contained contains=@luauTypeParam nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ {'hilink': 'luauPreProc', 'cmd': 'syn match luau%T_SpecialTypeOf /\<typeof\%(\s*[^(]\)\@!/ nextgroup=luau%T_ExpInference skipwhite'},
