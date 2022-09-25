@@ -325,7 +325,7 @@ syn match luauS_ColonInvocation /\<\K\k*\>\%(\s*:\)\@=/ containedin=luauS_HeadVa
 " Top Level Statements: variable tokens
 syn match luauS_HeadVar /\%(\.\s*\)\@<!\<\K\k*\>\%(\s*\%(,\|\[\|\.\)\)\@!/ nextgroup=@luauV skipwhite
 syn match luauS_HeadDottedVar /\%(\.\s*\)\@<!\<\K\k*\>\%(\s*\.\)\@=/ nextgroup=luauV_HeadDot skipwhite
-syn match luauS_DotHead /\<\K\k*\>/ contained nextgroup=@luauV,luauA_Symbol skipwhite
+syn match luauS_DotHead /\<\K\k*\>\%(\s*\%(,\|\[\|\.\)\)\@!/ contained nextgroup=@luauV,luauA_Symbol skipwhite
 syn match luauS_DottedVar /\<\K\k*\>\%(\s*\.\)\@=/ contained nextgroup=luauV_Dot skipwhite
 syn match luauS_HungVar /\%(end\)\@!\<\K\k*\>\%(\s*,\)\@=/ nextgroup=luauA_Comma skipwhite
 syn match luauS_TailVar /\<\K\k*\>\%(\s*\%(=\|+=\|-=\|\/=\|\*=\|\^=\|\.=\)\)\@=/ containedin=luauS_DotHead nextgroup=luauA_Symbol skipwhite

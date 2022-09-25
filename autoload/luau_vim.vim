@@ -1,4 +1,5 @@
 " luau-vim/autoload/luau_vim.vim
+" Author:       polychromatist <polychromatist proton me>
 " Last Change:  2022 Sep 5 (luau-vim v0.2.0)
 
 " this source file is a monolith that handles all tasks requiring logic and
@@ -175,7 +176,7 @@ function! s:_check_api_readiness() abort
 endfunction
 
 function! s:_win_api_fetch() abort
-  let l:query = 'powershell -command "Invoke-WebRequest -Uri %s -Method GET"'
+  let l:query = 'powershell.exe -command "irm -Method HEAD -Uri %s"'
 
 
 endfunction
