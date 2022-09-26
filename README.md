@@ -1,3 +1,5 @@
+<meta name="google-site-verification" content="google-site-verification: google40363b384ac950fb.html"/>
+
 # luau-vim
 
 <img style="float: left;" src="luau-vim-repologo-160x160.png"/>
