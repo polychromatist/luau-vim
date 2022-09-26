@@ -4,10 +4,10 @@
       "source": {
         "title": "@NightrainsRbx/RobloxLsp",
         "link": "https://github.com/NightrainsRbx/RobloxLsp",
-        "path": "server/def/3rd/roact.luau"
+        "path": "server/def/3rd/rodux.luau"
       },
       "font": "Fira Code",
-      "resource": "robloxlsp_roactluau.png",
+      "resource": "robloxlsp_roduxluau.png",
       "theme": "moonfly"
     },
     {
