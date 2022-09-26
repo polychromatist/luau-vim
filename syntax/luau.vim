@@ -764,7 +764,6 @@ hi def link luauF_Method              luauF_Name
 
 hi def link luauF_ParamDelim          luauDelimiter
 
-hi def link luauS_InvokedVar          luaFuncCall
 hi def link luauS_InvokedVar          luauFunction
 hi def link luauE_InvokedVar          luauS_InvokedVar
 hi def link luauL_InvokedVar          luauS_InvokedVar
@@ -781,7 +780,6 @@ hi def link luauC_Else                luauC_Keyword
 
 hi def link luauB_Function            luauK_Function
 
-hi def link luauTable               luaBraces
 hi def link luauTable               luauStructure
 
 call s:processHighlightMap(s:exphilinkout)
@@ -790,7 +788,7 @@ if exists('s:typehilinkout')
 endif
 
 if (g:luauHighlightBuiltins)
-  hi def link luauBuiltin           luaBuiltin
+  " hi def link luauBuiltin           luaBuiltin
   hi def link luauBuiltin           Function
 
   hi def link luauLibrary           luauBuiltin
