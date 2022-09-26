@@ -1,0 +1,53 @@
+{
+  "list": [
+    {
+      "source": {
+        "title": "@NightrainsRbx/RobloxLsp",
+        "link": "https://github.com/NightrainsRbx/RobloxLsp",
+        "path": "server/def/3rd/roact.luau"
+      },
+      "font": "Fira Code",
+      "resource": "robloxlsp_roactluau.png",
+      "theme": "moonfly"
+    },
+    {
+      "source": {
+        "title": "@Anaminus/Bitbuf",
+        "link": "https://github.com/Anaminus/roblox-library/tree/master/modules/Bitbuf",
+        "path": "Bitbuf.lua"
+      },
+      "font": "Fira Code",
+      "resource": "bitbuf_stringmtindex.png",
+      "theme": "Gruvbox &background=dark"
+    },
+    {
+      "source": {
+        "title": "@evaera/matter",
+        "link": "https://github.com/evaera/matter",
+        "path": "lib/World.lua#query()"
+      },
+      "font": "6x13",
+      "resource": "evaera_matter_world_query.png",
+      "theme": "elflord"
+    },
+    {
+      "source": {
+        "title": "geoplane",
+        "path": "Mesh3/Mesh3__type.lua"
+      },
+      "font": "6x13",
+      "resource": "geoplane_mesh__type.png",
+      "theme": "moonfly"
+    },
+    {
+      "source": {
+        "title": "@Novetus/Novetus-src",
+        "link": "https://github.com/Novetus/Novetus-src",
+        "path": "scripts/game/2012M/CSMPFunctions.lua"
+      },
+      "font": "6x13",
+      "resource": "novetus_2012m_csmpfunctions.png",
+      "theme": "moonfly"
+    }
+  ]
+}
