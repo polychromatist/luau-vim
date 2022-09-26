@@ -1,16 +1,13 @@
 class Screenshot {
   static first;
-  static imageClassName = "d-block w-100";
+  static imageClassName = "d-block w-100 img-fluid";
 
   constructor(caption, resource) {
     this.caption = caption;
     this.image = new Image();
-    this.image.src = resource;
+    this.image.src = `screenshots/${resource}`;
+    this.image.alt = "..."
     this.image.className = Screenshot.imageClassName;
-    this._placeholderImage = new Image();
-    this._placeholderImage.src = "...";
-    this._placeholderImage.alt = "...";
-    this._placeholderImage.className = Screenshot.imageClassName;
     this._desc = {};
     this._callbacks = {
       onRender: []
@@ -39,15 +36,13 @@ class Screenshot {
 
     this.element = document.createElement('div');
     this.element.className = "carousel-item";
-    if(this.image.complete)
-      this.element.appendChild(this.image);
-    else {
-      this.element.appendChild(this._placeholderImage);
+    this.element.appendChild(this.image);
+    if(this.image.complete) {
+      this.element.alt = "";
+    } else {
       this.image.onload = () => {
-        console.log("hello there");
-        this.element.removeChild(this._placeholderImage);
-        this.element.addChild(this.image);
-      };
+        this.element.alt = "";
+      }
     }
     this._dispatchCallbacks('onRender'); 
   }
@@ -111,10 +106,10 @@ var data = {
       "source": {
         "title": "@NightrainsRbx/RobloxLsp",
         "link": "https://github.com/NightrainsRbx/RobloxLsp",
-        "path": "server/def/3rd/roact.luau"
+        "path": "server/def/3rd/rodux.luau"
       },
       "font": "Fira Code",
-      "resource": "robloxlsp_roactluau.png",
+      "resource": "robloxlsp_roduxluau.png",
       "theme": "moonfly"
     },
     {
@@ -164,12 +159,12 @@ function main() {
 
   var screenshotCarousel = document.querySelector("#carouselScreenshots");
   var screenshotAnchor = screenshotCarousel.children[0];
+ 
+  var myenv = process(data);
 
   function addScreenshotToDOM(screenshot) {
     screenshotAnchor.appendChild(screenshot.element);
   }
-
-  var myenv = process(data);
 
   myenv.Screenshots.forEach(screenshot => {
     if (screenshot.hasOwnProperty("element"))
@@ -188,8 +183,12 @@ function main() {
       res();
     });
   }))).then(() => {
-    console.log("hello there");
-    new bootstrap.Carousel('#carouselScreenshots')
+    console.log("what has gone wrong");
+    myenv.Screenshots[0].setFirst();
+    new bootstrap.Carousel(screenshotCarousel, {
+      interval: 5000,
+      ride: "carousel"
+    });
   });
 }
 
