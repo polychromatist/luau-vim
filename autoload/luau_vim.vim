@@ -1,6 +1,6 @@
 " luau-vim/autoload/luau_vim.vim
 " Author:       polychromatist <polychromatist proton me>
-" Last Change:  2022 Sep 5 (luau-vim v0.2.0)
+" Last Change:  2022 Sep 26 (luau-vim v0.3.1)
 
 " this source file is a monolith that handles all tasks requiring logic and
 " advertises them under the luau_vim scope. there is currently only one task:
@@ -41,19 +41,19 @@ else
 endif
 
 " windows/unix+curl wrapper to fetch roblox api content from s:api_dump_url
-function! luau_vim#rbx_api_fetch() abort
+function! luau_vim#robloxAPIFetch() abort
   if has('win64') || has('win32')
-    return s:_win_api_fetch()
+    return s:winAPIFetch()
   elseif has('unix') && executable('curl')
-    return s:_curl_api_fetch()
+    return s:curlAPIFetch()
   else
     echoerr 'please install curl or put "let g:luauIncludeRobloxAPIDump = 0" in vim config'
-    throw 'could not detect any api retrieval method'
+    throw 'no roblox api retrieval method'
   endif
 endfunction
 
 " parse & create vim syntax output
-function! luau_vim#rbx_api_parse(api_data) abort
+function! luau_vim#robloxAPIParse(api_data) abort
   let l:rbx_syngen_fpath = luau_vim#get_rbx_syngen_fpath()
 
   if (filereadable(l:rbx_syngen_fpath))
@@ -79,10 +79,6 @@ function! luau_vim#rbx_api_parse(api_data) abort
   
   " Classes
 
-  " use a while loop, as the api data is not small
-  " although it's not huge at all, we should take care
-  " using statements that would either parse the entire list
-  " again and again or create big intermediate lists
   while l:_i < l:api_item_max
     " Termination Condition: hitting the enum section
     let l:api_item = a:api_data[l:_i]
@@ -137,36 +133,36 @@ function! luau_vim#rbx_api_parse(api_data) abort
 
 endfunction
 
-function! luau_vim#rbx_api_clean() abort
-  let l:api_dirpath = s:_get_api_dirpath()
+function! luau_vim#rbxAPIClean() abort
+  let l:api_dirpath = s:getAPIDir()
 
   delete(l:api_dirpath, 'rf')
 
-  let l:rbx_syngen_fpath = luau_vim#get_rbx_syngen_fpath()
+  let l:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath()
 
   delete(l:rbx_syngen_fpath)
 endfunction
 
-function! s:_get_api_dirpath() abort
+function! s:getAPIDir() abort
   return $"{s:_project_root}/{s:api_dump_dirname}"
 endfunction
 
-function! s:_get_api_filepath() abort
+function! s:getAPIFilename() abort
   return $"{s:_get_api_dirpath()}/{s:_current_api_suffix}.json"
 endfunction
 
-function! luau_vim#get_rbx_syngen_fpath() abort
+function! luau_vim#getRobloxSyntaxTargetPath() abort
   return $"{s:_project_root}/syntax/{s:api_dump_dirname}.vim"
 endfunction
 
-function! s:_check_api_readiness() abort
-  let l:api_dirpath = s:_get_api_dirpath()
+function! s:checkAPIReadiness() abort
+  let api_dirpath = s:getAPIDir()
 
-  if !isdirectory(l:api_dirpath)
+  if !isdirectory(api_dirpath)
     return 0
   endif
 
-  let l:api_filepath = s:_get_api_filepath()
+  let api_filepath = s:getAPIFilename()
 
   if !filereadable(l:api_filepath)
     return 0
@@ -175,15 +171,34 @@ function! s:_check_api_readiness() abort
   return 1
 endfunction
 
-function! s:_win_api_fetch() abort
+function! s:perpareAPITargets() abort
+  let l:api_dirpath = s:getAPIDir()
+  let l:api_filepath = s:getAPIFilename()
+  let l:etag_filepath = l:api_filepath . '.etag'
+
+  if !isdirectory(l:api_dirpath)
+    call mkdir(l:api_dirpath)
+  endif
+
+  return {
+        \ 'dir': l:api_dirpath,
+        \ 'filename': l:api_filepath,
+        \ 'etagpath': l:etag_filepath }
+endfunction
+
+function! s:winAPIFetch() abort
+  let l:api_dirpath = s:getAPIDir()
+  let l:api_filepath = s:getAPIFilename()
+  let l:etag_filepath = l:api_filepath . '.etag'
+
   let l:query = 'powershell.exe -command "irm -Method HEAD -Uri %s"'
 
 
 endfunction
 
-function! s:_curl_api_fetch(force) abort
-  let l:api_dirpath = s:_get_api_dirpath()
-  let l:api_filepath = s:_get_api_filepath()
+function! s:curlAPIFetch(force) abort
+  let l:api_dirpath = s:getAPIDir()
+  let l:api_filepath = s:getAPIFilename()
   let l:etag_filepath = l:api_filepath . '.etag'
 
   if !isdirectory(l:api_dirpath)
