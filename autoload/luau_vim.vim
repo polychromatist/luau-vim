@@ -2,12 +2,6 @@
 " Author:       polychromatist <polychromatist proton me>
 " Last Change:  2022 Sep 26 (luau-vim v0.3.1)
 
-" this source file is a monolith that handles all tasks requiring logic and
-" advertises them under the luau_vim scope. there is currently only one task:
-" - implement g:luauRobloxIncludeAPIDump
-"   * fetch, parse Roblox API
-"   * generate vim syntax file for luau.vim integration
-
 " roblox api source url
 if exists('g:luauRobloxAPIDumpURL')
   let s:api_dump_url = g:luauRobloxAPIDumpURL
@@ -54,7 +48,7 @@ endfunction
 
 " parse & create vim syntax output
 function! luau_vim#robloxAPIParse(api_data) abort
-  let l:rbx_syngen_fpath = luau_vim#get_rbx_syngen_fpath()
+  let l:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath()
 
   if (filereadable(l:rbx_syngen_fpath))
     delete(l:rbx_syngen_fpath)
@@ -133,47 +127,31 @@ function! luau_vim#robloxAPIParse(api_data) abort
 
 endfunction
 
-function! luau_vim#rbxAPIClean() abort
-  let l:api_dirpath = s:getAPIDir()
+function! luau_vim#rbxAPIClean(sep) abort
+  let l:api_dirpath = s:getAPIDir(a:sep)
 
   delete(l:api_dirpath, 'rf')
 
-  let l:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath()
+  let l:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath(a:sep)
 
   delete(l:rbx_syngen_fpath)
 endfunction
 
-function! s:getAPIDir() abort
-  return $"{s:_project_root}/{s:api_dump_dirname}"
+function! s:getAPIDir(sep) abort
+  return $"{s:_project_root}{a:sep}{s:api_dump_dirname}"
 endfunction
 
-function! s:getAPIFilename() abort
-  return $"{s:_get_api_dirpath()}/{s:_current_api_suffix}.json"
+function! s:getAPIFilename(sep) abort
+  return $"{s:getAPIDir(a:sep)}{a:sep}{s:_current_api_suffix}.txt"
 endfunction
 
-function! luau_vim#getRobloxSyntaxTargetPath() abort
-  return $"{s:_project_root}/syntax/{s:api_dump_dirname}.vim"
+function! luau_vim#getRobloxSyntaxTargetPath(sep) abort
+  return $"{s:_project_root}{a:sep}syntax{a:sep}{s:api_dump_dirname}.vim"
 endfunction
 
-function! s:checkAPIReadiness() abort
-  let api_dirpath = s:getAPIDir()
-
-  if !isdirectory(api_dirpath)
-    return 0
-  endif
-
-  let api_filepath = s:getAPIFilename()
-
-  if !filereadable(l:api_filepath)
-    return 0
-  endif
-
-  return 1
-endfunction
-
-function! s:perpareAPITargets() abort
-  let l:api_dirpath = s:getAPIDir()
-  let l:api_filepath = s:getAPIFilename()
+function! s:prepareAPITargets(sep) abort
+  let l:api_dirpath = s:getAPIDir(a:sep)
+  let l:api_filepath = s:getAPIFilename(a:sep)
   let l:etag_filepath = l:api_filepath . '.etag'
 
   if !isdirectory(l:api_dirpath)
@@ -183,37 +161,68 @@ function! s:perpareAPITargets() abort
   return {
         \ 'dir': l:api_dirpath,
         \ 'filename': l:api_filepath,
-        \ 'etagpath': l:etag_filepath }
+        \ 'etag': l:etag_filepath }
 endfunction
 
-function! s:winAPIFetch() abort
-  let l:api_dirpath = s:getAPIDir()
-  let l:api_filepath = s:getAPIFilename()
-  let l:etag_filepath = l:api_filepath . '.etag'
+function! s:collideCache(etagtarget, etagremotedata) abort
+  if (filereadable(a:etagtarget))
+    let l:etagdata = readfile(a:etagtarget)[0]
+    if (a:etagremotedata ==# l:etagdata)
+      return 1
+    endif
+  endif
+  return 0
+endfunction
 
-  let l:query = 'powershell.exe -command "irm -Method HEAD -Uri %s"'
+function! s:processMainQuery(query, targets, etag) abort
+  if filereadable(a:targets.etag)
+    delete(a:targets.etag)
+  endif
+  if filereadable(a:targets.filepath)
+    delete(a:targets.filepath)
+  endif
 
+  call printf(a:query, shellescape(s:api_dump_url), fnameescape(a:targets.filepath))
+  call system(a:query)
 
+  if !filereadable(a:targets.filepath)
+    echoerr 'no file containing response body was found after web request'
+    throw 'failed api fetch'
+  endif
+
+  call writefile([a:etag], a:targets.etag, '')
+
+  return readfile(a:targets.filepath)
+endfunction
+
+function! s:winAPIFetch(force) abort
+  let l:targets = s:prepareAPITargets('\')
+
+  let l:subquery = 'powershell.exe -Command "(iwr -Method Head -Uri %s).Headers.ETag"'
+  call printf(l:subquery, shellescape(s:api_dump_url))
+
+  let l:sq_res = system(l:subquery)
+  let l:sq_res_lines = split(l:sq_res, "\\(\r\n\|\n\\)")
+  let l:remote_etag = l:sq_res_lines[0]
+
+  if (!a:force && s:collideCache(l:targets.etag, l:remote_etag))
+    return readfile(l:targets.filepath)
+  endif
+
+  let l:query = 'powershell.exe -Command "irm -Method GET -Uri %s -OutFile %s"'
+
+  return s:processMainQuery(l:query, l:targets, l:remote_etag)
 endfunction
 
 function! s:curlAPIFetch(force) abort
-  let l:api_dirpath = s:getAPIDir()
-  let l:api_filepath = s:getAPIFilename()
-  let l:etag_filepath = l:api_filepath . '.etag'
-
-  if !isdirectory(l:api_dirpath)
-    call mkdir(l:api_dirpath)
-  endif
+  let l:targets = s:prepareAPITargets('/')
 
   let l:subquery = 'curl -I %s'
   call printf(l:subquery, shellescape(s:api_dump_url))
 
   let l:sq_res = system(l:subquery)
-
   let l:sq_res_lines = split(l:sq_res, "\\(\r\n\\|\n\\)")
-
   let l:sq_etag_midx = match(l:sq_res_lines, 'etag')
-
   if l:sq_etag_midx ==# -1
     echoerr 'no etag in subquery response headers for api versioning'
     throw 'bad api response'
@@ -221,31 +230,11 @@ function! s:curlAPIFetch(force) abort
 
   let l:remote_etag = matchstr(l:sq_res_lines[l:sq_etag_midx], "etag: \"\\zs[[:xdigit:]]\\+\\ze\"")
 
-  if (!a:force && filereadable(l:etag_filepath))
-    let l:stored_etag = readfile(l:etag_filepath)[0]
-    if (l:remote_etag ==# l:stored_etag)
-      return readfile(l:api_filepath)
-    endif
+  if (!a:force && s:collideCache(l:targets.etag, l:remote_etag))
+    return readfile(l:targets.filename)
   endif
 
-  let l:query = 'curl -fsSL --http2 %s --compressed -o %s'
-
-  if filereadable(l:etag_filepath)
-    delete(l:etag_filepath)
-  endif
-  if filereadable(l:api_filepath)
-    delete(l:api_filepath)
-  endif
-
-  call printf(l:query, shellescape(s:api_dump_url), l:api_filepath)
-  call system(l:query)
-
-  if !filereadable(l:api_filepath)
-    echoerr 'no file containing response body was found after api request'
-    throw 'no curl output file'
-  endif
-
-  call writefile([l:remote_etag], l:api_filepath, '')
-
-  return readfile(l:api_filepath)
+  let l:query = 'curl -sSL %s -o %s'
+  
+  return s:processMainQuery(l:query, l:targets, l:remote_etag)
 endfunction

@@ -1,8 +1,8 @@
 " Vim syntax file
-" Language:     Luau 0.545
+" Language:     Luau 0.546
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 23 (luau-vim v0.3.0b)
+" Last Change:  2022 Sep 27 (luau-vim v0.3.1)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (no default)
 "               - luauHighlightTypes = 0 or 1 (default 1)
@@ -21,8 +21,8 @@ if exists('b:current_syntax')
   finish
 endif
 
-let s:cpo_save = &cpo
-set cpo&vim
+let s:cpo_save = &cpoptions
+set cpoptions&vim
 
 if !exists('g:luauHighlightAll')
   let g:luauHighlightTypes = exists('g:luauHighlightTypes') ? g:luauHighlightTypes : 1
@@ -695,9 +695,14 @@ if (g:luauHighlightRoblox)
   endif
 
   if (g:luauRobloxIncludeAPIDump)
-    let s:rbx_syngen_fpath = luau_vim#get_rbx_syngen_fpath()
-    if (!filereadable(s:rbx_syngen_fpath))
-      call luau_vim#rbx_api_parse()
+    if has('win32') || has('win64')
+      let s:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath('\')
+    else
+      let s:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath('/')
+    endif
+
+    if !filereadable(s:rbx_syngen_fpath)
+      call luau_vim#robloxAPIParse(luau_vim#robloxAPIFetch())
     endif
 
     source! s:rbx_syngen_fpath
@@ -843,5 +848,5 @@ syn sync minlines=200
 
 let b:current_syntax='luau'
 
-let &cpo = s:cpo_save
+let &cpoptions = s:cpo_save
 unlet s:cpo_save
