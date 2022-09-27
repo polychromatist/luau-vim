@@ -332,7 +332,7 @@ syn match luauS_TailVar /\<\K\k*\>\%(\s*\%(=\|+=\|-=\|\/=\|\*=\|\^=\|\.=\)\)\@=/
 syn match luauS_DictRef /\<\K\k*\>\%(\s*\[\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_DictKey skipwhite
 
 " Top Level Statement: anonymous wrapped expression
-syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\K\k*\|\]\|:\)\@<!(" end=")" transparent contains=@luauE,luauE_Uop nextgroup=@luauE2 skipwhite skipnl
+syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\%(\K\k*\|\]\|:\)\s*\)\@<!(" end=")" transparent contains=@luauE,luauE_Uop nextgroup=@luauV,@luauE2 skipwhite skipnl
 
 " /\K\k*\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/
 " /\K\k*\%(\s*\%((\|'\|"\|\[=*\[\)\)\@=/ 
@@ -459,7 +459,7 @@ if (g:luauHighlightTypes)
 
   let s:typemap = {
         \ 'typec': [
-          \ 'syn cluster luau%T contains=luau%T_Name,luau%T_Module,luau%T_Table,luau%T_FunctionGen,luau%T_StringSingleton,luau%T_BoolSingleton,luau%T_NilSingleton,luau%T_SpecialTypeOf',
+          \ 'syn cluster luau%T contains=luau%T_Name,luau%T_Module,luau%T_Table,luau%T_FunctionGen,luau%T_StringSingleton,luau%T_BoolSingleton,luau%T_NilSingleton,luau%T_SpecialTypeOf,luau%T_Paren',
           \ 'syn cluster luau%T2 contains=luau%T2_Binop',
           \ ],
         \ 'type': [
@@ -512,9 +512,8 @@ if (g:luauHighlightTypes)
 
   syn cluster luauTypeL2 add=luauTypeL2_Sep
   syn cluster luauTypeParam2 add=luauTypeParam2_Sep
-  syn cluster luauType add=luauType_Paren
-  syn cluster luauTypeL add=luauTypeL_Paren,luauTypeL_Variadic,luauTypeL_GenPack
-  syn cluster luauTypeParam add=luauTypeParam_Paren,luauTypeParam_Variadic,luauTypeParam_GenPack
+  syn cluster luauTypeL add=luauTypeL_Variadic,luauTypeL_GenPack
+  syn cluster luauTypeParam add=luauTypeParam_Variadic,luauTypeParam_GenPack
   syn cluster luauCastE2 add=@luauE2
   syn cluster luauCastL2 add=@luauL2
 
@@ -801,10 +800,6 @@ if exists('s:typehilinkout')
 endif
 
 if (g:luauHighlightBuiltins)
-<<<<<<< HEAD
-=======
-  " hi def link luauBuiltin           luaBuiltin
->>>>>>> main
   hi def link luauBuiltin           Function
 
   hi def link luauLibrary           luauBuiltin
