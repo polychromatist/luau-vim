@@ -1,3 +1,5 @@
+<meta name="google-site-verification" content="iXPhH_6Bov7sXOAo7frcDNlcKi9B_25OhXnypXoZVMo" />
+
 # luau-vim
 
 <img style="float: left;" src="luau-vim-repologo-160x160.png"/>
@@ -6,21 +8,7 @@ Vimscript syntax plugin for Luau and Roblox Luau. This plugin intends to provide
 
 It's still experimental. You may be surprised by highlighting that bleeds over or appears missing. If that's important to you, it's important to [create an issue](https://github.com/polychromatist/luau-vim/issues).
 
-## Screenshots
-
-v0.2.0
-
-[PaperColor light](https://github.com/NLKNguyen/papercolor-theme): `protomodroot: <module>().pathparse()`
-
-![protomodroot: \<module\>().pathparse()](screenshots/protomodroot_parser1.png)
-
-elflord dark: [`@evaera/matter/lib/World#query()`](https://github.com/evaera/matter/blob/dc6edffcb1e41fb1b34ebbacb052fb10f445e417/lib/World.lua#L555)
-
-![@evaera/matter/lib/World#query()](screenshots/evaera_matter_world_query.png)
-
-[moonfly theme dark](https://github.com/bluz71/vim-moonfly-colors): `geoplane/Mesh3/CSCMatrix: MAT_GAUSSELIM_USWAP()`
-
-![geoplane/Mesh3/CSCMatrix: MAT_GAUSSELIM_USWAP()](screenshots/geoplane-mesh3-cscmat-nfn.png)
+Head to [the github pages](https://polychromatist.github.io/luau-vim/) for screenshots. <sup>_may not be working yet_</sup>
 
 ## Installation
 Installing is as simple as pulling the repo with your preferred plugin manager.

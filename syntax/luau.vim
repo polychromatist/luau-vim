@@ -801,6 +801,10 @@ if exists('s:typehilinkout')
 endif
 
 if (g:luauHighlightBuiltins)
+<<<<<<< HEAD
+=======
+  " hi def link luauBuiltin           luaBuiltin
+>>>>>>> main
   hi def link luauBuiltin           Function
 
   hi def link luauLibrary           luauBuiltin
