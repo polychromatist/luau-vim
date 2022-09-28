@@ -144,7 +144,7 @@ let s:expmap = {
         \ 'syn region luau%t_CallbackGen matchgroup=luauStructure start="<" end=">" transparent contained contains=@luauTypeGenParam nextgroup=luau%t_FunctionParams skipwhite skipnl',
         \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")\%(\_s*:\)\@!"me=e-1 end=")\_s*:"me=e-1 contained contains=luauB_Param,luauB_ParamVariadic nextgroup=luau%t_TypeHeader,luau%t_Block',
         \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start="." matchgroup=luauK_Function end="end" transparent contains=@luauTop contained%n',
-        \ 'syn region luau%t_TypeHeader matchgroup=luauF_ParamDelim start=":" end="$" transparent contains=@luauType,luauTypeL_Variadic,luauTypeL_GenPack nextgroup=luau%t_Block skipwhite skipempty',
+        \ 'syn region luau%t_TypeHeader matchgroup=luauF_ParamDelim start=":" end="$" contained transparent contains=@luauType,luauTypeL_Variadic,luauTypeL_GenPack nextgroup=luau%t_Block skipwhite skipempty',
         \ 'syn match luau%t_Var /\%(\.\s*\)\@<=\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_HeadVar /\%(\.\s*\)\@<!\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite',
         \ 'syn match luau%t_BuiltinTarget /[.:]\<\K\k*\>/ contains=@luauDotLibs contained nextgroup=@luau%t2 skipwhite skipnl',
@@ -287,7 +287,7 @@ endfunction
 " Section: Luau grammar
 
 " @luauE, @luauE2, luauNumber, luauFloat, @luauGeneralString
-let s:exp_nxt1 = ' nextgroup=luauE2_Binop,luauE2_CastSymbol skipwhite'
+let s:exp_nxt1 = ' nextgroup=luauE2_Binop,luauE2_CastSymbol skipwhite skipnl'
 let s:exp_nxt2 = ' nextgroup=luauE2_CastSymbol skipwhite'
 call s:newExp(s:expmap, s:exphilinkmap, s:expout, s:exphilinkout, {
      \ 'string': {           'n': s:exp_nxt1,   'p': ''                     },
@@ -297,7 +297,7 @@ call s:newExp(s:expmap, s:exphilinkmap, s:expout, s:exphilinkout, {
      \ 'exp':    {'t': 'E',  'n': s:exp_nxt2,           'e': 'E', 'l': 'L'  },
      \ 'exp2':   {'t': 'E',                             'e': 'E', 'l': 'L'  } })
 " @luauL, @luauL2, luauL_Number, luauL_Float, @luauL_GeneralString
-let s:lexp_nxt1 = ' contained nextgroup=luauL2_Sep,luauL2_Binop,luauL2_CastSymbol skipwhite'
+let s:lexp_nxt1 = ' contained nextgroup=luauL2_Sep,luauL2_Binop,luauL2_CastSymbol skipwhite skipnl'
 let s:lexp_nxt2 = ',luauL2_Sep'
 let s:lexp_nxt3 = ' nextgroup=luauL2_Sep,luauL2_CastSymbol skipwhite'
 call s:newExp(s:expmap, s:exphilinkmap, s:expout, s:exphilinkout, {
@@ -405,7 +405,7 @@ syn match luauK_Type /type\%(\s\+[^[:keyword:]]\)\@!/ nextgroup=luauTypedef_Dott
 syn match luauTypedef_DottedName /\<\K\k*\>\%(\s*\.\)\@=/ contained nextgroup=luauTypedef_Dot skipwhite
 syn match luauTypedef_Dot /\./ contained nextgroup=luauTypedef_Name skipwhite
 syn match luauTypedef_Name /\<\K\k*\>\%(\s*\.\)\@!/ contained nextgroup=luauTypedef_GenParam,luauTypedef_Symbol skipwhite
-syn region luauTypedef_GenParam matchgroup=luauStructure start="<" end=">" transparent contained contains=@luauTypeGenParam nextgroup=luauTypedef_Symbol skipwhite skipnl
+syn region luauTypedef_GenParam matchgroup=luauStructure start="<" end=">" transparent contained contains=@luauDefGen nextgroup=luauTypedef_Symbol skipwhite skipnl
 syn match luauTypedef_Symbol /=/ contained nextgroup=@luauType skipwhite skipnl
 
 " luauV - operators on top level (V)ariables
@@ -548,13 +548,7 @@ if (g:luauHighlightTypes)
   syn region luauTypeProp_Sep start=/:/ end=/,/ end=/}/me=e-1 transparent contained contains=@luauType skipwhite
   syn region luauTypeProp_Key matchgroup=luauStructure start=/\[/ end=/\]/ transparent contained contains=@luauType nextgroup=luauTypeProp_Sep skipwhite
 
-  " GenericTypeParameterList
-
-  " Note that this list is logically split into halves;
-  " 1. type parameters (NAME1 [ '=' Type1], NAME2 [ '=' Type2], ...)
-  " 2. pack generics T... [ '=' luauTypePack ]
-  " however, my only problem with these is that, in practice, the
-  " bracketed (meaning optional) type instantiators produce a syntax error.
+  " GenericTypeParam (non-typedef: no instantiation of generics is permitted)
 
   syn cluster luauTypeGenParam contains=luauTypeGenParam_Name,@luauTypeGenPack
   syn cluster luauTypeGenPack contains=luauTypeGenPack_Name
@@ -564,6 +558,19 @@ if (g:luauHighlightTypes)
   syn match luauTypeGenPack_Symbol /\.\.\./ contained nextgroup=luauTypeGenPack_Sep skipwhite
   syn match luauTypeGenPack_Name /\K\k*\%(\s*\.\)\@=/ contained nextgroup=luauTypeGenPack_Symbol skipwhite
   syn match luauTypeGenParam_Name /\K\k*\%(\s*\.\)\@!/ contained nextgroup=luauTypeGenParam_Sep skipwhite
+
+  " GenericTypeParameterList (can instantiate generics)
+  
+  syn cluster luauDefGen contains=luauDefGen_Name,@luauDefPack
+  syn cluster luauDefPack contains=luauDefPack_Name
+
+  syn region luauDefPack_Assign start="=" end=","me=e-1 end=">"me=e-1 transparent contained contains=luauType_Paren,luauTypeL_Variadic nextgroup=luauDefPack_Sep skipwhite skipnl
+  syn region luauDefGen_Assign start="=" end=","me=e-1 end=">"me=e-1 transparent contained contains=@luauType nextgroup=luauDefGen_Sep skipwhite skipnl
+  syn match luauDefGen_Sep /,/ contained nextgroup=@luauDefGen skipwhite skipnl
+  syn match luauDefPack_Sep /,/ contained nextgroup=@luauDefPack skipwhite skipnl
+  syn match luauDefPack_Symbol  /\.\.\./ contained nextgroup=luauDefPack_Sep,luauDefPack_Assign skipwhite
+  syn match luauDefPack_Name /\K\k*\%(\s*\.\)\@=/ contained nextgroup=luauDefPack_Symbol skipwhite
+  syn match luauDefGen_Name /\K\k*\%(\s*\.\)\@!/ contained nextgroup=luauDefGen_Sep,luauDefGen_Assign skipwhite
 endif
 
 syn cluster luauGeneralBuiltin contains=luauBuiltin,luauLibrary,luauIdentifier

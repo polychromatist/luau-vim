@@ -28,7 +28,7 @@ let s:_dated_api_prefix = 'dated'
 
 " XXX this is not implemented
 " TODO cmd interface for selecting previously downloaded api files
-if (g:luauMaxOldAPIFilesCount)
+if (exists('g:luauMaxOldAPIFilesCount'))
   let s:max_old_api = g:LuauMaxOldAPIFilesCount
 else
   let s:max_old_api = 3
