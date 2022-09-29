@@ -161,9 +161,9 @@ let s:expmap = {
       \ 'exp2': [
         \ 'syn match luau%t2_Dot /\./ transparent contained nextgroup=@luau%t,luau%t_Var skipwhite',
         \ 'syn match luau%t2_Colon /\:/ transparent contained nextgroup=luau%t_ColonInvoked skipwhite',
-        \ 'syn region luau%t2_Invoke matchgroup=luau%t2_Invoke start="(" end=")" contained contains=@luau%l,luau%l_Uop nextgroup=@luau%t2 skipwhite',
+        \ 'syn region luau%t2_Invoke matchgroup=luau%t2_Invoke start="(" end=")" contained contains=@luau%l,luau%l_Uop nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn region luau%t2_Bracket matchgroup=luau%t2_Bracket start="\[" end="\]" contained contains=@luau%e,luau%e_Uop nextgroup=@luau%t2 skipwhite skipnl',
-        \ 'syn match luau%t2_Binop /+\|-\%(-\)\@!\|\*\|\/\|\^\|%\|\.\.\|<=\?\|>=\?\|[~=]=\|\<and\>\|\<or\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
+        \ 'syn match luau%t2_Binop /+\|-\%(-\)\@!\|\*\|\/\|\^\|%\|\.\.\|<=\?\|>=\?\|[~=]=\|\<and\>\|\<or\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite skipnl',
         \ 'syn match luau%t2_CastSymbol /::/ contained nextgroup=@luauCast%t skipwhite'] }
 
  
