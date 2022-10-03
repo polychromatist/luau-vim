@@ -139,15 +139,15 @@ function! luau_vim#rbxAPIClean(sep) abort
 endfunction
 
 function! s:getAPIDir(sep) abort
-  return $"{s:_project_root}{a:sep}{s:api_dump_dirname}"
+  return s:_project_root . a:sep . s:api_dump_dirname
 endfunction
 
 function! s:getAPIFilename(sep) abort
-  return $"{s:getAPIDir(a:sep)}{a:sep}{s:_current_api_prefix}.txt"
+  return s:getAPIDir(a:sep) . a:sep . s:_current_api_prefix .  '.txt'
 endfunction
 
 function! luau_vim#getRobloxSyntaxTargetPath(sep) abort
-  return $"{s:_project_root}{a:sep}syntax{a:sep}{s:api_dump_dirname}.vim"
+  return s:_project_root . a:sep . 'syntax' . a:sep . s:api_dump_dirname . '.vim'
 endfunction
 
 function! s:prepareAPITargets(sep) abort
