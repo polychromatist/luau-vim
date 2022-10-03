@@ -119,7 +119,7 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
       let l:item_name = matchstr(l:api_item, '\%(^[\t]EnumItem \w\+\.\)\@<=\w\+\%(.*Deprecated\|.*NotBrowsable\)\@!')
 
       if !empty(l:item_name)
-        call add(l:outfiledata, 'syn keyword rbxAPIEnumMember ' . l:item_name)
+        call add(l:outfiledata, 'syn match rbxAPIEnumMember /\%(' . l:current_enum . '\s*\.\s*\)\@<=\<' . l:item_name . '\>/')
       endif
     endif
     let l:_i += 1
