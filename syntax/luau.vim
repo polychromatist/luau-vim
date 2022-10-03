@@ -714,12 +714,11 @@ if (g:luauHighlightRoblox)
     
     let s:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath(s:sep)
 
-    if !filereadable(s:rbx_syngen_fpath)
+    if !luau_vim#robloxAPIValid(s:rbx_syngen_fpath)
       call luau_vim#robloxAPIParse(luau_vim#robloxAPIFetch(v:false), s:rbx_syngen_fpath)
     endif
 
     unlet s:sep
-
 
     execute 'syn include ' . s:rbx_syngen_fpath
   endif

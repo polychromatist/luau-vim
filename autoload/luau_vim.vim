@@ -34,6 +34,28 @@ else
   let s:max_old_api = 3
 endif
 
+" a developer managed variable that is changed according to changes in the
+" api fetched generated syntax format
+let s:gen_syntax_version = 100
+
+function! luau_vim#robloxAPIValid(path) abort
+  if !filereadable(a:path)
+    return v:false
+  endif
+
+  let l:filedata = matchlist(readfile(a:path, '', 1)[0], '^" ver: \(\d\+\)$')
+
+  if empty(l:filedata)
+    return v:false
+  endif
+  
+  if str2nr(l:filedata[1]) !=# s:gen_syntax_version
+    return v:false
+  endif
+
+  return v:true
+endfunction
+
 " windows/unix+curl wrapper to fetch roblox api content from s:api_dump_url
 function! luau_vim#robloxAPIFetch(force) abort
   if has('win64') || has('win32')
@@ -55,7 +77,7 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
   let l:api_item_max = len(a:api_data)
   let l:_i = 0
 
-  let l:outfiledata = []
+  let l:outfiledata = ['" ver: ' . s:gen_syntax_version]
   
   " Classes
 
