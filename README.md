@@ -8,6 +8,8 @@ It's still experimental.
 
 <img src="dist/screenshots/xgame_charlgi.png" />
 
+<img src="dist/screenshots/rbxclipack_react_shared.png" />
+
 Head to [the github pages](https://polychromatist.github.io/luau-vim/) for screenshots.
 
 ## Installation
