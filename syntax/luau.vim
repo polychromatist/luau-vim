@@ -2,7 +2,7 @@
 " Language:     Luau 0.546
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Oct 3 (luau-vim v0.3.1)
+" Last Change:  2022 Oct 3 (luau-vim v0.3.1pre3)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (no default)
 "               - luauHighlightTypes = 0 or 1 (default 1)

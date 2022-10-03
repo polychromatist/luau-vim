@@ -4,9 +4,11 @@
 
 Vimscript syntax plugin for Luau and Roblox Luau. This plugin intends to provide good support for Luau and Roblox Luau in Vim, Neovim, and other flavors of Vim.
 
-It's still experimental. You may be surprised by highlighting that bleeds over or appears missing. If that's important to you, it's important to [create an issue](https://github.com/polychromatist/luau-vim/issues).
+It's still experimental.
 
-Head to [the github pages](https://polychromatist.github.io/luau-vim/) for screenshots. <sup>_may not be working yet_</sup>
+<img src="dist/screenshots/xgame_charlgi.png" />
+
+Head to [the github pages](https://polychromatist.github.io/luau-vim/) for screenshots.
 
 ## Installation
 Installing is as simple as pulling the repo with your preferred plugin manager.
