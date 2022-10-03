@@ -94,7 +94,7 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
       let l:is_nb = l:api_item =~# 'NotBrowsable'
       let l:is_nc = l:api_item =~# 'NotCreatable'
 
-      call add(l:outfiledata, 'syn keyword rbxAPITypeName ' . l:class_name . ' contained')
+      call add(l:outfiledata, 'syn keyword rbxAPITypeName ' . l:class_name)
 
       if l:is_nb
         continue
@@ -102,12 +102,12 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
 
       if l:is_nc
         if l:api_item =~# 'Service'
-          call add(l:outfiledata, 'syn keyword rbxAPIService ' . l:class_name . ' contained')
+          call add(l:outfiledata, 'syn keyword rbxAPIService ' . l:class_name)
         endif
         continue
       endif
 
-      call add(l:outfiledata, 'syn keyword rbxAPICreatableInstance ' . l:class_name . ' contained')
+      call add(l:outfiledata, 'syn keyword rbxAPICreatableInstance ' . l:class_name)
     endif
   endwhile
   
@@ -133,8 +133,6 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
     endif
     let l:_i += 1
   endwhile
-
-  echo l:outfiledata
 
   call writefile(l:outfiledata, a:api_file_target)
 endfunction
@@ -228,8 +226,6 @@ endfunction
 
 function! s:curlAPIFetch(force) abort
   let l:targets = s:prepareAPITargets('/')
-
-  echo l:targets
 
   let l:subquery = printf('curl -I %s', shellescape(s:api_dump_url))
 

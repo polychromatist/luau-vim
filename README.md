@@ -49,7 +49,7 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td><code>luauIncludeRobloxAPIDump = 0 | 1</code></td>
-      <td><em>Not Fully Implemented</em> default 0. If set, and as long as <code>luauHighlightRoblox</code> is set, luau.vim (v0.3.1+) will attempt to grab Roblox APIs from a <a href="https://github.com/MaximumADHD/Roblox-Client-Tracker">continuously refreshed, user-defined API endpoint</a>. The APIs are, for now, parsed using regex on the compact, raw text format specified in the linked repo rather than JSON.</td>
+      <td><em>Experimental</em> default 0. If set, and as long as <code>luauHighlightRoblox</code> is set, luau.vim (v0.3.1+) will attempt to grab Roblox APIs from a <a href="https://github.com/MaximumADHD/Roblox-Client-Tracker">continuously refreshed, user-defined API endpoint</a>. The APIs are, for now, parsed using regex on the compact, raw text format specified in the linked repo rather than JSON.</td>
     </tr>
     <tr>
       <td><code>luauRobloxAPIDumpURL = [string_url]</code></td>
@@ -57,7 +57,7 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td><code>luauRobloxAPIDumpDirname = [string_fname]</code></td>
-      <td>default <code>'robloxapi'</code>. This string specifies the path relative to the plugin directory where any fetched Roblox API data lives.</td>
+      <td>default <code>'robloxapi'</code>. This string specifies the path where any fetched Roblox API data lives, within the plugin root directory.</td>
     </tr>
   </tbody>
 </table>
@@ -144,7 +144,7 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td />
-      <td>types</td><td>m<sup>2</sup></td>
+      <td>types</td><td>y*<sup>2</sup></td>
     </tr>
     <tr>
       <td />
@@ -155,4 +155,4 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
 
 (1) A lightweight interface to a Roblox linter/LSP is planned. I recommend [ALE](https://github.com/dense-analysis/ale) which supports the (Roblox) Luau linter [selene](https://github.com/Kampfkarren/selene)
 
-(2) The autoload module is being prepared to fetch Roblox API data in order to generate proper highlight groups on Roblox types and Enums, etc.
+(2) An experimental API fetch to syntax rule pipeline is now being staged on the main branch. Enum is not yet supported.

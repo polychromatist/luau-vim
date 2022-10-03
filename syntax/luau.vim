@@ -466,7 +466,7 @@ if (g:luauHighlightTypes)
           \ {'hilink': 'luauIdentifier', 'cmd': 'syn keyword luau%T_Primitive any number string boolean function table thread userdata contained containedin=luau%T_Name' },
           \ {'hilink': 'luauSpecial', 'cmd': 'syn keyword luau%T_Boundary never unknown contained containedin=luau%T_Name' },
           \ {'hilink': 'luauOperator', 'cmd': 'syn match luau%T_Uop /?/ contained nextgroup=@luau%T2 skipwhite skipnl'},
-          \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\>\%(\s*\%(\.\|:\)\)\@!/ contained contains=luauAPITypeName nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite skipnl' },
+          \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\>\%(\s*\%(\.\|:\)\)\@!/ contained contains=rbxAPITypeName nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite skipnl' },
           \ 'syn match luau%T_Module /\<\K\k*\s*\.\%(\s*\K\)\@=/ contained nextgroup=luau%T_Name skipwhite',
           \ 'syn region luau%T_Table matchgroup=luauTable start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key,luauComment nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ 'syn region luau%T_FunctionGen matchgroup=luauStructure start=+\%(\k\s*\)\@<!<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luau%T_FunctionParam skipwhite',
