@@ -2,7 +2,7 @@
 " Language:     Luau 0.546
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Oct 3 (luau-vim v0.3.1pre3)
+" Last Change:  2022 Oct 3 (luau-vim v0.3.1)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (no default)
 "               - luauHighlightTypes = 0 or 1 (default 1)
@@ -714,7 +714,7 @@ if (g:luauHighlightRoblox)
     
     let s:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath(s:sep)
 
-    if !luau_vim#robloxAPIValid(s:rbx_syngen_fpath)
+    if !luau_vim#robloxAPIValid(s:rbx_syngen_fpath, s:sep)
       call luau_vim#robloxAPIParse(luau_vim#robloxAPIFetch(v:false), s:rbx_syngen_fpath)
     endif
 
