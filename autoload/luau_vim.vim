@@ -111,7 +111,7 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
       let l:current_enum = matchstr(l:api_item, '\%(^Enum \)\@5<=\w\+\%(.*Deprecated\)\@!')
 
       if !empty(l:current_enum)
-        call add(l:outfiledata, 'syn keyword rbxAPIEnumItem ' . l:current_enum . ' contained')
+        call add(l:outfiledata, 'syn keyword rbxAPIEnumItem ' . l:current_enum )
       endif
 
     " Branch: the item is an EnumItem contained in the last enum type
@@ -119,7 +119,7 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
       let l:item_name = matchstr(l:api_item, '\%(^[\t]EnumItem \w\+\.\)\@<=\w\+\%(.*Deprecated\|.*NotBrowsable\)\@!')
 
       if !empty(l:item_name)
-        call add(l:outfiledata, 'syn keyword rbxAPIEnumMember ' . l:item_name . ' contained')
+        call add(l:outfiledata, 'syn keyword rbxAPIEnumMember ' . l:item_name)
       endif
     endif
     let l:_i += 1
