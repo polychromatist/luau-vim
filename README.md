@@ -148,11 +148,11 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
     </tr>
     <tr>
       <td />
-      <td>Enum</td><td>m<sup>2</sup></td>
+      <td>Enum</td><td>y*<sup>2</sup></td>
     </tr>
   </tbody>
 </table>
 
 (1) A lightweight interface to a Roblox linter/LSP is planned. I recommend [ALE](https://github.com/dense-analysis/ale) which supports the (Roblox) Luau linter [selene](https://github.com/Kampfkarren/selene)
 
-(2) An experimental API fetch to syntax rule pipeline is now being staged on the main branch. Enum is not yet supported.
+(2) An experimental API fetch to syntax rule pipeline is now being staged on the main branch. 

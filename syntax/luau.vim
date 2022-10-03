@@ -89,9 +89,11 @@ syn match luauIntEscape #\\{# contained
 " many contexts allow you to write a list of expressions. some contexts, like
 " table contents, allow you to choose between a list of expressions and a structured
 " form [(exp)] = (exp) & (var) = (exp).
+
 " the main two contexts for us to model are the single style and the
 " list style to cover most areas, and combining them with other syntax rules to
 " form our syntax plugin.
+
 " this means we need two (or more) parallel copies of the entire expression model,
 " as the syn-nextgroup might differ in target to better reflect the true behavior.
 " we can merely allow commas in all cases to fix this issue - this would not
@@ -100,7 +102,7 @@ syn match luauIntEscape #\\{# contained
 " the grammar of Luau distinguishes between exp and explist. in that case,
 " in order not to have to copy and paste for all changes to the
 " common expression model, we use this generator.
-"
+
 let s:expmap = {
       \ 'string': [
       \   'syn region luau%pString matchgroup=luau%pString start="\[\z(=*\)\[" end="\]\z1\]"   contains=luauEscape%n',
@@ -138,17 +140,17 @@ let s:expmap = {
         \ 'syn cluster luau%t contains=luau%t_Callback,luau%t_Wrap,luau%t_HeadVar,luau%t_BuiltinTemplate,luau%t_Variadic,luau%t_Table,luau%t_InlineIf',
         \ 'syn cluster luau%t add=luau%pNumber,luau%pFloat,@luau%pGeneralString',
         \ 'syn cluster luau%t add=luau%pNil,luau%pBoolean,luauComment',
-        \ 'syn cluster luau%t2 contains=luau%t2_Invoke,luau%t2_Dot,luau%t2_Colon,luau%t2_Bracket,luau%t2_Binop,luau%t2_CastSymbol,luau%t2_Instance,luau%t2_Service%n' ],
+        \ 'syn cluster luau%t2 contains=luau%t2_Invoke,luau%t2_Dot,luau%t2_Colon,luau%t2_Bracket,luau%t2_Binop,luau%t2_CastSymbol,luau%t2_Instance,luau%t2_Service,luau%t2_Enum%n' ],
       \ 'exp': [
         \ 'syn keyword luau%t_Callback function contained nextgroup=luau%t_FunctionParams,luau%t_CallbackGen skipwhite',
         \ 'syn region luau%t_CallbackGen matchgroup=luauStructure start="<" end=">" transparent contained contains=@luauTypeGenParam nextgroup=luau%t_FunctionParams skipwhite skipnl',
         \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")\%(\_s*:\)\@!"me=e-1 end=")\_s*:"me=e-1 contained contains=luauB_Param,luauB_ParamVariadic nextgroup=luau%t_TypeHeader,luau%t_Block',
         \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start="." matchgroup=luauK_Function end="end" transparent contains=@luauTop contained%n',
         \ 'syn region luau%t_TypeHeader matchgroup=luauF_ParamDelim start=":" end="$" contained transparent contains=@luauType,luauTypeL_Variadic,luauTypeL_GenPack nextgroup=luau%t_Block skipwhite skipempty',
-        \ 'syn match luau%t_Var /\%(\.\s*\)\@<=\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite skipnl',
+        \ 'syn match luau%t_Var /\%(\<Enum\>\s*\.\s*\)\@<!\%(\.\s*\)\@<=\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t_HeadVar /\%(\.\s*\)\@<!\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t_BuiltinTarget /[.:]\<\K\k*\>/ contains=@luauDotLibs contained nextgroup=@luau%t2 skipwhite skipnl',
-        \ 'syn match luau%t_BuiltinTemplate /\%(\s\|(\|{\)\@1<=\<\K\k*\>\%([.:]\<\K\k*\>\)\@=/ contains=@luauGeneralBuiltin contained nextgroup=luau%t_BuiltinTarget',
+        \ 'syn match luau%t_BuiltinTemplate /\%(\s\|(\|{\)\@1<=\%(Enum\)\@!\<\K\k*\>\%([.:]\<\K\k*\>\)\@=/ contains=@luauGeneralBuiltin contained nextgroup=luau%t_BuiltinTarget',
         \ 'syn match luau%t_InvokedVar /\<\K\k*\>\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained containedin=luau%t_HeadVar,luau%t_Var,luau%t_BuiltinTarget nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_ColonInvoked /\<\K\k*\>\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite skipnl',
@@ -159,7 +161,8 @@ let s:expmap = {
         \ 'syn region luau%t_InlineThen matchgroup=luauC_Keyword start="\<then\>" end="\<else\>" display transparent contained contains=@luau%e,luau%e_Uop,luau%t_InlineElseif nextgroup=@luau%t,luau%t_Uop skipwhite',
         \ 'syn region luau%t_InlineElseif matchgroup=luauC_Keyword start="\<elseif\>" end="\<then\>" display transparent contained contains=@luau%e,luau%e_Uop nextgroup=@luau%e,luau%e_Uop skipwhite' ],
       \ 'exp2': [
-        \ 'syn match luau%t2_Dot /\./ transparent contained nextgroup=@luau%t,luau%t_Var skipwhite',
+        \ 'syn match luau%t2_Dot /\./ transparent contained nextgroup=luau%t2_Enum,@luau%t,luau%t_Var skipwhite',
+        \ 'syn match luau%t2_Enum /\%(\<Enum\>\s*\.\s*\)\@<=\<\K\k*\>\s*\.\s*\<\K\k*\>/ contains=rbxEnumItemContext,rbxEnumMemberContext contained nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t2_Colon /\:/ transparent contained nextgroup=luau%t_ColonInvoked skipwhite',
         \ 'syn region luau%t2_Invoke matchgroup=luau%t2_Invoke start="(" end=")" contained contains=@luau%l,luau%l_Uop nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn region luau%t2_Bracket matchgroup=luau%t2_Bracket start="\[" end="\]" contained contains=@luau%e,luau%e_Uop nextgroup=@luau%t2 skipwhite skipnl',
@@ -170,8 +173,8 @@ let s:expmap = {
 
 let s:exphilinkmap = {
       \ 'string': 'luauString',
-      \  'number': 'luauNumber',
-      \ 'const': 'luauConstant'
+      \ 'number': 'luauNumber',
+      \ 'const':  'luauConstant'
       \ }
 
 let s:expout = []
@@ -698,6 +701,8 @@ if (g:luauHighlightRoblox)
     
     syn region rbxInstanceDescriptor matchgroup=luauString start=/\z("\|'\)/ end=/\z1/ contained contains=rbxAPICreatableInstance
     syn region rbxServiceDescriptor matchgroup=luauString start=/\z("\|'\)/ end=/\z1/ contained contains=rbxAPIService
+    syn match rbxEnumItemContext /\<\K\k*\>\%(\s*\.\)\@=/ contained contains=rbxAPIEnumItem
+    syn match rbxEnumMemberContext /\%(\%(Enum\s*\)\@<!\.\s*\)\@<=\<\K\k*\>/ contained contains=rbxAPIEnumMember
   endif
 
   if (g:luauRobloxIncludeAPIDump)
@@ -831,12 +836,14 @@ if (g:luauHighlightBuiltins)
     hi def link rbxServiceDescriptor    luauString
     hi def link rbxInstanceDescriptor   luauString
 
-
     hi def link rbxIdentifier         Identifier
     hi def link rbxBuiltin            Function
     hi def link rbxMethod             Function
     hi def link rbxInstantiator       Structure
     hi def link rbxConstant           luauConstant
+
+    hi def link rbxAPIEnumItem        rbxIdentifier
+    hi def link rbxAPIEnumMember      rbxConstant
 
     hi def link rbxLibrary            rbxBuiltin
     hi def link rbxDotTask            rbxLibrary

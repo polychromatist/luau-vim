@@ -1,6 +1,6 @@
 " luau-vim/autoload/luau_vim.vim
 " Author:       polychromatist <polychromatist proton me>
-" Last Change:  2022 Oct 3 (luau-vim v0.3.1)
+" Last Change:  2022 Oct 3 (luau-vim v0.3.1pre3)
 
 " roblox api source url
 if exists('g:luauRobloxAPIDumpURL')
@@ -51,17 +51,6 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
   if (filereadable(a:api_file_target))
     call delete(a:api_file_target)
   endif
-
-  " let l:is_service = {}
-  " "standard": type is a Class | Enum | Service
-  " "nonstandard":  type is a Class | Enum with NotBrowsable
-  " "erroneous": type exists but should never be used
-  " let l:type_dict = {
-  "      \ 'standard': [],
-  "      \ 'nonstandard': [],
-  "      \ 'erroneous': [] }
-  " let l:classes_list = []
-  " let l:enums_dict = {}
 
   let l:api_item_max = len(a:api_data)
   let l:_i = 0
@@ -121,14 +110,16 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
     if a:api_data[l:_i][0] ==# 'E'
       let l:current_enum = matchstr(l:api_item, '\%(^Enum \)\@5<=\w\+\%(.*Deprecated\)\@!')
 
-      " call add(l:outfiledata, 'syn keyword rbxAPIEnumItem ' . l:current_enum . ' contained')
+      if !empty(l:current_enum)
+        call add(l:outfiledata, 'syn keyword rbxAPIEnumItem ' . l:current_enum . ' contained')
+      endif
 
     " Branch: the item is an EnumItem contained in the last enum type
     else
-      let l:item_name = matchstr(l:api_item, '\%(^ EnumItem ' . l:current_enum . '\.\)\@<=\w\+\%(.*Deprecated\|.*NotBrowsable\)\@!')
+      let l:item_name = matchstr(l:api_item, '\%(^[\t]EnumItem \w\+\.\)\@<=\w\+\%(.*Deprecated\|.*NotBrowsable\)\@!')
 
-      if l:item_name
-        " call add(l:outfiledata, 'syn keyword rbxAPIEnumMember ' . l:item_name . ' contained')
+      if !empty(l:item_name)
+        call add(l:outfiledata, 'syn keyword rbxAPIEnumMember ' . l:item_name . ' contained')
       endif
     endif
     let l:_i += 1
