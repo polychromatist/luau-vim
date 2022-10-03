@@ -1,6 +1,6 @@
 " luau-vim/autoload/luau_vim.vim
 " Author:       polychromatist <polychromatist proton me>
-" Last Change:  2022 Sep 26 (luau-vim v0.3.1)
+" Last Change:  2022 Oct 3 (luau-vim v0.3.1)
 
 " roblox api source url
 if exists('g:luauRobloxAPIDumpURL')
@@ -35,11 +35,11 @@ else
 endif
 
 " windows/unix+curl wrapper to fetch roblox api content from s:api_dump_url
-function! luau_vim#robloxAPIFetch() abort
+function! luau_vim#robloxAPIFetch(force) abort
   if has('win64') || has('win32')
-    return s:winAPIFetch()
+    return s:winAPIFetch(a:force)
   elseif has('unix') && executable('curl')
-    return s:curlAPIFetch()
+    return s:curlAPIFetch(a:force)
   else
     echoerr 'please install curl or put "let g:luauIncludeRobloxAPIDump = 0" in vim config'
     throw 'no roblox api retrieval method'
@@ -47,64 +47,68 @@ function! luau_vim#robloxAPIFetch() abort
 endfunction
 
 " parse & create vim syntax output
-function! luau_vim#robloxAPIParse(api_data) abort
-  let l:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath()
-
-  if (filereadable(l:rbx_syngen_fpath))
-    delete(l:rbx_syngen_fpath)
+function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
+  if (filereadable(a:api_file_target))
+    call delete(a:api_file_target)
   endif
 
-  let l:is_service = {}
-  " "standard": type is a Class with Service tag, or is not nonstandard
-  "             nor erroneus
-  " "nonstandard":  type is a Class with Deprecated and/or NotBrowsable
-  "                 tag(s), or type is an Enum with similar tags
+  " let l:is_service = {}
+  " "standard": type is a Class | Enum | Service
+  " "nonstandard":  type is a Class | Enum with NotBrowsable
   " "erroneous": type exists but should never be used
-  " Option: g:luauRobloxNonstandardTypesAreErrors = 0 or 1
-  let l:type_dict = {
-        \ 'standard': [],
-        \ 'nonstandard': [],
-        \ 'erroneous': [] }
-  let l:classes_list = []
-  let l:enums_dict = {}
+  " let l:type_dict = {
+  "      \ 'standard': [],
+  "      \ 'nonstandard': [],
+  "      \ 'erroneous': [] }
+  " let l:classes_list = []
+  " let l:enums_dict = {}
 
   let l:api_item_max = len(a:api_data)
   let l:_i = 0
+
+  let l:outfiledata = []
   
   " Classes
 
   while l:_i < l:api_item_max
     " Termination Condition: hitting the enum section
     let l:api_item = a:api_data[l:_i]
+    let l:_i += 1
     if l:api_item[0] ==# 'E'
       break
     endif
     if l:api_item[0] ==# 'C'
-      " Skip Condition: the api item is a property
       " there are a lot of properties, discretion is needed
       " when the time comes to consider them for syntax rules
       " Known Tags: Deprecated, NotBrowsable, NotCreatable, Service,
       "             NotReplicated
+      " Tags of lesser importance are RobloxSecurity, PluginSecurity, etc
 
-      let l:class_data = matchlist(l:api_item, 'Class \(\w\+\)\(.*Deprecated\|.*NotBrowsable\)\@!')
-      if empty(l:class_data)
-        let l:_i += 1
+      let l:class_name = matchstr(l:api_item, '\%(^Class \)\@6<=\w\+\%(.*Deprecated\)\@!')
+
+      " Skip Condition: the api item is a property
+      if empty(l:class_name)
         continue
       endif
 
-      let l:class_name = l:class_data[1]
-      let l:tags_offset = 9 + len(l:class_name)
+      let l:is_nb = l:api_item =~# 'NotBrowsable'
+      let l:is_nc = l:api_item =~# 'NotCreatable'
 
-      " Branch: if it is a Service (note Service always has NotCreatable)
-      if (match(l:api_item, 'Service', l:tags_offset) != -1)
-        l:is_service[l:class_name] = v:true
-      " Branch: if the NotCreatable tag is missing
-      elseif (match(l:api_item, 'NotCreatable', l:tags_offset) ==# -1)
-        " this is a non-deprecated, browsable, creatable Class
-        call add(l:type_dict.standard, l:class_name)
+      call add(l:outfiledata, 'syn keyword rbxAPITypeName ' . l:class_name . ' contained')
+
+      if l:is_nb
+        continue
       endif
+
+      if l:is_nc
+        if l:api_item =~# 'Service'
+          call add(l:outfiledata, 'syn keyword rbxAPIService ' . l:class_name . ' contained')
+        endif
+        continue
+      endif
+
+      call add(l:outfiledata, 'syn keyword rbxAPICreatableInstance ' . l:class_name . ' contained')
     endif
-    let l:_i += 1
   endwhile
   
   " Enums
@@ -113,28 +117,36 @@ function! luau_vim#robloxAPIParse(api_data) abort
   let l:enum_unused = 0
   while l:_i < l:api_item_max
     " Branch: the item is an enum type
+    let l:api_item = a:api_data[l:_i]
     if a:api_data[l:_i][0] ==# 'E'
-      let l:enum_data = matchlist(a:api_data[l:_i], 'Enum \(\w\+\)\(.*Deprecated\)\@!')
-      l:current_enum = a:api_data[l:_i][5:]
+      let l:current_enum = matchstr(l:api_item, '\%(^Enum \)\@5<=\w\+\%(.*Deprecated\)\@!')
 
-      let l:enums_dict[l:current_enum] = []
-    " Branch: the item is an enum property contained in the last enum type
+      " call add(l:outfiledata, 'syn keyword rbxAPIEnumItem ' . l:current_enum . ' contained')
+
+    " Branch: the item is an EnumItem contained in the last enum type
     else
+      let l:item_name = matchstr(l:api_item, '\%(^ EnumItem ' . l:current_enum . '\.\)\@<=\w\+\%(.*Deprecated\|.*NotBrowsable\)\@!')
 
+      if l:item_name
+        " call add(l:outfiledata, 'syn keyword rbxAPIEnumMember ' . l:item_name . ' contained')
+      endif
     endif
-
+    let l:_i += 1
   endwhile
 
+  echo l:outfiledata
+
+  call writefile(l:outfiledata, a:api_file_target)
 endfunction
 
 function! luau_vim#rbxAPIClean(sep) abort
   let l:api_dirpath = s:getAPIDir(a:sep)
 
-  delete(l:api_dirpath, 'rf')
+  call delete(l:api_dirpath, 'rf')
 
   let l:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath(a:sep)
 
-  delete(l:rbx_syngen_fpath)
+  call delete(l:rbx_syngen_fpath)
 endfunction
 
 function! s:getAPIDir(sep) abort
@@ -142,7 +154,7 @@ function! s:getAPIDir(sep) abort
 endfunction
 
 function! s:getAPIFilename(sep) abort
-  return $"{s:getAPIDir(a:sep)}{a:sep}{s:_current_api_suffix}.txt"
+  return $"{s:getAPIDir(a:sep)}{a:sep}{s:_current_api_prefix}.txt"
 endfunction
 
 function! luau_vim#getRobloxSyntaxTargetPath(sep) abort
@@ -176,23 +188,23 @@ endfunction
 
 function! s:processMainQuery(query, targets, etag) abort
   if filereadable(a:targets.etag)
-    delete(a:targets.etag)
+    call delete(a:targets.etag)
   endif
-  if filereadable(a:targets.filepath)
-    delete(a:targets.filepath)
+  if filereadable(a:targets.filename)
+    call delete(a:targets.filename)
   endif
 
-  call printf(a:query, shellescape(s:api_dump_url), fnameescape(a:targets.filepath))
-  call system(a:query)
+  let l:query = printf(a:query, shellescape(s:api_dump_url), fnameescape(a:targets.filename))
+  call system(l:query)
 
-  if !filereadable(a:targets.filepath)
+  if !filereadable(a:targets.filename)
     echoerr 'no file containing response body was found after web request'
     throw 'failed api fetch'
   endif
 
   call writefile([a:etag], a:targets.etag, '')
 
-  return readfile(a:targets.filepath)
+  return readfile(a:targets.filename)
 endfunction
 
 function! s:winAPIFetch(force) abort
@@ -217,8 +229,9 @@ endfunction
 function! s:curlAPIFetch(force) abort
   let l:targets = s:prepareAPITargets('/')
 
-  let l:subquery = 'curl -I %s'
-  call printf(l:subquery, shellescape(s:api_dump_url))
+  echo l:targets
+
+  let l:subquery = printf('curl -I %s', shellescape(s:api_dump_url))
 
   let l:sq_res = system(l:subquery)
   let l:sq_res_lines = split(l:sq_res, "\\(\r\n\\|\n\\)")

@@ -2,3 +2,5 @@
 *.old
 *.example*
 *.vistest
+robloxapi/
+syntax/robloxapi.vim

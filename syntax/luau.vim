@@ -2,7 +2,7 @@
 " Language:     Luau 0.546
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Sep 27 (luau-vim v0.3.1)
+" Last Change:  2022 Oct 3 (luau-vim v0.3.1)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (no default)
 "               - luauHighlightTypes = 0 or 1 (default 1)
@@ -34,7 +34,7 @@ else
   let g:luauHighlightRoblox = g:luauHighlightAll
 endif
 if !exists('g:luauRobloxIncludeAPIDump')
-  let g:luauRobloxIncludeAPIDump = 0
+  let g:luauRobloxIncludeAPIDump = 1
 endif
 
 syn case match
@@ -138,15 +138,15 @@ let s:expmap = {
         \ 'syn cluster luau%t contains=luau%t_Callback,luau%t_Wrap,luau%t_HeadVar,luau%t_BuiltinTemplate,luau%t_Variadic,luau%t_Table,luau%t_InlineIf',
         \ 'syn cluster luau%t add=luau%pNumber,luau%pFloat,@luau%pGeneralString',
         \ 'syn cluster luau%t add=luau%pNil,luau%pBoolean,luauComment',
-        \ 'syn cluster luau%t2 contains=luau%t2_Invoke,luau%t2_Dot,luau%t2_Colon,luau%t2_Bracket,luau%t2_Binop,luau%t2_CastSymbol%n' ],
+        \ 'syn cluster luau%t2 contains=luau%t2_Invoke,luau%t2_Dot,luau%t2_Colon,luau%t2_Bracket,luau%t2_Binop,luau%t2_CastSymbol,luau%t2_Instance,luau%t2_Service%n' ],
       \ 'exp': [
         \ 'syn keyword luau%t_Callback function contained nextgroup=luau%t_FunctionParams,luau%t_CallbackGen skipwhite',
         \ 'syn region luau%t_CallbackGen matchgroup=luauStructure start="<" end=">" transparent contained contains=@luauTypeGenParam nextgroup=luau%t_FunctionParams skipwhite skipnl',
         \ 'syn region luau%t_FunctionParams matchgroup=luauF_ParamDelim start="(" end=")\%(\_s*:\)\@!"me=e-1 end=")\_s*:"me=e-1 contained contains=luauB_Param,luauB_ParamVariadic nextgroup=luau%t_TypeHeader,luau%t_Block',
         \ 'syn region luau%t_Block matchgroup=luauF_ParamDelim start="." matchgroup=luauK_Function end="end" transparent contains=@luauTop contained%n',
         \ 'syn region luau%t_TypeHeader matchgroup=luauF_ParamDelim start=":" end="$" contained transparent contains=@luauType,luauTypeL_Variadic,luauTypeL_GenPack nextgroup=luau%t_Block skipwhite skipempty',
-        \ 'syn match luau%t_Var /\%(\.\s*\)\@<=\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite',
-        \ 'syn match luau%t_HeadVar /\%(\.\s*\)\@<!\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite',
+        \ 'syn match luau%t_Var /\%(\.\s*\)\@<=\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite skipnl',
+        \ 'syn match luau%t_HeadVar /\%(\.\s*\)\@<!\<\K\k*\>/ contained nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t_BuiltinTarget /[.:]\<\K\k*\>/ contains=@luauDotLibs contained nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t_BuiltinTemplate /\%(\s\|(\|{\)\@1<=\<\K\k*\>\%([.:]\<\K\k*\>\)\@=/ contains=@luauGeneralBuiltin contained nextgroup=luau%t_BuiltinTarget',
         \ 'syn match luau%t_InvokedVar /\<\K\k*\>\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained containedin=luau%t_HeadVar,luau%t_Var,luau%t_BuiltinTarget nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
@@ -164,9 +164,9 @@ let s:expmap = {
         \ 'syn region luau%t2_Invoke matchgroup=luau%t2_Invoke start="(" end=")" contained contains=@luau%l,luau%l_Uop nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn region luau%t2_Bracket matchgroup=luau%t2_Bracket start="\[" end="\]" contained contains=@luau%e,luau%e_Uop nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t2_Binop /+\|-\%(-\)\@!\|\*\|\/\|\^\|%\|\.\.\|<=\?\|>=\?\|[~=]=\|\<and\>\|\<or\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite skipnl',
+        \ 'syn region luau%t2_Instance start=/\%(\<Instance\>\s*\.\s*\<new\>\s*\)\@<=(/ end=/)/ contains=rbxInstanceDescriptor contained nextgroup=@luau%t2 skipwhite skipnl',
+        \ 'syn region luau%t2_Service start=/\%(\<game\>\s*:\s*\<GetService\>\s*\)\@<=(/ end=/)/ contains=rbxServiceDescriptor contained nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t2_CastSymbol /::/ contained nextgroup=@luauCast%t skipwhite'] }
-
- 
 
 let s:exphilinkmap = {
       \ 'string': 'luauString',
@@ -328,7 +328,7 @@ syn match luauS_HeadDottedVar /\%(\.\s*\)\@<!\<\K\k*\>\%(\s*\.\)\@=/ nextgroup=l
 syn match luauS_DotHead /\<\K\k*\>\%(\s*\%(,\|\[\|\.\)\)\@!/ contained nextgroup=@luauV,luauA_Symbol skipwhite
 syn match luauS_DottedVar /\<\K\k*\>\%(\s*\.\)\@=/ contained nextgroup=luauV_Dot skipwhite
 syn match luauS_HungVar /\%(end\)\@!\<\K\k*\>\%(\s*,\)\@=/ nextgroup=luauA_Comma skipwhite
-syn match luauS_TailVar /\<\K\k*\>\%(\s*\%(=\|+=\|-=\|\/=\|\*=\|\^=\|\.=\)\)\@=/ containedin=luauS_DotHead nextgroup=luauA_Symbol skipwhite
+syn match luauS_TailVar /\<\K\k*\>\%(\s*\%(=\|+=\|-=\|\/=\|\*=\|\^=\|\.\.=\|%=\)\)\@=/ containedin=luauS_DotHead nextgroup=luauA_Symbol skipwhite
 syn match luauS_DictRef /\<\K\k*\>\%(\s*\[\)\@=/ contains=@luauGeneralBuiltin nextgroup=luauV_DictKey skipwhite
 
 " Top Level Statement: anonymous wrapped expression
@@ -339,7 +339,7 @@ syn region luauS_Wrap matchgroup=luauS_Wrap start="\%(\%(\K\k*\|\]\|:\)\s*\)\@<!
 
 " luauA - variable (A)ssignment syntax
 syn match luauA_Symbol /=/ contained nextgroup=@luauL,luauL_Uop skipwhite skipnl
-syn match luauA_Symbol '+=\|-=\|\/=\|\*=\|\^=\|\.\.=' contained nextgroup=@luauE,luauE_Uop skipwhite
+syn match luauA_Symbol '+=\|-=\|\/=\|\*=\|\^=\|\.\.=\|%=' contained nextgroup=@luauE,luauE_Uop skipwhite
 syn match luauA_Dot /\./ contained nextgroup=@luauA skipwhite
 syn match luauA_DottedVar /\K\k*\%(\s*\.\)\@=/ contained nextgroup=luauA_Dot skipwhite
 syn match luauA_DictRef /\K\k*\%(\s*\[\)\@=/ contained nextgroup=luauA_DictKey skipwhite
@@ -466,7 +466,7 @@ if (g:luauHighlightTypes)
           \ {'hilink': 'luauIdentifier', 'cmd': 'syn keyword luau%T_Primitive any number string boolean function table thread userdata contained containedin=luau%T_Name' },
           \ {'hilink': 'luauSpecial', 'cmd': 'syn keyword luau%T_Boundary never unknown contained containedin=luau%T_Name' },
           \ {'hilink': 'luauOperator', 'cmd': 'syn match luau%T_Uop /?/ contained nextgroup=@luau%T2 skipwhite skipnl'},
-          \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\>\%(\s*\%(\.\|:\)\)\@!/ contained nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite skipnl' },
+          \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\>\%(\s*\%(\.\|:\)\)\@!/ contained contains=luauAPITypeName nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite skipnl' },
           \ 'syn match luau%T_Module /\<\K\k*\s*\.\%(\s*\K\)\@=/ contained nextgroup=luau%T_Name skipwhite',
           \ 'syn region luau%T_Table matchgroup=luauTable start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key,luauComment nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ 'syn region luau%T_FunctionGen matchgroup=luauStructure start=+\%(\k\s*\)\@<!<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luau%T_FunctionParam skipwhite',
@@ -635,53 +635,57 @@ if (g:luauHighlightRoblox)
 
   syn match rbxLibraryDot /\./ transparent contained nextgroup=rbxDotTask
 
+  syn cluster luauDotLibs add=rbxDotTask,rbxMethodGame
+
   syn keyword rbxDotTask cancel defer delay desynchronize spawn wait contained
 
   syn match rbxGameMethod /:/ contained nextgroup=rbxMethodGame
-  syn keyword rbxMethodGame GetService nextgroup=rbxGetService skipwhite
-  " syn region rbxGetService start="GetService"
+  syn keyword rbxMethodGame GetService contained
 
   if (g:luauHighlightTypes)
     syn keyword rbxDatatype Enum EnumItem contained
     syn keyword rbxDatatype RBXScriptConnection RBXScriptSignal contained
     syn keyword rbxDatatype RaycastResult contained
 
-    syn keyword rbxDatatype Axes BrickColor CatalogSearchParams ColorSequence contained containedin=@luauEnv nextgroup=rbxDataDot
+    syn cluster luauDotLibs add=rbxDotData,rbxDotCFrame,rbxDotDateTime,rbxMethodEnums,rbxDotFont,rbxDotUDim2,rbxDotVector2_const,rbxDotVector3,rbxDotVector3_const
+
+    syn keyword rbxDatatype Axes BrickColor CatalogSearchParams contained containedin=@luauEnv nextgroup=rbxDataDot
     syn keyword rbxDatatype ColorSequence ColorSequenceKeypoint contained containedin=@luauEnv nextgroup=rbxDataDot
     syn keyword rbxDatatype DockWidgetPluginGuiInfo Faces FloatCurveKey contained containedin=@luauEnv nextgroup=rbxDataDot
-    syn keyword rbxDatatype NumberRange NumberSequence NumberSequenceKeypoint contained containedin=@luauEnv nextgroup=rbxDataDot
+    syn keyword rbxDatatype Instance NumberRange NumberSequence NumberSequenceKeypoint contained containedin=@luauEnv nextgroup=rbxDataDot
     syn keyword rbxDatatype OverlapParams PathWaypoint PhysicalProperties contained containedin=@luauEnv nextgroup=rbxDataDot
     syn keyword rbxDatatype Random RaycastParams Rect Region3 contained containedin=@luauEnv nextgroup=rbxDataDot
     syn keyword rbxDatatype Region3int16 TweenInfo UDim Vector2int16 contained containedin=@luauEnv nextgroup=rbxDataDot
     syn keyword rbxDatatype Vector3int16 contained containedin=@luauEnv nextgroup=rbxDataDot
     syn match rbxDataDot /\./ contained nextgroup=rbxDotData
-    syn keyword rbxDotData new contained nextgroup=luauE2_Invoke
+    syn match rbxDotData /\%(\<\%(Axes\|BrickColor\|Color3\|CFrame\|CatalogSearchParams\|ColorSequence\%(Keypoint\)\?\|DockWidgetPluginGuiInfo\|Faces\|FloatCurveKey\|Font\|NumberRange\|NumberSequence\%(Keypoint\)\?\|OverlapParams\|PathWaypoint\|PhysicalProperties\|Random\|RaycastParams\|Rect\|\%(Region3\|Vector2\|Vector3\)\%(int16\)\?\|TweenInfo\|UDim\%(2\)\?\)\>\.\)\@<=\<new\>/ contained
 
     syn keyword rbxDatatype CFrame contained containedin=@luauEnv nextgroup=rbxCFrameDot
     syn match rbxCFrameDot /\./ contained nextgroup=rbxDotCFrame,rbxDotData
-    syn keyword rbxDotCFrame lookAt fromEulerAnglesXYZ fromEulerAnglesYXZ contained nextgroup=luauE2_Invoke
-    syn keyword rbxDotCFrame Angles fromOrientation fromAxisAngle fromMatrix contained nextgroup=luauE2_Invoke
+    syn keyword rbxDotCFrame lookAt fromEulerAnglesXYZ fromEulerAnglesYXZ contained
+    syn keyword rbxDotCFrame Angles fromOrientation fromAxisAngle fromMatrix contained
 
     syn keyword rbxDatatype Color3 contained containedin=@luauEnv nextgroup=rbxColor3Dot
     syn match rbxColor3Dot /\./ contained nextgroup=rbxDotColor3,rbxDotData
-    syn keyword rbxDotColor3 fromRGB, fromHSV, fromHex contained nextgroup=luauE2_Invoke
+    syn keyword rbxDotColor3 fromRGB, fromHSV, fromHex contained
 
     syn keyword rbxDatatype DateTime contained containedin=@luauEnv nextgroup=rbxDateTimeDot
     syn match rbxDateTimeDot /\./ contained nextgroup=rbxDotDateTime,rbxDotData
-    syn keyword rbxDotDateTime fromUnixTimestamp fromUnixTimestampMillis nextgroup=luauE2_Invoke
-    syn keyword rbxDotDateTime fromUniversalTime fromLocalTime fromIsoDate nextgroup=luauE2_Invoke
+    syn keyword rbxDotDateTime fromUnixTimestamp fromUnixTimestampMillis
+    syn keyword rbxDotDateTime fromUniversalTime fromLocalTime fromIsoDate
 
-    syn keyword rbxDatatype Enum contained containedin=@luauEnv nextgroup=rbxEnumsMethod
+    syn keyword rbxDatatype Enum contained containedin=@luauEnv nextgroup=rbxEnumsMethod,rbxEnumTmplDot
     syn match rbxEnumsMethod /:/ contained nextgroup=rbxMethodEnums
-    syn keyword rbxMethodEnums GetEnums contained nextgroup=luauE2_Invoke
+    syn match rbxEnumTmplDot /./ contained nextgroup=rbxEnumItemGenerated
+    syn keyword rbxMethodEnums GetEnums contained
 
     syn keyword rbxDatatype Font contained containedin=@luauEnv nextgroup=rbxFontDot
     syn match rbxFontDot /\./ contained nextgroup=rbxDotFont,rbxDotData
-    syn keyword rbxDotFont fromEnum contained nextgroup=luauE2_Invoke
-
+    syn keyword rbxDotFont fromEnum contained
+   
     syn keyword rbxDatatype UDim2 contained containedin=@luauEnv nextgroup=rbxUDim2Dot
     syn match rbxUDim2Dot /\./ contained nextgroup=rbxDotUDim2,rbxDotData
-    syn keyword rbxDotUDim2 fromScale fromOffset contained nextgroup=luauE2_Invoke
+    syn keyword rbxDotUDim2 fromScale fromOffset contained 
 
     syn keyword rbxDatatype Vector2 contained containedin=@luauEnv nextgroup=rbxVector2Dot
     syn match rbxVector2Dot /\./ contained nextgroup=rbxDotVector2_const,rbxDotData
@@ -690,28 +694,29 @@ if (g:luauHighlightRoblox)
     syn keyword rbxDatatype Vector3 contained containedin=@luauEnv nextgroup=rbxVector3Dot,rbxDotData
     syn match rbxVector3Dot /\./ contained nextgroup=rbxDotVector3,rbxDotVector3_const
     syn keyword rbxDotVector3_const zero one xAxis yAxis zAxis contained
-    syn keyword rbxDotVector3 FromNormalId FromAxis contained nextgroup=luauE2_Invoke
-
-    syn keyword rbxDatatype Instance contained containedin=@luauEnv nextgroup=rbxInstanceDot
-    syn match rbxInstanceDot /\./ contained nextgroup=rbxDotInstance
-    syn keyword rbxDotInstance new contained nextgroup=rbxInstanceNewInvoke,rbxInstanceNewArg skipwhite
-    syn region rbxInstanceNewInvoke matchgroup=luauDelimiter start=+(\%(\_s*\z("\|'\)\)\@=+ end=+\%(\z1\_s*\)\@<=)+ contained contains=rbxInstanceNewArg keepend
-    syn region rbxInstanceNewArg start=+\z("\|'\)+ end=+\z1+ transparent contained 
-
+    syn keyword rbxDotVector3 FromNormalId FromAxis contained 
+    
+    syn region rbxInstanceDescriptor matchgroup=luauString start=/\z("\|'\)/ end=/\z1/ contained contains=rbxAPICreatableInstance
+    syn region rbxServiceDescriptor matchgroup=luauString start=/\z("\|'\)/ end=/\z1/ contained contains=rbxAPIService
   endif
 
   if (g:luauRobloxIncludeAPIDump)
     if has('win32') || has('win64')
-      let s:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath('\')
+      let s:sep = '\'
     else
-      let s:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath('/')
+      let s:sep = '/'
     endif
+    
+    let s:rbx_syngen_fpath = luau_vim#getRobloxSyntaxTargetPath(s:sep)
 
     if !filereadable(s:rbx_syngen_fpath)
-      call luau_vim#robloxAPIParse(luau_vim#robloxAPIFetch())
+      call luau_vim#robloxAPIParse(luau_vim#robloxAPIFetch(v:false), s:rbx_syngen_fpath)
     endif
 
-    source! s:rbx_syngen_fpath
+    unlet s:sep
+
+
+    execute 'syn include ' . s:rbx_syngen_fpath
   endif
 endif
 
@@ -820,6 +825,13 @@ if (g:luauHighlightBuiltins)
   hi def link luauDotDebug          luauLibrary
   hi def link luauDotUTF8           luauLibrary
   if (g:luauHighlightRoblox)
+    hi def link rbxAPICreatableInstance SpecialComment
+    hi def link rbxAPITypeName          SpecialComment
+    hi def link rbxAPIService           SpecialComment
+    hi def link rbxServiceDescriptor    luauString
+    hi def link rbxInstanceDescriptor   luauString
+
+
     hi def link rbxIdentifier         Identifier
     hi def link rbxBuiltin            Function
     hi def link rbxMethod             Function
