@@ -469,7 +469,7 @@ if (g:luauHighlightTypes)
           \ {'hilink': 'luauIdentifier', 'cmd': 'syn keyword luau%T_Primitive any number string boolean function table thread userdata contained containedin=luau%T_Name' },
           \ {'hilink': 'luauSpecial', 'cmd': 'syn keyword luau%T_Boundary never unknown contained containedin=luau%T_Name' },
           \ {'hilink': 'luauOperator', 'cmd': 'syn match luau%T_Uop /?/ contained nextgroup=@luau%T2 skipwhite skipnl'},
-          \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\>\%(\s*\%(\.\|:\)\)\@!/ contained contains=rbxAPITypeName nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite skipnl' },
+          \ {'hilink': 'luauTypeAnnotation', 'cmd': 'syn match luau%T_Name /\<\K\k*\>\%(\s*\%(\.\|:\)\)\@!/ contained contains=rbxAPITypeName,rbxDatatype nextgroup=@luau%T2,luau%T_Uop,luau%T_Param skipwhite skipnl' },
           \ 'syn match luau%T_Module /\<\K\k*\s*\.\%(\s*\K\)\@=/ contained nextgroup=luau%T_Name skipwhite',
           \ 'syn region luau%T_Table matchgroup=luauTable start=+{+ end=+}+ transparent contained contains=@luauType,luauTypeProp_Name,luauTypeProp_Key,luauComment nextgroup=@luau%T2,luau%T_Uop skipwhite',
           \ 'syn region luau%T_FunctionGen matchgroup=luauStructure start=+\%(\k\s*\)\@<!<+ end=+>+ transparent contained contains=@luauTypeGenParam nextgroup=luau%T_FunctionParam skipwhite',
@@ -596,30 +596,38 @@ if (g:luauHighlightBuiltins)
   syn cluster luauDotLibs contains=luauDotBit32,luauDotCoroutine,luauDotString,luauDotTable
   syn cluster luauDotLibs add=luauDotMath,luauDotMath_const,luauDotOS,luauDotDebug,luauDotUTF8
 
-  syn keyword luauDotBit32 arshift lrotate lshift replace rrotate rshift contained
-  syn keyword luauDotBit32 btest bxor band bnot bor countlz countrz extract contained
+  syn match luauDotBit32 /\%(\<bit32\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword luauBit32_F arshift lrotate lshift replace rrotate rshift contained containedin=luauDotBit32
+  syn keyword luauBit32_F btest bxor band bnot bor countlz countrz extract contained containedin=luauDotBit32
 
-  syn keyword luauDotCoroutine close create isyieldable resume running status wrap yield contained
+  syn match luauDotCoroutine /\%(\<coroutine\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword luauCoroutine_F close create isyieldable resume running status wrap yield contained containedin=luauDotCoroutine
 
-  syn keyword luauDotString byte char find format gmatch gsub len lower contained
-  syn keyword luauDotString match pack packsize rep reverse split sub unpack upper contained
+  syn match luauDotString /\%(\<string\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword luauString_F byte char find format gmatch gsub len lower contained containedin=luauDotString
+  syn keyword luauString_F match pack packsize rep reverse split sub unpack upper contained containedin=luauDotString
 
-  syn keyword luauDotTable create clear clone concat foreach foreachi find freeze contained
-  syn keyword luauDotTable getn insert isfrozen maxn move pack remove sort unpack contained
+  syn match luauDotTable /\%(\<table\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword luauTable_F create clear clone concat foreach foreachi find freeze contained containedin=luauDotTable
+  syn keyword luauTable_F getn insert isfrozen maxn move pack remove sort unpack contained containedin=luauDotTable
 
-  syn keyword luauDotMath abs acos asin atan atan2 ceil clamp cos cosh deg exp contained
-  syn keyword luauDotMath floor fmod frexp ldexp log log10 max min modf noise contained
-  syn keyword luauDotMath pow rad random randomseed round sign sin sinh sqrt tan tanh contained
-  syn keyword luauDotMath_const huge pi contained
+  syn match luauDotMath /\%(\<math\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword luauMath_F abs acos asin atan atan2 ceil clamp cos cosh deg exp contained containedin=luauDotMath
+  syn keyword luauMath_F floor fmod frexp ldexp log log10 max min modf noise contained containedin=luauDotMath
+  syn keyword luauMath_F pow rad random randomseed round sign sin sinh sqrt tan tanh contained containedin=luauDotMath
+  syn keyword luauMath_C huge pi contained containedin=luauDotMath
 
-  syn keyword luauDotOS clock date difftime time contained
+  syn match luauDotOS /\%(\<os\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword luauOS_F clock date difftime time contained containedin=luauDotOS
 
-  syn keyword luauDotDebug info traceback contained
+  syn match luauDotDebug /\%(\<debug\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword luauDebug_F info traceback contained containedin=luauDotDebug
   if (g:luauHighlightRoblox)
-    syn keyword luauDotDebug profilebegin profileend resetmemorycategory setmemorycategory contained
+    syn keyword luauDebug_F profilebegin profileend resetmemorycategory setmemorycategory contained containedin=luauDotDebug
   endif
 
-  syn keyword luauDotUTF8 char codepoint codes len offset contained
+  syn match luauDotUTF8 /\%(\<utf8\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword luauUTF8_F char codepoint codes len offset contained containedin=luauDotUTF8
 endif
 
 syn cluster luauGeneralBuiltin add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDatatype
@@ -627,7 +635,7 @@ syn cluster luauGeneralBuiltin add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDataty
 if (g:luauHighlightRoblox)
   syn cluster luauTop add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDatatype
 
-  syn keyword rbxIdentifier game contained containedin=@luauEnv nextgroup=rbxGameMethod
+  syn keyword rbxIdentifier game contained containedin=@luauEnv nextgroup=rbxGameMethod skipwhite skipnl
   syn keyword rbxIdentifier plugin script workspace shared contained containedin=@luauEnv
 
   syn keyword rbxBuiltin delay DebuggerManager elapsedTime LoadLibrary PluginManager contained containedin=@luauEnv
@@ -636,11 +644,12 @@ if (g:luauHighlightRoblox)
 
   syn keyword rbxLibrary task contained containedin=@luauEnv nextgroup=rbxLibraryDot
 
-  syn match rbxLibraryDot /\./ transparent contained nextgroup=rbxDotTask
+  syn match rbxLibraryDot /\./ transparent contained nextgroup=rbxDotTask skipwhite
 
   syn cluster luauDotLibs add=rbxDotTask,rbxMethodGame
 
-  syn keyword rbxDotTask cancel defer delay desynchronize spawn wait contained
+  syn match rbxDotTask /\%(\<task\>\s*\.\s*\)\@<=\<\K\k*\>/ contained
+  syn keyword rbxTask_F cancel defer delay desynchronize spawn wait contained containedin=rbxDotTask
 
   syn match rbxGameMethod /:/ contained nextgroup=rbxMethodGame
   syn keyword rbxMethodGame GetService contained
@@ -816,18 +825,18 @@ if exists('s:typehilinkout')
 endif
 
 if (g:luauHighlightBuiltins)
-  hi def link luauBuiltin           Function
+  hi def link luauBuiltin             Function
 
-  hi def link luauLibrary           luauBuiltin
-  hi def link luauDotBit32          luauLibrary
-  hi def link luauDotCoroutine      luauLibrary    
-  hi def link luauDotString         luauLibrary
-  hi def link luauDotTable          luauLibrary
-  hi def link luauDotMath           luauLibrary
-  hi def link luauDotMath_const     luauConstant
-  hi def link luauDotOS             luauLibrary
-  hi def link luauDotDebug          luauLibrary
-  hi def link luauDotUTF8           luauLibrary
+  hi def link luauLibrary             luauBuiltin
+  hi def link luauBit32_F             luauLibrary
+  hi def link luauCoroutine_F         luauLibrary    
+  hi def link luauString_F            luauLibrary
+  hi def link luauTable_F             luauLibrary
+  hi def link luauMath_F              luauLibrary
+  hi def link luauMath_C              luauConstant
+  hi def link luauOS_F                luauLibrary
+  hi def link luauDebug_F             luauLibrary
+  hi def link luauUTF8_F              luauLibrary
   if (g:luauHighlightRoblox)
     hi def link rbxAPICreatableInstance SpecialComment
     hi def link rbxAPITypeName          SpecialComment
@@ -845,7 +854,7 @@ if (g:luauHighlightBuiltins)
     hi def link rbxAPIEnumMember      rbxConstant
 
     hi def link rbxLibrary            rbxBuiltin
-    hi def link rbxDotTask            rbxLibrary
+    hi def link rbxTask_F             rbxLibrary
 
     hi def link rbxMethodGame         rbxInstantiator
 
