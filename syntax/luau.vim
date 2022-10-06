@@ -2,7 +2,7 @@
 " Language:     Luau 0.546
 " Maintainer:    polychromatist <polychromatist 'at' proton me>
 " First Author: polychromatist
-" Last Change:  2022 Oct 3 (luau-vim v0.3.1)
+" Last Change:  2022 Oct 5 (luau-vim v0.3.2)
 " Options:      XXX Set options before loading the plugin.
 "               luauHighlightAll = 0 or 1 (no default)
 "               - luauHighlightTypes = 0 or 1 (default 1)
@@ -153,7 +153,7 @@ let s:expmap = {
         \ 'syn match luau%t_BuiltinTemplate /\%(\s\|(\|{\)\@1<=\%(Enum\)\@!\<\K\k*\>\%([.:]\<\K\k*\>\)\@=/ contains=@luauGeneralBuiltin contained nextgroup=luau%t_BuiltinTarget',
         \ 'syn match luau%t_InvokedVar /\<\K\k*\>\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained containedin=luau%t_HeadVar,luau%t_Var,luau%t_BuiltinTarget nextgroup=@luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
         \ 'syn match luau%t_ColonInvoked /\<\K\k*\>\%(\s*\%((\|"\|''\|\[=*\[\)\)\@=/ contained nextgroup=luau%t2_Invoke,@luau%t_GeneralString skipwhite skipnl',
-        \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e nextgroup=@luau%t2 skipwhite skipnl',
+        \ 'syn region luau%t_Wrap matchgroup=luau%t_Wrap start="(" end=")" transparent contained contains=@luau%e,luau%e_Uop nextgroup=@luau%t2 skipwhite skipnl',
         \ 'syn match luau%t_Variadic /\.\.\./ contained%n',
         \ 'syn match luau%t_Uop /#\|-\%(-\)\@!\|\<not\>/ contained nextgroup=@luau%t,luau%t_Uop skipwhite',
         \ 'syn region luau%t_Table matchgroup=luauTable start="{" end="}" transparent contained contains=@luau%l,@luauT,luauComment%n',
@@ -403,8 +403,8 @@ syn region luauD_ExpRangeStep matchgroup=luauD_ExpRangeStep start="," end="\<do\
 " luauS - top level syntactic (S)tatements
 
 " Top Level Keyword: [export] type
-syn match luauK_Export /export\%(\s\+[^[:keyword:]]\)\@!/ nextgroup=luauK_Type skipwhite
-syn match luauK_Type /type\%(\s\+[^[:keyword:]]\)\@!/ nextgroup=luauTypedef_DottedName,luauTypedef_Name skipwhite
+syn match luauK_Export /\<export\>\%(\s\+[^[:keyword:]]\)\@!/ nextgroup=luauK_Type skipwhite
+syn match luauK_Type /\<type\>\%(\s\+[^[:keyword:]]\)\@!/ nextgroup=luauTypedef_DottedName,luauTypedef_Name skipwhite
 syn match luauTypedef_DottedName /\<\K\k*\>\%(\s*\.\)\@=/ contained nextgroup=luauTypedef_Dot skipwhite
 syn match luauTypedef_Dot /\./ contained nextgroup=luauTypedef_Name skipwhite
 syn match luauTypedef_Name /\<\K\k*\>\%(\s*\.\)\@!/ contained nextgroup=luauTypedef_GenParam,luauTypedef_Symbol skipwhite
@@ -633,7 +633,7 @@ endif
 syn cluster luauGeneralBuiltin add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDatatype
 " syn cluster luauGeneralBuiltinDot add=rbxLibraryDot,rbxDataDot,rbxCFrameDot,rbxColor3Dot,rbxDateTimeDot,rbxFontDot,rbxUDim2Dot,rbxVector2Dot,rbxVector3Dot,rbxInstanceDot
 if (g:luauHighlightRoblox)
-  syn cluster luauTop add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDatatype
+  " syn cluster luauTop add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDatatype
 
   syn keyword rbxIdentifier game contained containedin=@luauEnv nextgroup=rbxGameMethod skipwhite skipnl
   syn keyword rbxIdentifier plugin script workspace shared contained containedin=@luauEnv

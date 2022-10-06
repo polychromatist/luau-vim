@@ -1,6 +1,6 @@
 " luau-vim/autoload/luau_vim.vim
 " Author:       polychromatist <polychromatist proton me>
-" Last Change:  2022 Oct 3 (luau-vim v0.3.1)
+" Last Change:  2022 Oct 5 (luau-vim v0.3.2)
 
 " roblox api source url
 if exists('g:luauRobloxAPIDumpURL')
@@ -21,11 +21,12 @@ endif
 
 " plugin folder
 let s:_project_root = expand('<sfile>:p:h:h')
+
 " file name for roblox api used to generate syntax file
 let s:_current_api_prefix = 'current'
 
 " a developer managed variable that is changed according to changes in the
-" api fetched generated syntax format
+" generated syntax rules file
 let s:gen_syntax_version = 100
 
 function! luau_vim#robloxAPIValid(path, sep) abort
@@ -33,7 +34,7 @@ function! luau_vim#robloxAPIValid(path, sep) abort
     return v:false
   endif
 
-  let l:api_filepath = s:getAPIFilename(a:sep)
+  let l:api_filepath = luau_vim#getAPIFilename(a:sep)
 
   if !filereadable(l:api_filepath)
     return v:false
@@ -50,7 +51,7 @@ function! luau_vim#robloxAPIValid(path, sep) abort
     return v:false
   endif
 
-  " call s:startColliderJob(a:sep)
+  " call luau_vim#jobs#startAPIJob(a:sep)
 
   return v:true
 endfunction
@@ -150,7 +151,7 @@ function! luau_vim#robloxAPIParse(api_data, api_file_target) abort
 endfunction
 
 function! luau_vim#rbxAPIClean(sep) abort
-  let l:api_dirpath = s:getAPIDir(a:sep)
+  let l:api_dirpath = luau_vim#getAPIDir(a:sep)
 
   call delete(l:api_dirpath, 'rf')
 
@@ -159,12 +160,12 @@ function! luau_vim#rbxAPIClean(sep) abort
   call delete(l:rbx_syngen_fpath)
 endfunction
 
-function! s:getAPIDir(sep) abort
+function! luau_vim#getAPIDir(sep) abort
   return s:_project_root . a:sep . s:api_dump_dirname
 endfunction
 
-function! s:getAPIFilename(sep) abort
-  return s:getAPIDir(a:sep) . a:sep . s:_current_api_prefix .  '.txt'
+function! luau_vim#getAPIFilename(sep) abort
+  return luau_vim#getAPIDir(a:sep) . a:sep . s:_current_api_prefix .  '.txt'
 endfunction
 
 function! luau_vim#getRobloxSyntaxTargetPath(sep) abort
@@ -172,8 +173,8 @@ function! luau_vim#getRobloxSyntaxTargetPath(sep) abort
 endfunction
 
 function! s:prepareAPITargets(sep) abort
-  let l:api_dirpath = s:getAPIDir(a:sep)
-  let l:api_filepath = s:getAPIFilename(a:sep)
+  let l:api_dirpath = luau_vim#getAPIDir(a:sep)
+  let l:api_filepath = luau_vim#getAPIFilename(a:sep)
   let l:etag_filepath = l:api_filepath . '.etag'
 
   if !isdirectory(l:api_dirpath)
@@ -217,36 +218,17 @@ function! s:processMainQuery(query, targets, etag) abort
   return readfile(a:targets.filename)
 endfunction
 
-function! s:getSubquery(sep)
-  if a:sep ==# '/'
-    return 'curl -I %s'
-  else
-    return 'powershell.exe -Command "(iwr -Method Head -Uri %s).Headers.ETag"'
-  endif
-endfunction
-
-function! s:getETagFromSubqueryResponse(res, sep)
-  if a:sep ==# '\'
-    let l:sq_res_lines = split(a:res, "\\(\r\n\|\n\\)")
-    return l:sq_res_lines[0]
-  else
-    let l:sq_res_lines = split(a:res, "\\(\r\n\\|\n\\)")
-    let l:sq_etag_midx = match(l:sq_res_lines, 'etag')
-    if l:sq_etag_midx ==# -1
-      echoerr 'no etag in subquery response headers for api versioning'
-      throw 'bad api response'
-    endif
-    return matchstr(l:sq_res_lines[l:sq_etag_midx], "etag: \"\\zs[[:xdigit:]]\\+\\ze\"")
-  endif
+function! luau_vim#getAPIDumpURL()
+  return s:api_dump_url
 endfunction
 
 function! s:winAPIFetch(force) abort
   let l:targets = s:prepareAPITargets('\')
 
-  let l:subquery = printf(s:getSubquery('\'), shellescape(s:api_dump_url))
+  let l:subquery = printf(luau_vim#internal#getSubquery('\'), shellescape(s:api_dump_url))
   let l:sq_res = system(l:subquery)
 
-  let l:remote_etag = s:getETagFromSubqueryResponse(l:sq_res, '\')
+  let l:remote_etag = luau_vim#internal#getETagFromSubqueryResponse(l:sq_res, '\')
 
   if (!a:force && s:collideCache(l:targets.etag, l:remote_etag))
     return readfile(l:targets.filepath)
@@ -260,10 +242,10 @@ endfunction
 function! s:curlAPIFetch(force) abort
   let l:targets = s:prepareAPITargets('/')
 
-  let l:subquery = printf(s:getSubquery('/'), shellescape(s:api_dump_url))
+  let l:subquery = printf(luau_vim#internal#getSubquery('/'), shellescape(s:api_dump_url))
   let l:sq_res = system(l:subquery)
 
-  let l:remote_etag = s:getETagFromSubqueryResponse(l:sq_res, '/')
+  let l:remote_etag = luau_vim#internal#getETagFromSubqueryResponse(l:sq_res, '/')
 
   if (!a:force && s:collideCache(l:targets.etag, l:remote_etag))
     return readfile(l:targets.filename)
@@ -274,81 +256,7 @@ function! s:curlAPIFetch(force) abort
   return s:processMainQuery(l:query, l:targets, l:remote_etag)
 endfunction
 
-function! s:deselectCurrentAPIVersion(sep)
-  call delete(s:getAPIFilename(a:sep))
-  call delete(s:getAPIFilename(a:sep) . '.etag')
-endfunction
-
-let s:api_job_data = {
-      \ 'last_check': 0,
-      \ 'sep': '',
-      \ 'started': 0,
-      \ 'poll_interval': 10
-      \ }
-
-function! s:completeAPIJobCollision(ch, other) abort
-  let l:data = ch_status(a:ch)
-  let l:sep = s:api_job_data.sep
-
-  let l:remote_etag = s:getETagFromSubqueryResponse(l:data, l:sep)
-  let l:etag_filepath = s:getAPIFilename(l:sep) . '.etag'
-
-  if !filereadable(l:etag_filepath)
-    return
-  endif
-
-  let l:etag = readfile(l:etag_filepath)[0]
-
-  if (l:etag ==# l:remote_etag)
-    echo 'luau_vim roblox api job: check returned OK'
-    call s:markAPIJobCheck()
-    call s:startColliderJob()
-    return
-  endif
-
-  echo l:remote_etag
-  echo 'luau_vim roblox api job: new api version available'
-
-  call s:deselectCurrentAPIVersion(l:sep)
-endfunction
-
-function! s:getAPILastCheckFilename() abort
-  let l:sep = s:api_job_data.sep
-  return s:getAPIDir(l:sep) . l:sep . 'apilastcheck.unixtime.txt'
-endfunction
-
-function! s:getAPIJobLastCheck() abort
-  let l:chkfile = s:getAPILastCheckFilename()
-
-  if !filereadable(l:chkfile)
-    return
-  endif
-
-  let s:api_job_data['last_check'] = str2nr(readfile(l:chkfile)[0])
-endfunction
-
-function! s:markAPIJobCheck() abort
-  let l:chkfile = s:getAPILastCheckFilename()
-
-  if filereadable(l:chkfile)
-    call delete(l:chkfile)
-  endif
-
-  call writefile([localtime()], l:chkfile)
-endfunction
-
-function! s:wakeUpColliderJob(subquery)
-  let l:curlpath = exepath('curl')
-  call job_start([l:curlpath, '-I', s:api_dump_url], { 'out_mode': 'raw', 'exit_cb': funcref('s:completeAPIJobCollision') })
-endfunction
-
-function! s:startColliderJob(sep) abort
-  let s:api_job_data['sep'] = a:sep
-  let s:api_job_data['started'] = 1
-  call s:getAPIJobLastCheck()
-
-  let l:sleep_delta = s:api_job_data.poll_interval - min([s:api_job_data.poll_interval, localtime() - s:api_job_data.last_check])
-
-  let l:subquery = printf(s:getSubquery(a:sep), shellescape(s:api_dump_url))
-  call job_start('sleep ' . l:sleep_delta, { 'exit_cb': {... -> s:wakeUpColliderJob(l:subquery)} })
+function! luau_vim#deselectCurrentAPIVersion(sep)
+  call delete(luau_vim#getAPIFilename(a:sep))
+  call delete(luau_vim#getAPIFilename(a:sep) . '.etag')
 endfunction
