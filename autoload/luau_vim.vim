@@ -21,6 +21,7 @@ endif
 
 " plugin folder
 let s:_project_root = expand('<sfile>:p:h:h')
+
 " file name for roblox api used to generate syntax file
 let s:_current_api_prefix = 'current'
 

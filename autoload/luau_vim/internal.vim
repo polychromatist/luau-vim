@@ -1,4 +1,4 @@
-function! luau_vim#internal#getSubquery(sep)
+function! luau_vim#internal#getSubquery(sep) abort
   if a:sep ==# '/'
     return 'curl -I %s'
   else
@@ -6,7 +6,7 @@ function! luau_vim#internal#getSubquery(sep)
   endif
 endfunction
 
-function! luau_vim#internal#getETagFromSubqueryResponse(res, sep)
+function! luau_vim#internal#getETagFromSubqueryResponse(res, sep) abort
   if a:sep ==# '\'
     let l:sq_res_lines = split(a:res, "\\(\r\n\|\n\\)")
     return l:sq_res_lines[0]
