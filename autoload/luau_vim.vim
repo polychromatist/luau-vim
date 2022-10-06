@@ -25,7 +25,7 @@ let s:_project_root = expand('<sfile>:p:h:h')
 let s:_current_api_prefix = 'current'
 
 " a developer managed variable that is changed according to changes in the
-" api fetched generated syntax format
+" generated syntax rules file
 let s:gen_syntax_version = 100
 
 function! luau_vim#robloxAPIValid(path, sep) abort
