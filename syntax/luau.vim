@@ -34,7 +34,7 @@ else
   let g:luauHighlightRoblox = g:luauHighlightAll
 endif
 if !exists('g:luauRobloxIncludeAPIDump')
-  let g:luauRobloxIncludeAPIDump = 1
+  let g:luauRobloxIncludeAPIDump = 0
 endif
 
 syn case match
