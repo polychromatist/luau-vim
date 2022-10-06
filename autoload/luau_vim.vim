@@ -1,6 +1,6 @@
 " luau-vim/autoload/luau_vim.vim
 " Author:       polychromatist <polychromatist proton me>
-" Last Change:  2022 Oct 5 (luau-vim v0.3.2)
+" Last Change:  2022 Oct 6 (luau-vim v0.4pre1)
 
 " roblox api source url
 if exists('g:luauRobloxAPIDumpURL')
