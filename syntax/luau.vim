@@ -34,7 +34,7 @@ else
   let g:luauHighlightRoblox = g:luauHighlightAll
 endif
 if !exists('g:luauRobloxIncludeAPIDump')
-  let g:luauRobloxIncludeAPIDump = 1
+  let g:luauRobloxIncludeAPIDump = 0
 endif
 
 syn case match
@@ -633,7 +633,7 @@ endif
 syn cluster luauGeneralBuiltin add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDatatype
 " syn cluster luauGeneralBuiltinDot add=rbxLibraryDot,rbxDataDot,rbxCFrameDot,rbxColor3Dot,rbxDateTimeDot,rbxFontDot,rbxUDim2Dot,rbxVector2Dot,rbxVector3Dot,rbxInstanceDot
 if (g:luauHighlightRoblox)
-  syn cluster luauTop add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDatatype
+  " syn cluster luauTop add=rbxIdentifier,rbxBuiltin,rbxLibrary,rbxDatatype
 
   syn keyword rbxIdentifier game contained containedin=@luauEnv nextgroup=rbxGameMethod skipwhite skipnl
   syn keyword rbxIdentifier plugin script workspace shared contained containedin=@luauEnv
