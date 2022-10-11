@@ -52,7 +52,7 @@ Example: `let g:luauIncludeRobloxAPIDump = 1`. Note that a value of 1 means on, 
       <td>default 1. If set, Luau builtins will be extended by Roblox datatypes <a href="https://create.roblox.com/docs/reference/engine/datatypes">as they appear on the docs</a>. None of these datatypes are generated in the plugin by fetching the Roblox API - they are manually defined. However, any applicable Roblox API fetched syntax rules are impossible unless this is setting is on.</td>
     </tr>
     <tr>
-      <td><code>luauIncludeRobloxAPIDump = 0 | 1</code></td>
+      <td><code>luauRobloxIncludeAPIDump = 0 | 1</code></td>
       <td><em>Experimental</em> default 0. If set, and as long as <code>luauHighlightRoblox</code> is set, luau.vim (v0.3.1+) will attempt to grab Roblox APIs from a <a href="https://github.com/MaximumADHD/Roblox-Client-Tracker">continuously refreshed, user-defined API endpoint</a>. The APIs are, for now, parsed using regex on the compact, raw text format specified in the linked repo rather than JSON.</td>
     </tr>
     <tr>
