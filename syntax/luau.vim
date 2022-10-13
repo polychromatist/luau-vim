@@ -129,7 +129,7 @@ let s:expmap = {
       \ 'number': [ 
         \ 'syn match luau%pNumber "\<[[:digit:]_]\+\>\%(\.\)\@!"%n',
         \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%pFloat  "\<[[:digit:]_]\+\.[[:digit:]_]*\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"%n'},
-        \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%pFloat  "\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"%n'},
+        \ {'hilink': 'luauFloat', 'cmd': 'syn match luau%pFloat  "\<\.[[:digit:]_]\+\%([eE][-+]\=[[:digit:]_]\+\)\=\>\%(\.\)\@!"%n'},
         \ 'syn match luau%pNumber "\<[[:digit:]_]\+[eE][-+]\=[[:digit:]_]\+\>\%(\.\)\@!"%n',
         \ 'syn match luau%pNumber "\<0[xX][[:xdigit:]_]\+\>\%(\.\)\@!"%n',
         \ 'syn match luau%pNumber "\<0[bB][01_]\+\>\%(\.\)\@!"%n' ],
