@@ -3,10 +3,10 @@ let s:last_check = 0
 let s:started = 0
 let s:pollintv = 10
 
-function! s:completeAPIJobCollision(ch, other) abort
-  let l:data = ch_status(a:ch)
+function! s:completeAPIJobCollision(data) abort
+  echom a:data
 
-  let l:remote_etag = luau_vim#internal#getETagFromSubqueryResponse(l:data, s:sep)
+  let l:remote_etag = luau_vim#internal#getETagFromSubqueryResponse(a:data, s:sep)
   let l:etag_filepath = luau_vim#getAPIFilename(s:sep) . '.etag'
 
   if !filereadable(l:etag_filepath)
@@ -51,10 +51,24 @@ function! s:markAPIJobCheck() abort
   call writefile([localtime()], l:chkfile)
 endfunction
 
-function! s:wakeUpColliderJob()
+function! s:tryCollectChannelOutData(ch, job_out)
+  if ch_canread(a:ch)
+    call add(a:job_out, ch_read(a:ch))
+  elseif ch_status(a:ch) ==# 'fail'
+    echom '-- channel dump --'
+    echom ch_info(a:ch)
+    throw 'channel reported failure fetching api data'
+  endif
+endfunction
+
+function! s:wakeUpColliderJob(timer_id)
+  " let l:job_options = {  'exit_cb': {ch, other -> s:completeAPIJobCollision(ch, other) } }
+  let l:job_out = []
   let l:job_options = {
-        \ 'out_mode': 'raw',
-        \ 'exit_cb': {...-> s:completeAPIJobCollision() } }
+        \ 'out_mode': 'nl',
+        \ 'out_cb': {ch, other -> s:tryCollectChannelOutData(ch, l:job_out) },
+        \ 'exit_cb': {ch, other -> s:completeAPIJobCollision(join(l:job_out, "\n")) }
+        \ }
   if s:sep ==# '/'
     let l:curlpath = exepath('curl')
     call job_start([l:curlpath, '-I', luau_vim#getAPIDumpURL()], l:job_options)
@@ -75,5 +89,5 @@ function! luau_vim#jobs#startAPIJob(sep) abort
 
   " let l:subquery = printf(luau_vim#internal#getSubquery(a:sep), shellescape(luau_vim#getAPIDumpURL()))
   " call job_start('sleep ' . l:sleep_delta, { 'exit_cb': {... -> s:wakeUpColliderJob(l:subquery)} })
-  let s:timer = timer_start(l:sleep_delta, function('s:wakeUpColliderJob'))
+  call timer_start(l:sleep_delta, function('s:wakeUpColliderJob'))
 endfunction

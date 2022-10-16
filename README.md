@@ -1,3 +1,7 @@
+# Notice
+
+This vim syntax works, but I have started to maintain [tree-sitter-luau](https://github.com/polychromatist/tree-sitter-luau) with queries that bind to nvim-treesitter. It is more powerful, works for large files with nested syntax, and much more performant. I have a small guide on how I set it up in Neovim. There's currently no plans to integrate it into Vim.
+
 # luau-vim
 
 <img style="float: left;" src="luau-vim-repologo-160x160.png"/>
